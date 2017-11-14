@@ -18,16 +18,16 @@ def createUser():
       'password': password
     }
 
-    # value = db.usersdb.update({}, user, upsert=True)
     userExists = db.userdb.find_one({ 'username': username })
+
     if userExists:
       return jsonify({
         'status': 409,
         'message': 'User already exists'
-      })
+      }), 409
     else:
       db.userdb.insert(user)
       return jsonify({
         'status': 201,
         'message': 'User was created'
-      })
+      }), 201
