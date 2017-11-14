@@ -4,24 +4,30 @@ from pymongo import MongoClient
 users = Blueprint('users', __name__)
 
 client = MongoClient('mongodb:27017')
-db = client.usersdb
+db = client.userdb
 
 # add bcrypt
 @users.route('/users', methods=['GET', 'POST'])
 def createUser():
   if request.method == 'POST':
+    username = request.form['username']
+    password = request.form['password'] 
+
     user = {
-      'username': request.form['username'],
-      'password': request.form['password']
+      'username': username,
+      'password': password
     }
 
-    db.usersdb.update({}, user, upsert=True)
-    userd = db.usersdb.find({'username': request.form['username']})
-    for user in userd:
-      print(user)
-    
-    _items = db.usersdb.find()
-    items = [item for item in _items]
-    print(items)
-    return jsonify(items)
-
+    # value = db.usersdb.update({}, user, upsert=True)
+    userExists = db.userdb.find_one({ 'username': username })
+    if userExists:
+      return jsonify({
+        'status': 409,
+        'message': 'User already exists'
+      })
+    else:
+      db.userdb.insert(user)
+      return jsonify({
+        'status': 201,
+        'message': 'User was created'
+      })
