@@ -1,0 +1,26 @@
+
+#using: db = client.tododb
+
+@app.route('/getRepresentatives', methods=['GET'])
+def getRepresentatives():
+	db_reps = db.representatives
+	
+	json_reps = []
+
+	for rep in db_reps.find():
+		json_reps.append({'name' : rep['name'], 'company' : rep['company']})
+	
+return jsonify({'result' : json_reps})
+
+@app.route('/getRepresentativeByName/<name>', methods=['GET'])
+def getRepresentativeByName(name):
+	db_reps = db.representatives
+
+	query = representatives.find_one({'name' : name})						#find_one
+	
+	if query:
+		out = {'name' : query['name'], 'company' : query['company']}
+	else:
+		out = 'No results found'
+
+return jsonify({'result' : out})
