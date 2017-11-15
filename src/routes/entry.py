@@ -4,7 +4,6 @@ entry = Blueprint('entry', __name__)
 @entry.route('/')
 def getEntry():
   routes = {
-    'auth': '/auth',
     'representatives': '/representatives',
     'self': '/'
   }
