@@ -4,7 +4,7 @@ entry = Blueprint('entry', __name__)
 @entry.route('/')
 def getEntry():
   routes = {
-    'auth': '/auth',
+    'admins': '/admins',
     'self': '/'
   }
   return jsonify(routes)
