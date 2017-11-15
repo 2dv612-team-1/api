@@ -55,6 +55,11 @@ docker rmi $(docker images -a -q)
 docker volume rm $(docker volume ls -f dangling=true -q)
 ```
 
+## Robo 3T
+[Robo 3T](https://robomongo.org/) (f.k.a. Robomongo) is a cross platform tool that allows you to view a mongo database and work directly with the data. This section explains how to connect Robo 3T with a mongoDB instance running in a docker container.
+
+To connect the Robo 3T client to the mongoDB instance just open the program and connect to localhost:27017. You should then be able to connect and view the database inside the Robo 3T client.
+
 ## Links
 
 * [Flask/MongoDB Tutorial](http://containertutorials.com/docker-compose/flask-mongo-compose.html)
