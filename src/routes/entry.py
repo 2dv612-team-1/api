@@ -5,6 +5,7 @@ entry = Blueprint('entry', __name__)
 def getEntry():
   routes = {
     'representatives': '/representatives',
+    'admins': '/admins',
     'self': '/'
   }
   return jsonify(routes)
