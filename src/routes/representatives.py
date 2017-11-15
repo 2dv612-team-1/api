@@ -12,28 +12,34 @@ def representativeActions():
   if request.method == 'POST':
     form = request.form
 
-    token = form['jwt']
+    try:
+      token = form['jwt']
+      payload = jwt.decode(token, 'super-secret')
 
-    payload = jwt.decode(token, 'super-secret')
-    if payload['isCompany'] == True:
-      username = form['username']
-      password = form['password'] 
+      if payload['role'] == 'company':
+        username = form['username']
+        password = form['password'] 
 
-      representative = {
-        'username': username,
-        'password': password
-      }
+        representative = {
+          'username': username,
+          'password': password
+        }
 
-      representativeExists = db.representatives.find_one({ 'username': username })
+        representativeExists = db.representatives.find_one({ 'username': username })
 
-      if representativeExists:
-        return jsonify({
-          'status': 409,
-          'message': 'Representative already exists'
-        }), 409
-      else:
-        db.representatives.insert(representative)
-        return jsonify({
-          'status': 201,
-          'message': 'Representative was created'
-        }), 201
+        if representativeExists:
+          return jsonify({
+            'status': 409,
+            'message': 'Representative already exists'
+          }), 409
+        else:
+          db.representatives.insert(representative)
+          return jsonify({
+            'status': 201,
+            'message': 'Representative was created'
+          }), 201
+    except:
+      return jsonify({
+        'message': 'Wrong credentials',
+        'status': 400
+      }), 400
