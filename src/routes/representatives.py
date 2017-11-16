@@ -43,3 +43,29 @@ def representativeActions():
         'message': 'Wrong credentials',
         'status': 400
       }), 400
+
+@representatives.route('/representatives/auth', methods=['POST'])
+def representativesAuth():
+
+    if request.method == 'POST':
+        try:
+            username = request.form['username']
+            password = request.form['password']
+
+            foundRepresentative = db.representative.find_one({'username': username, 'password': password})
+
+            if foundRepresentative:
+                payload = {'username': username, 'role': 'representative'}
+                encoded = jwt.encode(payload, 'super-secret')
+                return jsonify({
+                    'token': encoded.decode('utf-8'),
+                    'message': 'Successfully logged in as representative',
+                    'status': 200
+                }), 200
+            else:
+                raise AttributeError()
+        except AttributeError:
+            return jsonify({
+                'message': 'Wrong credentials',
+                'status': 400
+            }), 400
