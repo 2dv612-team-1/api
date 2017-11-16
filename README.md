@@ -69,7 +69,7 @@ To connect the Robo 3T client to the mongoDB instance just open the program and 
 ## API - Routes
 
 #### Create Admin
-http://nanotu.be/admins  | POST  
+http://nanotu.be/admins  | POST
 Creates admin account with the credentials:
 
     username: admin
@@ -84,7 +84,7 @@ Returns statuscode 201 and the JSON
 
 
 #### Authenticate Admin
-http://nanotu.be/admins/auth | POST  
+http://nanotu.be/admins/auth | POST
 Authenticates admin. Requires the following data:
 
     username: admin
@@ -100,7 +100,7 @@ Returns statuscode 200 and the JSON
 
 
 #### Create Company
-http://nanotu.be/companies | POST  
+http://nanotu.be/companies | POST
 Creates a company. Requires the following data:
 
     username: username-of-company
@@ -121,12 +121,12 @@ If company name exists: returns 409 and the JSON
        "status": 409
     }
 
-#### Authenticate Company (To be implemented)
-http://nanotu.be/admins/auth | POST  
+#### Authenticate Company
+http://nanotu.be/admins/auth | POST
 Authenticates company. Requires the following data:
 
-    name: company-name
-    password: company-password
+    username: username-of-company
+    password: password-for-company
 
 Returns statuscode 200 and the JSON
 
@@ -137,7 +137,7 @@ Returns statuscode 200 and the JSON
     }
 
 #### Create Representative
-http://nanotu.be/representatives | POST  
+http://nanotu.be/representatives | POST
 Creates a representative. Requires the following data:
 
     username: name-of-representative
@@ -159,7 +159,7 @@ If exists: returns 409 and the JSON
     }
 
 #### Authenticate Representative
-http://nanotu.be/representatives/auth | POST  
+http://nanotu.be/representatives/auth | POST
 Authenticates representative. Requires the following data:
 
     username: representative-username
