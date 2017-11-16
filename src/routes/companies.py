@@ -1,3 +1,7 @@
+"""
+Company routes
+"""
+
 from flask import Blueprint, request, jsonify
 from pymongo import MongoClient
 import jwt
