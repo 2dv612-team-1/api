@@ -44,3 +44,29 @@ def companyActions():
         'message': 'Wrong credentials',
         'status': 400
       }), 400
+
+@companies.route('/companies/auth', methods=['POST'])
+def representativesAuth():
+
+    if request.method == 'POST':
+        try:
+            username = request.form['username']
+            password = request.form['password']
+
+            foundCompany = db.companies.find_one({'username': username, 'password': password})
+
+            if foundCompany:
+                payload = {'username': username, 'role': 'company'}
+                encoded = jwt.encode(payload, 'super-secret')
+                return jsonify({
+                    'token': encoded.decode('utf-8'),
+                    'message': 'Successfully logged in as company',
+                    'status': 200
+                }), 200
+            else:
+                raise AttributeError()
+        except AttributeError:
+            return jsonify({
+                'message': 'Wrong credentials',
+                'status': 400
+            }), 400
