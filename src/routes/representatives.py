@@ -52,7 +52,7 @@ def representativeActions():
 
       if payload['role'] == 'company':
         _representatives = []
-        for representative in db.representatives.find():
+        for representative in db.representatives.find({'owner': payload['username']}):
           _representatives.append({'username': representative['username']})
 
         return jsonify({
