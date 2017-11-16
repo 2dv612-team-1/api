@@ -98,6 +98,32 @@ Returns statuscode 200 and the JSON
         "token": "a-jwt-of-great-importance55"
     }
 
+#### Get All Companies
+http://nanotu.be/companies | GET
+Gets a list of all companies
+
+If ok: returns statuscode 200 and the JSON
+
+    {
+       "status": 200,
+       "message": "Successfully extracted all companies",
+       "companies": [
+           {
+               "username": "Company1"
+            },
+           {
+               "username": "Company2"
+            },
+            ...
+        ]
+    }
+
+If company name exists: returns 409 and the JSON
+
+    {
+       "message": "Company already exists",
+       "status": 409
+    }
 
 #### Create Company
 http://nanotu.be/companies | POST
