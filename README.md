@@ -103,7 +103,7 @@ Returns statuscode 200 and the JSON
 http://nanotu.be/companies | POST  
 Creates a company. Requires the following data:
 
-    name: name-of-company
+    username: username-of-company
     password: password-for-company
     jwt: an-admin-jwt
 

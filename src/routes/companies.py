@@ -18,15 +18,15 @@ def companyActions():
       payload = jwt.decode(token, 'super-secret')
 
       if payload['role'] == 'admin':
-        name = form['name']
+        username = form['username']
         password = form['password']
 
         company = {
-          'name': name,
+          'username': username,
           'password': password
         }
 
-        companyExists = db.companies.find_one({ 'name': name })
+        companyExists = db.companies.find_one({ 'username': username })
 
         if companyExists:
           return jsonify({
