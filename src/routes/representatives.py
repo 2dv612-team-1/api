@@ -52,7 +52,7 @@ def representativesAuth():
             username = request.form['username']
             password = request.form['password']
 
-            foundRepresentative = db.representative.find_one({'username': username, 'password': password})
+            foundRepresentative = db.representatives.find_one({'username': username, 'password': password})
 
             if foundRepresentative:
                 payload = {'username': username, 'role': 'representative'}
