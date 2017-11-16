@@ -26,7 +26,7 @@ def companyActions():
           'password': password
         }
 
-        companyExists = db.companies.find_one({'username': username})
+        companyExists = db.companies.find_one({ 'username': username })
 
         if companyExists:
           return jsonify({
