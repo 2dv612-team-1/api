@@ -3,8 +3,10 @@ from routes.entry import entry
 from routes.representatives import representatives
 from routes.admin import admin
 from routes.companies import companies
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 app.register_blueprint(entry)
 app.register_blueprint(representatives)
