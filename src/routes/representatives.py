@@ -22,7 +22,8 @@ def representativeActions():
 
         representative = {
           'username': username,
-          'password': password
+          'password': password,
+          'owner': payload['username']
         }
 
         representativeExists = db.representatives.find_one({ 'username': username })
