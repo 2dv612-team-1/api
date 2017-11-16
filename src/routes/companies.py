@@ -11,43 +11,61 @@ client = MongoClient('mongodb:27017')
 db = client.api
 
 # add bcrypt
-# GET not implemented yet
 @companies.route('/companies', methods=['GET', 'POST'])
 def companyActions():
-  if request.method == 'POST':
-    form = request.form
+    if request.method == 'GET':
 
-    try:
-      token = form['jwt']
-      payload = jwt.decode(token, 'super-secret')
+        try:
+            data = []
+            for company in db.companies.find():
+                data.append({'username': company['username']})
 
-      if payload['role'] == 'admin':
-        username = form['username']
-        password = form['password']
+            return jsonify({
+                'status': 200,
+                'message': 'Successfully extracted all companies',
+                'companies': data
+            }), 200
+        except SystemError:
+            return jsonify({
+                'status': 500,
+                'message': 'Something went wrong while retreiving the data'
+            }), 500
 
-        company = {
-          'username': username,
-          'password': password
-        }
+    if request.method == 'POST':
+        form = request.form
 
-        companyExists = db.companies.find_one({ 'username': username })
+        try:
+            token = form['jwt']
+            payload = jwt.decode(token, 'super-secret')
 
-        if companyExists:
-          return jsonify({
-            'status': 409,
-            'message': 'Company already exists'
-          }), 409
-        else:
-          db.companies.insert(company)
-          return jsonify({
-            'status': 201,
-            'message': 'Company was created'
-          }), 201
-    except:
-      return jsonify({
-        'message': 'Wrong credentials',
-        'status': 400
-      }), 400
+            if payload['role'] == 'admin':
+                username = form['username']
+                password = form['password']
+
+                company = {
+                    'username': username,
+                    'password': password
+                }
+
+                companyExists = db.companies.find_one({'username': username})
+
+                if companyExists:
+                    return jsonify({
+                        'status': 409,
+                        'message': 'Company already exists'
+                    }), 409
+                else:
+                    db.companies.insert(company)
+                    return jsonify({
+                        'status': 201,
+                        'message': 'Company was created'
+                    }), 201
+        except AttributeError:
+            return jsonify({
+                'message': 'Wrong credentials',
+                'status': 400
+            }), 400
+
 
 @companies.route('/companies/auth', methods=['POST'])
 def companiesAuth():
@@ -57,7 +75,8 @@ def companiesAuth():
             username = request.form['username']
             password = request.form['password']
 
-            foundCompany = db.companies.find_one({'username': username, 'password': password})
+            foundCompany = db.companies.find_one(
+                {'username': username, 'password': password})
 
             if foundCompany:
                 payload = {'username': username, 'role': 'company'}
