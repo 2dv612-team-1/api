@@ -46,7 +46,7 @@ def companyActions():
       }), 400
 
 @companies.route('/companies/auth', methods=['POST'])
-def representativesAuth():
+def companiesAuth():
 
     if request.method == 'POST':
         try:
