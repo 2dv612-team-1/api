@@ -44,6 +44,32 @@ def representativeActions():
         'status': 400
       }), 400
 
+  if request.method == 'GET':
+    try:
+      token = request.args.get('token')
+      payload = jwt.decode(token, 'super-secret')
+
+      if payload['role'] == 'company':
+        _representatives = []
+        for representative in db.representatives.find():
+          _representatives.append({'username': representative['username']})
+
+        return jsonify({
+          'status': 200,
+          'message': 'Successfully extracted all representatives',
+          'representatives': _representatives
+        }), 200
+      else:
+        return jsonify({
+          'status': 409,
+          'message': 'You need to be a company to get representatives'
+        }), 409
+    except SystemError:
+      return jsonify({
+        'status': 500,
+        'message': 'Something went wrong while retreiving the data'
+      }), 500
+
 @representatives.route('/representatives/auth', methods=['POST'])
 def representativesAuth():
 

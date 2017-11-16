@@ -162,6 +162,28 @@ Returns statuscode 200 and the JSON
         "token": "a-jwt-of-great-importance42"
     }
 
+
+#### Get All Representatives
+http://nanotu.be/representatives?token=jwt | GET  
+Gets all representatives if user is logged in. Requires jwt parameter:
+  
+    http://nanotu.be/representatives?token=superauth-8352-12.123
+
+Returns statuscode 200 and the JSON
+
+    {
+      "message": "Successfully extracted all representatives",
+      "representatives": [
+        {
+            "username": "adminsasdasd"
+        },
+        {
+            "username": "one"
+        }
+      ],
+      "status": 200
+    }
+
 #### Create Representative
 http://nanotu.be/representatives | POST
 Creates a representative. Requires the following data:

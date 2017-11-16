@@ -5,7 +5,7 @@ entry = Blueprint('entry', __name__)
 def getEntry():
   routes = {
     'companies': '/companies',
-    'representatives': '/representatives',
+    'representatives': '/representatives(?token=jwt)',
     'admins': '/admins',
     'self': '/'
   }
