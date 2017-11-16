@@ -64,3 +64,113 @@ To connect the Robo 3T client to the mongoDB instance just open the program and 
 
 * [Flask/MongoDB Tutorial](http://containertutorials.com/docker-compose/flask-mongo-compose.html)
 * [Flask Mega Tutorial](https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world)
+
+
+## API - Routes
+
+#### Create Admin
+http://nanotu.be/admins  | POST  
+Creates admin account with the credentials:
+
+    username: admin
+    password: admin123
+
+Returns statuscode 201 and the JSON
+
+    {
+      "message": "Admin account has been created",
+      "status": 201
+    }
+
+
+#### Authenticate Admin
+http://nanotu.be/admins/auth | POST  
+Authenticates admin. Requires the following data:
+
+    username: admin
+    passowrd: admin123
+
+Returns statuscode 200 and the JSON
+
+    {
+        "message": "Successfully logged in as admin",
+        "status": 200,
+        "token": "a-jwt-of-great-importance55"
+    }
+
+
+#### Create Company
+http://nanotu.be/companies | POST  
+Creates a company. Requires the following data:
+
+    name: name-of-company
+    password: password-for-company
+    jwt: an-admin-jwt
+
+If ok: returns statuscode 201 and the JSON
+
+    {
+       "message": "Company was created",
+       "status": 201
+    }
+
+If company name exists: returns 409 and the JSON
+
+    {
+       "message": "Company already exists",
+       "status": 409
+    }
+
+#### Authenticate Company (To be implemented)
+http://nanotu.be/admins/auth | POST  
+Authenticates company. Requires the following data:
+
+    name: company-name
+    password: company-password
+
+Returns statuscode 200 and the JSON
+
+    {
+        "message": "Successfully logged in as company",
+        "status": 200,
+        "token": "a-jwt-of-great-importance42"
+    }
+
+#### Create Representative
+http://nanotu.be/representatives | POST  
+Creates a representative. Requires the following data:
+
+    username: name-of-representative
+    password: password-for-representative
+    jwt: a-company-jwt
+
+If ok: returns statuscode 201 and the JSON
+
+    {
+       "message": "Representative was created",
+       "status": 201
+    }
+
+If exists: returns 409 and the JSON
+
+    {
+       "message": "Representative already exists",
+       "status": 409
+    }
+
+#### Authenticate Representative
+http://nanotu.be/representatives/auth | POST  
+Authenticates representative. Requires the following data:
+
+    username: representative-username
+    password: representative-password
+
+Returns statuscode 200 and the JSON
+
+    {
+        "message": "Successfully logged in as representative",
+        "status": 200,
+        "token": "a-jwt-of-great-importance33"
+    }
+
+
