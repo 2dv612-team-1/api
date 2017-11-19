@@ -4,6 +4,7 @@ Admin routes
 
 from flask import Blueprint, request, jsonify
 from pymongo import MongoClient
+from utils.response import defaultResponse
 import jwt
 
 client = MongoClient('mongodb:27017')
@@ -20,11 +21,8 @@ def adminActions():
         }
 
         db.admin.update({}, default_admin, upsert=True)
-
-        return jsonify({
-            'status': 201,
-            'message': 'Admin account has been created'
-        }), 201
+        
+        return defaultResponse('Admin account has been created', 201)
 
 @admin.route('/admins/auth', methods=['POST'])
 def adminAuth():
@@ -46,7 +44,4 @@ def adminAuth():
             else:
                 raise AttributeError()
         except AttributeError:
-            return jsonify({
-                'message': 'Wrong credentials',
-                'status': 400
-            }), 400
+            return defaultResponse('Wrong credentials', 400)
