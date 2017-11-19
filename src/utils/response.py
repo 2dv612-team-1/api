@@ -1,7 +1,9 @@
 from flask import jsonify
 
-def defaultResponse(message, status):
-  return jsonify({
+def defaultResponse(message, status, rest={}):
+  default = {
     'message': message,
     'status': status
-  }), status
+  }
+  default.update(rest)
+  return jsonify(default), status
