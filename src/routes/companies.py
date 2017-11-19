@@ -4,6 +4,7 @@ Company routes
 
 from flask import Blueprint, request, jsonify
 from pymongo import MongoClient
+from utils.response import defaultResponse
 import jwt
 
 companies = Blueprint('companies', __name__)
@@ -26,10 +27,7 @@ def companyActions():
                 'companies': data
             }), 200
         except SystemError:
-            return jsonify({
-                'status': 500,
-                'message': 'Something went wrong while retreiving the data'
-            }), 500
+            return defaultResponse('Something went wrong while retreiving the data', 500)
 
     if request.method == 'POST':
         form = request.form
@@ -50,21 +48,12 @@ def companyActions():
                 companyExists = db.companies.find_one({'username': username})
 
                 if companyExists:
-                    return jsonify({
-                        'status': 409,
-                        'message': 'Company already exists'
-                    }), 409
+                    return defaultResponse('Company already exists', 409)
                 else:
                     db.companies.insert(company)
-                    return jsonify({
-                        'status': 201,
-                        'message': 'Company was created'
-                    }), 201
+                    return defaultResponse('Company was created', 201)
         except AttributeError:
-            return jsonify({
-                'message': 'Wrong credentials',
-                'status': 400
-            }), 400
+            return defaultResponse('Wrong credentials', 400)
 
 
 @companies.route('/companies/auth', methods=['POST'])
@@ -89,7 +78,4 @@ def companiesAuth():
             else:
                 raise AttributeError()
         except AttributeError:
-            return jsonify({
-                'message': 'Wrong credentials',
-                'status': 400
-            }), 400
+            return defaultResponse('Wrong credentials', 400)
