@@ -2,26 +2,30 @@
 Company routes
 """
 
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request
 from pymongo import MongoClient
 from utils.response import defaultResponse
 import jwt
 
-companies = Blueprint('companies', __name__)
-client = MongoClient('mongodb:27017')
-db = client.api
+COMPANIES = Blueprint('companies', __name__)
+CLIENT = MongoClient('mongodb:27017')
+DB = CLIENT.api
 
 # add bcrypt
-@companies.route('/companies', methods=['GET', 'POST'])
-def companyActions():
+
+
+@COMPANIES.route('/companies', methods=['GET', 'POST'])
+def company_actions():
+    """Creates company"""
+
     if request.method == 'GET':
 
         try:
             data = []
-            for company in db.companies.find():
+            for company in DB.companies.find():
                 data.append({'username': company['username']})
-            
-            return defaultResponse('Successfully extracted all companies', 200, { 'companies': data })
+
+            return defaultResponse('Successfully extracted all companies', 200, {'companies': data})
         except SystemError:
             return defaultResponse('Something went wrong while retreiving the data', 500)
 
@@ -41,32 +45,36 @@ def companyActions():
                     'password': password
                 }
 
-                companyExists = db.companies.find_one({'username': username})
+                company_exists = DB.companies.find_one({'username': username})
 
-                if companyExists:
+                if company_exists:
                     return defaultResponse('Company already exists', 409)
                 else:
-                    db.companies.insert(company)
+                    DB.companies.insert(company)
                     return defaultResponse('Company was created', 201)
         except AttributeError:
             return defaultResponse('Wrong credentials', 400)
 
 
-@companies.route('/companies/auth', methods=['POST'])
-def companiesAuth():
+@COMPANIES.route('/companies/auth', methods=['POST'])
+def companies_auth():
+    """Authenticates company"""
 
     if request.method == 'POST':
         try:
             username = request.form['username']
             password = request.form['password']
 
-            foundCompany = db.companies.find_one(
+            found_company = DB.companies.find_one(
                 {'username': username, 'password': password})
 
-            if foundCompany:
+            if found_company:
                 payload = {'username': username, 'role': 'company'}
                 encoded = jwt.encode(payload, 'super-secret')
-                return defaultResponse('Successfully logged in as company', 200, { 'token': encoded.decode('utf-8') })
+
+                return defaultResponse('Successfully logged in as company',
+                                       200,
+                                       {'token': encoded.decode('utf-8')})
             else:
                 raise AttributeError()
         except AttributeError:

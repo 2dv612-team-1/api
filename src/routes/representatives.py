@@ -1,17 +1,23 @@
-from flask import Blueprint, request, jsonify
+"""
+Representatives
+"""
+
+from flask import Blueprint, request
 from pymongo import MongoClient
 from utils.response import defaultResponse
 import jwt
 
-representatives = Blueprint('users', __name__)
-client = MongoClient('mongodb:27017')
-db = client.api
+REPRESENTATIVES = Blueprint('users', __name__)
+CLIENT = MongoClient('mongodb:27017')
+DB = CLIENT.api
 
 # add bcrypt
 
 
-@representatives.route('/representatives', methods=['GET', 'POST'])
-def representativeActions():
+@REPRESENTATIVES.route('/representatives', methods=['GET', 'POST'])
+def representative_actions():
+    """Creates representative"""
+
     if request.method == 'POST':
         form = request.form
 
@@ -29,15 +35,15 @@ def representativeActions():
                     'owner': payload['username']
                 }
 
-                representativeExists = db.representatives.find_one(
+                representative_exists = DB.representatives.find_one(
                     {'username': username})
 
-                if representativeExists:
+                if representative_exists:
                     return defaultResponse('Representative already exists', 409)
                 else:
-                    db.representatives.insert(representative)
+                    DB.representatives.insert(representative)
                     return defaultResponse('Representative was created', 201)
-        except:
+        except AttributeError:
             return defaultResponse('Wrong credentials', 400)
 
     if request.method == 'GET':
@@ -47,7 +53,7 @@ def representativeActions():
 
             if payload['role'] == 'company':
                 _representatives = []
-                for representative in db.representatives.find({'owner': payload['username']}):
+                for representative in DB.representatives.find({'owner': payload['username']}):
                     _representatives.append(
                         {'username': representative['username']})
 
@@ -61,14 +67,16 @@ def representativeActions():
             return defaultResponse('Something went wrong while retreiving the data', 500)
 
 
-@representatives.route('/representatives/auth', methods=['POST'])
+@REPRESENTATIVES.route('/representatives/auth', methods=['POST'])
 def representatives_auth():
+    """Authenticates representative"""
+
     if request.method == 'POST':
         try:
             username = request.form['username']
             password = request.form['password']
 
-            found_representative = db.representatives.find_one(
+            found_representative = DB.representatives.find_one(
                 {'username': username, 'password': password}
             )
 
