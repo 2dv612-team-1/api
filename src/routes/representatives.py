@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from pymongo import MongoClient
+from utils.response import defaultResponse
 import jwt
 
 representatives = Blueprint('users', __name__)
@@ -29,21 +30,12 @@ def representativeActions():
         representativeExists = db.representatives.find_one({ 'username': username })
 
         if representativeExists:
-          return jsonify({
-            'status': 409,
-            'message': 'Representative already exists'
-          }), 409
+          return defaultResponse('Representative already exists', 409)
         else:
           db.representatives.insert(representative)
-          return jsonify({
-            'status': 201,
-            'message': 'Representative was created'
-          }), 201
+          return defaultResponse('Representative was created', 201)
     except:
-      return jsonify({
-        'message': 'Wrong credentials',
-        'status': 400
-      }), 400
+      return defaultResponse('Wrong credentials', 400)
 
   if request.method == 'GET':
     try:
@@ -61,15 +53,9 @@ def representativeActions():
           'representatives': _representatives
         }), 200
       else:
-        return jsonify({
-          'status': 409,
-          'message': 'You need to be a company to get representatives'
-        }), 409
+        return defaultResponse('You need to be a company to get representatives', 409)
     except SystemError:
-      return jsonify({
-        'status': 500,
-        'message': 'Something went wrong while retreiving the data'
-      }), 500
+      return defaultResponse('Something went wrong while retreiving the data', 500)
 
 @representatives.route('/representatives/auth', methods=['POST'])
 def representativesAuth():
@@ -92,7 +78,4 @@ def representativesAuth():
             else:
                 raise AttributeError()
         except AttributeError:
-            return jsonify({
-                'message': 'Wrong credentials',
-                'status': 400
-            }), 400
+            return defaultResponse('Wrong credentials', 400)
