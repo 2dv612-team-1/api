@@ -19,9 +19,7 @@ def adminActions():
             'username': 'admin',
             'password': 'admin123'
         }
-
         db.admin.update({}, default_admin, upsert=True)
-        
         return defaultResponse('Admin account has been created', 201)
 
 @admin.route('/admins/auth', methods=['POST'])
@@ -36,11 +34,7 @@ def adminAuth():
             if foundAdmin:
                 payload = {'username': username, 'role': 'admin'}
                 encoded = jwt.encode(payload, 'super-secret')
-                return jsonify({
-                    'token': encoded.decode('utf-8'),
-                    'message': 'Successfully logged in as admin',
-                    'status': 200
-                }), 200
+                return defaultResponse('Successfully logged in as admin', 200, { 'token': encoded.decode('utf-8') })
             else:
                 raise AttributeError()
         except AttributeError:

@@ -8,73 +8,78 @@ client = MongoClient('mongodb:27017')
 db = client.api
 
 # add bcrypt
+
+
 @representatives.route('/representatives', methods=['GET', 'POST'])
 def representativeActions():
-  if request.method == 'POST':
-    form = request.form
+    if request.method == 'POST':
+        form = request.form
 
-    try:
-      token = form['jwt']
-      payload = jwt.decode(token, 'super-secret')
+        try:
+            token = form['jwt']
+            payload = jwt.decode(token, 'super-secret')
 
-      if payload['role'] == 'company':
-        username = form['username']
-        password = form['password'] 
+            if payload['role'] == 'company':
+                username = form['username']
+                password = form['password']
 
-        representative = {
-          'username': username,
-          'password': password,
-          'owner': payload['username']
-        }
+                representative = {
+                    'username': username,
+                    'password': password,
+                    'owner': payload['username']
+                }
 
-        representativeExists = db.representatives.find_one({ 'username': username })
+                representativeExists = db.representatives.find_one(
+                    {'username': username})
 
-        if representativeExists:
-          return defaultResponse('Representative already exists', 409)
-        else:
-          db.representatives.insert(representative)
-          return defaultResponse('Representative was created', 201)
-    except:
-      return defaultResponse('Wrong credentials', 400)
+                if representativeExists:
+                    return defaultResponse('Representative already exists', 409)
+                else:
+                    db.representatives.insert(representative)
+                    return defaultResponse('Representative was created', 201)
+        except:
+            return defaultResponse('Wrong credentials', 400)
 
-  if request.method == 'GET':
-    try:
-      token = request.args.get('token')
-      payload = jwt.decode(token, 'super-secret')
+    if request.method == 'GET':
+        try:
+            token = request.args.get('token')
+            payload = jwt.decode(token, 'super-secret')
 
-      if payload['role'] == 'company':
-        _representatives = []
-        for representative in db.representatives.find({'owner': payload['username']}):
-          _representatives.append({'username': representative['username']})
+            if payload['role'] == 'company':
+                _representatives = []
+                for representative in db.representatives.find({'owner': payload['username']}):
+                    _representatives.append(
+                        {'username': representative['username']})
 
-        return jsonify({
-          'status': 200,
-          'message': 'Successfully extracted all representatives',
-          'representatives': _representatives
-        }), 200
-      else:
-        return defaultResponse('You need to be a company to get representatives', 409)
-    except SystemError:
-      return defaultResponse('Something went wrong while retreiving the data', 500)
+                return defaultResponse(
+                    'Successfully extracted all representatives', 200,
+                    {'representatives': _representatives}
+                )
+            else:
+                return defaultResponse('You need to be a company to get representatives', 409)
+        except SystemError:
+            return defaultResponse('Something went wrong while retreiving the data', 500)
+
 
 @representatives.route('/representatives/auth', methods=['POST'])
-def representativesAuth():
-
+def representatives_auth():
     if request.method == 'POST':
         try:
             username = request.form['username']
             password = request.form['password']
 
-            foundRepresentative = db.representatives.find_one({'username': username, 'password': password})
+            found_representative = db.representatives.find_one(
+                {'username': username, 'password': password}
+            )
 
-            if foundRepresentative:
+            if found_representative:
                 payload = {'username': username, 'role': 'representative'}
                 encoded = jwt.encode(payload, 'super-secret')
-                return jsonify({
-                    'token': encoded.decode('utf-8'),
-                    'message': 'Successfully logged in as representative',
-                    'status': 200
-                }), 200
+
+                return defaultResponse(
+                    'Successfully logged in as a representative', 200,
+                    {'token': encoded.decode('utf-8')}
+                )
             else:
                 raise AttributeError()
         except AttributeError:
