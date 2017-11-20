@@ -1,3 +1,7 @@
+"""
+Main system file
+"""
+
 from flask import Flask
 from routes.entry import entry
 from routes.representatives import representatives
