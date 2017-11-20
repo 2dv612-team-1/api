@@ -10,7 +10,6 @@ class CompaniesTestCase(unittest.TestCase):
         self.app.testing = True;
 
     def tearDown(self):
-        #db.companies.remove({})
         pass
 
     def test_getCompanies(self):
@@ -22,8 +21,7 @@ class CompaniesTestCase(unittest.TestCase):
         else:
             self.assertEqual(response.status_code, 200)
     
-    """check companies collection"""
-    def __checkIfCompaniesHasContent(self):
+    def __checkIfCompaniesCollectionHasContent(self):
         if (db.companies.find().count() != 0):
             companiesExist = True;
         else:
@@ -31,8 +29,6 @@ class CompaniesTestCase(unittest.TestCase):
         return companiesExist
 
     def __addCompany(self):
-        #company = { 'username': 'company', 'password': '123'}
-        #db.companies.insert(company)
         pass
 
     def __removeCompany(self):

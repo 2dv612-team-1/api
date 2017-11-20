@@ -3,7 +3,7 @@ from pymongo import MongoClient
 import unittest
 import json
 
-"""Random tests writing and reading """
+"""Very simple tests writing and reading """
 class UsersTest(unittest.TestCase):
 
     def setUp(self):
@@ -29,6 +29,7 @@ class UsersTest(unittest.TestCase):
             elif user['role'] == 'representative':
                 self.__testInsertedRepresentativeData(user)
                 self.__findCompanyForRepresentative(user)
+            else:
                 pass
     
     def __findCompanyForRepresentative(self, user):
