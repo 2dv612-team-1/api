@@ -26,8 +26,17 @@ class UsersTest(unittest.TestCase):
                 self.__testInsertedConsumerData(user)
             elif user['role'] == 'company':
                 self.__testInsertedCompanyData(user)
-            else:
+            elif user['role'] == 'representative':
+                self.__testInsertedRepresentativeData(user)
+                self.__findCompanyForRepresentative(user)
                 pass
+    
+    def __findCompanyForRepresentative(self, user):
+        if user['username'] == 'rep1':
+            self.assertEqual(user['data']['company'], 'Dell')
+
+    def __testInsertedRepresentativeData(self, user):
+        self.assertEqual(user['password'], user['username'])
 
     def __testInsertedConsumerData(self, user):
         self.assertEqual(user['password'], 'consumer1')
@@ -48,16 +57,21 @@ class UsersTest(unittest.TestCase):
         self.__test_data.append({'username' : 'consumer1', 'password' : 'consumer1', 'role' : 'consumer', 'data' : consumer_data})
 
         """ Admin Data """
-        admin_data = {'Dell' :{ 'username' : 'userDell', 'password' : 'passDell'},
-                        'Apple':{'username' : 'userApple', 'password': 'passApple'}}
+        admin_data = {'Dell':{ 'username' : 'userDell', 'password' : 'passDell'},
+                        'Apple':{'username' : 'userApple', 'password': 'passApple'},
+                        'Samsung':{'username' : 'userSams', 'password': 'passSams'}}
         self.__test_data.append({'username' : 'admin', 'password' : '1234', 'role' : 'admin', 'data' : admin_data})
 
         """ Company Data """
         company_data = {'Representatives' : [{'username' : 'rep1', 'password' : 'rep1'},
                                             {'username' : 'rep2', 'password' : 'rep2'},
-                                            {'username' : 'rep3', 'password' : 'rep3'}]}
-
+                                            {'username' : 'rep3', 'password' : 'rep3'}]}                               
         self.__test_data.append({'username' : 'userDell', 'password' : 'passDell', 'role' : 'company', 'data' : company_data})
+
+        """ Representative Data """
+        self.__test_data.append({'username' : 'rep1', 'password' : 'rep1', 'role' : 'representative', 'data' : {'company':'Dell'}})
+        self.__test_data.append({'username' : 'rep2', 'password' : 'rep2', 'role' : 'representative', 'data' : {'company':'Apple'}})
+        self.__test_data.append({'username' : 'rep3', 'password' : 'rep3', 'role' : 'representative', 'data' : {'company':'Samsung'}})
 
     def __saveTestDataToDB(self):
         for user in self.__test_data:
