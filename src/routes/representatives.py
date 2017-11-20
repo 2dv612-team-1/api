@@ -4,7 +4,7 @@ Representatives
 
 from flask import Blueprint, request
 from pymongo import MongoClient
-from utils.response import defaultResponse
+from utils.response import response
 import jwt
 
 REPRESENTATIVES = Blueprint('users', __name__)

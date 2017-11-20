@@ -4,7 +4,7 @@ Company routes
 
 from flask import Blueprint, request
 from pymongo import MongoClient
-from utils.response import defaultResponse
+from utils.response import response
 import jwt
 
 COMPANIES = Blueprint('companies', __name__)
