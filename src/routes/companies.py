@@ -20,12 +20,8 @@ def companyActions():
             data = []
             for company in db.companies.find():
                 data.append({'username': company['username']})
-
-            return jsonify({
-                'status': 200,
-                'message': 'Successfully extracted all companies',
-                'companies': data
-            }), 200
+            
+            return defaultResponse('Successfully extracted all companies', 200, { 'companies': data })
         except SystemError:
             return defaultResponse('Something went wrong while retreiving the data', 500)
 
@@ -70,11 +66,7 @@ def companiesAuth():
             if foundCompany:
                 payload = {'username': username, 'role': 'company'}
                 encoded = jwt.encode(payload, 'super-secret')
-                return jsonify({
-                    'token': encoded.decode('utf-8'),
-                    'message': 'Successfully logged in as company',
-                    'status': 200
-                }), 200
+                return defaultResponse('Successfully logged in as company', 200, { 'token': encoded.decode('utf-8') })
             else:
                 raise AttributeError()
         except AttributeError:
