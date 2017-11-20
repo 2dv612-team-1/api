@@ -20,8 +20,6 @@ class CompaniesTestCase(unittest.TestCase):
         if companiesExistInDB:
             self.assertEqual(response.status_code, 200)
         else:
-            #Should not return 200 =>'Successfully extracted all companies'?
-            #When no data is found.
             self.assertEqual(response.status_code, 200)
     
     """check companies collection"""
