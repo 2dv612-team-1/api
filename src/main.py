@@ -9,13 +9,13 @@ from routes.admin import admin
 from routes.companies import companies
 from flask_cors import CORS
 
-app = Flask(__name__)
-CORS(app)
+APP = Flask(__name__)
+CORS(APP)
 
-app.register_blueprint(entry)
-app.register_blueprint(representatives)
-app.register_blueprint(admin)
-app.register_blueprint(companies)
+APP.register_blueprint(entry)
+APP.register_blueprint(representatives)
+APP.register_blueprint(admin)
+APP.register_blueprint(companies)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True, port=80)
+    APP.run(host='0.0.0.0', debug=True, port=80)
