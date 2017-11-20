@@ -39,12 +39,12 @@ def representative_actions():
                     {'username': username})
 
                 if representative_exists:
-                    return defaultResponse('Representative already exists', 409)
+                    return response('Representative already exists', 409)
                 else:
                     DB.representatives.insert(representative)
-                    return defaultResponse('Representative was created', 201)
+                    return response('Representative was created', 201)
         except AttributeError:
-            return defaultResponse('Wrong credentials', 400)
+            return response('Wrong credentials', 400)
 
     if request.method == 'GET':
         try:
@@ -57,14 +57,14 @@ def representative_actions():
                     _representatives.append(
                         {'username': representative['username']})
 
-                return defaultResponse(
+                return response(
                     'Successfully extracted all representatives', 200,
                     {'representatives': _representatives}
                 )
             else:
-                return defaultResponse('You need to be a company to get representatives', 409)
+                return response('You need to be a company to get representatives', 409)
         except SystemError:
-            return defaultResponse('Something went wrong while retreiving the data', 500)
+            return response('Something went wrong while retreiving the data', 500)
 
 
 @REPRESENTATIVES.route('/representatives/auth', methods=['POST'])
@@ -84,11 +84,11 @@ def representatives_auth():
                 payload = {'username': username, 'role': 'representative'}
                 encoded = jwt.encode(payload, 'super-secret')
 
-                return defaultResponse(
+                return response(
                     'Successfully logged in as a representative', 200,
                     {'token': encoded.decode('utf-8')}
                 )
             else:
                 raise AttributeError()
         except AttributeError:
-            return defaultResponse('Wrong credentials', 400)
+            return response('Wrong credentials', 400)

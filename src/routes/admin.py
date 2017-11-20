@@ -22,7 +22,7 @@ def admin_actions():
             'password': 'admin123'
         }
         DB.admin.update({}, default_admin, upsert=True)
-        return defaultResponse('Admin account has been created', 201)
+        return response('Admin account has been created', 201)
 
 
 @ADMIN.route('/admins/auth', methods=['POST'])
@@ -40,10 +40,10 @@ def admin_auth():
             if found_admin:
                 payload = {'username': username, 'role': 'admin'}
                 encoded = jwt.encode(payload, 'super-secret')
-                return defaultResponse('Successfully logged in as admin',
+                return response('Successfully logged in as admin',
                                        200,
                                        {'token': encoded.decode('utf-8')})
             else:
                 raise AttributeError()
         except AttributeError:
-            return defaultResponse('Wrong credentials', 400)
+            return response('Wrong credentials', 400)
