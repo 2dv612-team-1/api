@@ -48,7 +48,7 @@ def company_creation():
             company_exists = DB.users.find_one({'username': username})
 
             if company_exists:
-                return response('Company already exists', 409)
+                return response('Username already exists', 409)
             else:
                 DB.users.insert(company)
                 return response('Company was created', 201)
