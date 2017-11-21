@@ -1,30 +1,17 @@
 import unittest
-
-from main import APP
-from pymongo import MongoClient
-
-from db_helper import DBHelper
 import json
+from basetest import BaseTest
 
 
-class AuthTestCase(unittest.TestCase):
-
-    def setUp(self):
-        client = MongoClient('mongodb:27017')
-        self.__db_helper = DBHelper(client.api.users)
-        self.__app = APP.test_client()
-        self.__app.testing = True
-
-    def tearDown(self):
-        self.__db_helper.deleteTestDataInDB()
+class AuthTestCase(BaseTest):
 
     def test_authAsAdmin(self):
         username = 'admin'
         password = '1234'
 
-        response_auth = self.__app.post('/auth',
+        response_auth = self._app.post('/auth',
                                         data=dict({'username': username, 'password': password}))
         auth_data = json.loads(response_auth.data)
         self.assertEqual(response_auth.status_code, 200)
-        self.assertEqual(auth_data['message'], 'Successfully logged in as ' + self.__db_helper.getRoleForUser(username)['role'])
+        self.assertEqual(auth_data['message'], 'Successfully logged in as ' + self._db_helper.getRoleForUser(username)['role'])
         self.assertTrue(auth_data['token'])

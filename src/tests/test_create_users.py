@@ -1,24 +1,11 @@
-from main import APP
-from pymongo import MongoClient
-from db_helper import DBHelper
 import unittest
+from basetest import BaseTest
 
-"""Very simple tests writing and reading """
 
-
-class UsersTest(unittest.TestCase):
-
-    def setUp(self):
-        client = MongoClient('mongodb:27017')
-        self.__db_helper = DBHelper(client.api.users)
-        self.__app = APP.test_client()
-        self.__app.testing = True
-
-    def tearDown(self):
-        self.__db_helper.deleteTestDataInDB()
+class UsersTest(BaseTest):
     
     def test_runTestDepOnRole(self):
-        for user in self.__db_helper.getUsers():
+        for user in self._db_helper.getUsers():
             if user['role'] == 'admin':
                 self.__testInsertedAdminData(user)
             elif user['role'] == 'consumer':
