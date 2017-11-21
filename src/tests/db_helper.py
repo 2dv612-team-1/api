@@ -9,6 +9,7 @@ class DBHelper():
         self.addTestDataToDB()
 
     def __createTestData(self):
+
         """" Consumer Data """
         consumer_data = {'PersonalInfo': {'name': 'Eggbert', 'age': 34},
                          'Manuals': ('manual_1', 'manual_2', 'manual_2')}
@@ -38,12 +39,15 @@ class DBHelper():
     def getUsers(self):
         return self.__db_users.find()
 
+    def getRoleForUser(self, user_name):
+        return self.__db_users.find_one({'username': user_name}, {'role': 1})
+
     def deleteTestDataInDB(self):
         for user in self.__test_data:
             self.__db_users.remove(user)
 
-    def companyExistInDB(self, in_username):
-        if self.__db_users.find({'username': in_username}):
+    def userExistInDB(self, user_name):
+        if self.__db_users.find({'username': user_name}):
             return True
         else:
             return False

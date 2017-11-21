@@ -5,7 +5,7 @@ from pymongo import MongoClient
 
 from db_helper import DBHelper
 import jwt
-import json
+
 
 """Test for (sprint-1) companies routes"""
 
@@ -32,18 +32,6 @@ class CompaniesTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue(len(response.data) != 0)
 
-    """ Removed from company route
-    def test_authAsAdmin(self):
-        response_auth = self.__app.post('/companies/auth',
-                                        data=dict({'username': 'admin', 'password': '1234'}),
-                                        content_type='application/x-www-form-urlencoded')
-
-        result_auth = json.loads(response_auth.data.decode())
-        self.assertEqual(response_auth.status_code, 200)
-        self.assertEqual(result_auth['message'], 'Successfully logged in as company')
-        self.assertTrue(result_auth['token'])
-    """
-
     def test_addingCompanyAccountAsAdmin(self):
         username_comp = 'userDell'
         password_comp = 'passDell'
@@ -52,7 +40,7 @@ class CompaniesTestCase(unittest.TestCase):
         response_auth = self.__app.post('/companies',
                                         data=dict({'username': username_comp, 'password': password_comp, 'jwt': encoded_data}))
 
-        if self.__db_helper.companyExistInDB(username_comp):
+        if self.__db_helper.userExistInDB(username_comp):
             self.assertEqual(response_auth.status_code, 409)
         else:
             self.assertEqual(response_auth.status_code, 201)
