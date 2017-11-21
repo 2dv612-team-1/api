@@ -8,6 +8,7 @@ def get_entry():
     """Displays a list of possible routes"""
 
     routes = {
+        'auth': '/auth',
         'companies': '/companies',
         'representatives': '/representatives(?token=jwt)',
         'admins': '/admins',
