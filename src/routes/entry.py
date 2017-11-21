@@ -11,7 +11,6 @@ def get_entry():
         'auth': '/auth',
         'consumers': '/consumers',
         'companies': '/companies',
-        'representatives': '/representatives(?token=jwt)',
         'admins': '/admins',
         'self': '/'
     }
