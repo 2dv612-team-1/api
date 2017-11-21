@@ -69,7 +69,7 @@ To connect the Robo 3T client to the mongoDB instance just open the program and 
 ## API - Routes
 
 #### Create Admin
-http://nanotu.be/admins  | POST
+https://nanotu.be/admins  | POST
 Creates admin account with the credentials:
 
     username: admin
@@ -84,7 +84,7 @@ Returns statuscode 201 and the JSON
 
 
 #### Authenticate Admin
-http://nanotu.be/admins/auth | POST
+https://nanotu.be/admins/auth | POST
 Authenticates admin. Requires the following data:
 
     username: admin
@@ -99,7 +99,7 @@ Returns statuscode 200 and the JSON
     }
 
 #### Get All Companies
-http://nanotu.be/companies | GET
+https://nanotu.be/companies | GET
 Gets a list of all companies
 
 If ok: returns statuscode 200 and the JSON
@@ -126,7 +126,7 @@ If company name exists: returns 409 and the JSON
     }
 
 #### Create Company
-http://nanotu.be/companies | POST
+https://nanotu.be/companies | POST
 Creates a company. Requires the following data:
 
     username: username-of-company
@@ -148,7 +148,7 @@ If company name exists: returns 409 and the JSON
     }
 
 #### Authenticate Company
-http://nanotu.be/auth | POST
+https://nanotu.be/auth | POST
 Authenticates company. Requires the following data:
 
     username: username-of-company
@@ -164,10 +164,8 @@ Returns statuscode 200 and the JSON
 
 
 #### Get All Representatives
-http://nanotu.be/representatives?token=jwt | GET
-Gets all representatives if user is logged in. Requires jwt parameter:
-
-    http://nanotu.be/representatives?token=superauth-8352-12.123
+https://nanotu.be/companies/{company-name}/representatives | GET
+Gets all representatives from specific company.
 
 Returns statuscode 200 and the JSON
 
@@ -185,7 +183,7 @@ Returns statuscode 200 and the JSON
     }
 
 #### Create Representative
-http://nanotu.be/representatives | POST
+https://nanotu.be/companies/{company-name}/representatives | POST
 Creates a representative. Requires the following data:
 
     username: name-of-representative
@@ -207,7 +205,7 @@ If exists: returns 409 and the JSON
     }
 
 #### Authenticate Representative
-http://nanotu.be/auth | POST
+https://nanotu.be/auth | POST
 Authenticates representative. Requires the following data:
 
     username: representative-username
@@ -222,7 +220,7 @@ Returns statuscode 200 and the JSON
     }
 
 #### Create Consumer
-http://nanotu.be/consumers | POST
+https://nanotu.be/consumers | POST
 Creates a consumer. Requires the following data:
 
     username: name-of-consumer
@@ -243,7 +241,7 @@ If exists: returns 409 and the JSON
     }
 
 #### Authenticate Consumer
-http://nanotu.be/auth | POST
+https://nanotu.be/auth | POST
 Authenticates consumer. Requires the following data:
 
     username: consumer-username
