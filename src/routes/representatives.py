@@ -7,7 +7,7 @@ from pymongo import MongoClient
 from utils.response import response
 import jwt
 
-REPRESENTATIVES = Blueprint('users', __name__)
+REPRESENTATIVES = Blueprint('representatives', __name__)
 CLIENT = MongoClient('mongodb:27017')
 DB = CLIENT.api
 
@@ -44,6 +44,8 @@ def representative_actions():
                 else:
                     DB.users.insert(representative)
                     return response('Representative was created', 201)
+            else:
+                return response('You are not a company', 400)
         except AttributeError:
             return response('Wrong credentials', 400)
 

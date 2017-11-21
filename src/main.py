@@ -8,6 +8,7 @@ from routes.representatives import REPRESENTATIVES
 from routes.admin import ADMIN
 from routes.companies import COMPANIES
 from routes.auth import AUTH
+from routes.users import USERS
 from flask_cors import CORS
 
 APP = Flask(__name__)
@@ -15,6 +16,7 @@ CORS(APP)
 
 APP.register_blueprint(ENTRY)
 APP.register_blueprint(REPRESENTATIVES)
+APP.register_blueprint(USERS)
 APP.register_blueprint(ADMIN)
 APP.register_blueprint(COMPANIES)
 APP.register_blueprint(AUTH)
