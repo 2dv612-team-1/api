@@ -16,8 +16,8 @@ DB = CLIENT.api
 
 @COMPANIES.route('/companies', methods=['GET', 'POST'])
 def company_actions():
-    """Creates company"""
 
+    """Extracts companies"""
     if request.method == 'GET':
 
         try:
@@ -29,6 +29,7 @@ def company_actions():
         except SystemError:
             return response('Something went wrong while retreiving the data', 500)
 
+    """Creates company"""
     if request.method == 'POST':
         form = request.form
 
@@ -42,15 +43,16 @@ def company_actions():
 
                 company = {
                     'username': username,
-                    'password': password
+                    'password': password,
+                    'role': 'company'
                 }
 
-                company_exists = DB.companies.find_one({'username': username})
+                company_exists = DB.users.find_one({'username': username})
 
                 if company_exists:
                     return response('Company already exists', 409)
                 else:
-                    DB.companies.insert(company)
+                    DB.users.insert(company)
                     return response('Company was created', 201)
         except AttributeError:
             return response('Wrong credentials', 400)

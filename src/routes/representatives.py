@@ -32,16 +32,17 @@ def representative_actions():
                 representative = {
                     'username': username,
                     'password': password,
-                    'owner': payload['username']
+                    'owner': payload['username'],
+                    'role': 'representative'
                 }
 
-                representative_exists = DB.representatives.find_one(
+                representative_exists = DB.users.find_one(
                     {'username': username})
 
                 if representative_exists:
                     return response('Representative already exists', 409)
                 else:
-                    DB.representatives.insert(representative)
+                    DB.users.insert(representative)
                     return response('Representative was created', 201)
         except AttributeError:
             return response('Wrong credentials', 400)
