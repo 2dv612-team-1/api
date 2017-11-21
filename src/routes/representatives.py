@@ -56,7 +56,7 @@ def representative_actions():
 
             if payload['role'] == 'company':
                 _representatives = []
-                for representative in DB.representatives.find({'owner': payload['username']}):
+                for representative in DB.users.find({'role': 'representative','owner': payload['username']}):
                     _representatives.append(
                         {'username': representative['username']})
 

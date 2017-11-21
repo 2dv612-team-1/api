@@ -42,7 +42,6 @@ def user_actions():
         except AttributeError:
             return response('Wrong credentials', 400)
 
-    # TODO: Needs to filter according to role
     if request.method == 'GET':
         try:
             _users = []
@@ -78,30 +77,3 @@ def get_user(token):
             raise AttributeError()
     except AttributeError:
         return response('Wrong credentials', 400)
-
-
-#TODO: remove
-# @USERS.route('/consumers/auth', methods=['POST'])
-# def user_auth():
-#     """Authenticates user"""
-
-#     try:
-#         username = request.form['username']
-#         password = request.form['password']
-
-#         found_user = DB.users.find_one(
-#             {'username': username, 'password': password}
-#         )
-
-#         if found_user:
-#             payload = {'username': username, 'role': 'user'}
-#             encoded = jwt.encode(payload, 'super-secret')
-
-#             return response(
-#                 'Successfully logged in as a user', 200,
-#                 {'token': encoded.decode('utf-8')}
-#             )
-#         else:
-#             raise AttributeError()
-#     except AttributeError:
-#         return response('Wrong credentials', 400)

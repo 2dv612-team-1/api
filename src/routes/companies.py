@@ -22,7 +22,7 @@ def company_actions():
 
         try:
             data = []
-            for company in DB.companies.find():
+            for company in DB.users.find({'role': 'company'}):
                 data.append({'username': company['username']})
 
             return response('Successfully extracted all companies', 200, {'companies': data})
@@ -54,30 +54,5 @@ def company_actions():
                 else:
                     DB.users.insert(company)
                     return response('Company was created', 201)
-        except AttributeError:
-            return response('Wrong credentials', 400)
-
-
-@COMPANIES.route('/companies/auth', methods=['POST'])
-def companies_auth():
-    """Authenticates company"""
-
-    if request.method == 'POST':
-        try:
-            username = request.form['username']
-            password = request.form['password']
-
-            found_company = DB.companies.find_one(
-                {'username': username, 'password': password})
-
-            if found_company:
-                payload = {'username': username, 'role': 'company'}
-                encoded = jwt.encode(payload, 'super-secret')
-
-                return response('Successfully logged in as company',
-                                       200,
-                                       {'token': encoded.decode('utf-8')})
-            else:
-                raise AttributeError()
         except AttributeError:
             return response('Wrong credentials', 400)
