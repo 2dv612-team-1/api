@@ -37,6 +37,7 @@ def company_actions():
             payload = jwt.decode(token, 'super-secret')
 
             if payload['role'] == 'admin':
+
                 username = form['username']
                 password = form['password']
 
@@ -52,6 +53,10 @@ def company_actions():
                 else:
                     DB.companies.insert(company)
                     return response('Company was created', 201)
+            else:
+                pass
+                #return response('Bad role', 201)
+
         except AttributeError:
             return response('Wrong credentials', 400)
 

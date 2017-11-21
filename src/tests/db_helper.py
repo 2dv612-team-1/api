@@ -41,3 +41,9 @@ class DBHelper():
     def deleteTestDataInDB(self):
         for user in self.__test_data:
             self.__db_users.remove(user)
+
+    def companyExistInDB(self, in_username):
+        if self.__db_users.find({'username': in_username}):
+            return True
+        else:
+            return False
