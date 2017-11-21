@@ -7,7 +7,7 @@ from pymongo import MongoClient
 from utils.response import response
 import jwt
 
-REPRESENTATIVES = Blueprint('users', __name__)
+REPRESENTATIVES = Blueprint('representatives', __name__)
 CLIENT = MongoClient('mongodb:27017')
 DB = CLIENT.api
 
@@ -32,17 +32,20 @@ def representative_actions():
                 representative = {
                     'username': username,
                     'password': password,
-                    'owner': payload['username']
+                    'owner': payload['username'],
+                    'role': 'representative'
                 }
 
-                representative_exists = DB.representatives.find_one(
+                representative_exists = DB.users.find_one(
                     {'username': username})
 
                 if representative_exists:
                     return response('Representative already exists', 409)
                 else:
-                    DB.representatives.insert(representative)
+                    DB.users.insert(representative)
                     return response('Representative was created', 201)
+            else:
+                return response('You are not a company', 400)
         except AttributeError:
             return response('Wrong credentials', 400)
 
@@ -53,12 +56,12 @@ def representative_actions():
 
             if payload['role'] == 'company':
                 _representatives = []
-                for representative in DB.representatives.find({'owner': payload['username']}):
+                for representative in DB.users.find({'role': 'representative','owner': payload['username']}):
                     _representatives.append(
                         {'username': representative['username']})
 
                 return response(
-                    'Successfully extracted all representatives', 200,
+                    'Successfully extracted all representatives for ' + payload['username'], 200,
                     {'representatives': _representatives}
                 )
             else:
