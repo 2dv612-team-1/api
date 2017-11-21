@@ -22,7 +22,7 @@ def admin_actions():
             'password': 'admin123',
             'role': 'admin'
         }
-        DB.users.update({}, default_admin, upsert=True)
+        DB.admin.update({}, default_admin, upsert=True)
         return response('Admin account has been created', 201)
 
 
