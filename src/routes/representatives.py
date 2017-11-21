@@ -43,6 +43,8 @@ def representative_actions():
                 else:
                     DB.representatives.insert(representative)
                     return response('Representative was created', 201)
+            else:
+                return response('You are not a company', 400)
         except AttributeError:
             return response('Wrong credentials', 400)
 
