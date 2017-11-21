@@ -45,7 +45,7 @@ def user_actions():
         try:
             _users = []
             for user in DB.users.find():
-                _users.append({'username':user['username']})
+                _users.append({'username': user['username']})
 
             return response(
                 'Successfully extracted all users', 200,
