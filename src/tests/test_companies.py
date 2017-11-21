@@ -1,46 +1,41 @@
+import unittest
+
 from main import APP
 from pymongo import MongoClient
-import unittest
+
+from db_helper import DBHelper
+
 import json
+
+"""Test for (sprint-1) companies routes"""
+
 
 class CompaniesTestCase(unittest.TestCase):
 
     def setUp(self):
         client = MongoClient('mongodb:27017')
-        self.__db_users = client.api.users
-        self.app = APP.test_client()
-        self.app.testing = True;
+        self.__db_helper = DBHelper(client.api.companies)#companies coll!
+        self.__app = APP.test_client()
+        self.__app.testing = True;
 
     def tearDown(self):
-        pass
+        self.__db_helper.deleteTestDataInDB()
 
-    def test_getCompanies(self):
-        companiesExistInDB = self.__checkIfCompaniesCollectionHasContent()
-        response = self.app.get('/companies')
+    def test_getCompaniesOnEmptyCollection(self):
+        self.__db_helper.deleteTestDataInDB()
+        response = self.__app.get('/companies')
+        self.assertEqual(response.status_code, 200)
+        self.__db_helper.addTestDataToDB()
 
-        if companiesExistInDB:
-            self.assertEqual(response.status_code, 200)
-        else:
-            self.assertEqual(response.status_code, 200)
-    
-    def __checkIfCompaniesCollectionHasContent(self):
-        if (self.__db_users.find().count() != 0):
-            companiesExist = True;
-        else:
-            companiesExist = False;
-        return companiesExist
+    def test_getCompaniesOnPopulatedCollection(self):
+        response = self.__app.get('/companies')
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(len(response.data) != 0)
 
-    def __addCompany(self):
-        pass
-
-    def __removeCompany(self):
-        pass
-
-    def __addCompanies(self):
-        pass
-    
-    def __removeCompanies(self):
-        pass
+    def test_getToken(self):
+        response = self.__app.post('/companies/auth', data=dict({'username': 'admin', 'password': '1234'}), content_type='application/x-www-form-urlencoded')
+        self.assertEqual(response.status_code, 200)
 
 if __name__ == '__main__':
     unittest.main()
+
