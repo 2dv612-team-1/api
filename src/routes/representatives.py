@@ -7,7 +7,7 @@ from pymongo import MongoClient
 from utils.response import response
 import jwt
 
-REPRESENTATIVES = Blueprint('users', __name__)
+REPRESENTATIVES = Blueprint('representatives', __name__)
 CLIENT = MongoClient('mongodb:27017')
 DB = CLIENT.api
 
