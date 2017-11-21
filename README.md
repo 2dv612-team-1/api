@@ -148,7 +148,7 @@ If company name exists: returns 409 and the JSON
     }
 
 #### Authenticate Company
-http://nanotu.be/admins/auth | POST
+http://nanotu.be/auth | POST
 Authenticates company. Requires the following data:
 
     username: username-of-company
@@ -164,15 +164,15 @@ Returns statuscode 200 and the JSON
 
 
 #### Get All Representatives
-http://nanotu.be/representatives?token=jwt | GET  
+http://nanotu.be/representatives?token=jwt | GET
 Gets all representatives if user is logged in. Requires jwt parameter:
-  
+
     http://nanotu.be/representatives?token=superauth-8352-12.123
 
 Returns statuscode 200 and the JSON
 
     {
-      "message": "Successfully extracted all representatives",
+      "message": "Successfully extracted all representatives for {company-name}",
       "representatives": [
         {
             "username": "adminsasdasd"
@@ -207,7 +207,7 @@ If exists: returns 409 and the JSON
     }
 
 #### Authenticate Representative
-http://nanotu.be/representatives/auth | POST
+http://nanotu.be/auth | POST
 Authenticates representative. Requires the following data:
 
     username: representative-username
@@ -221,4 +221,38 @@ Returns statuscode 200 and the JSON
         "token": "a-jwt-of-great-importance33"
     }
 
+#### Create Consumer
+http://nanotu.be/consumers | POST
+Creates a consumer. Requires the following data:
 
+    username: name-of-consumer
+    password: password-for-consumer
+
+If ok: returns statuscode 201 and the JSON
+
+    {
+       "message": "User was created",
+       "status": 201
+    }
+
+If exists: returns 409 and the JSON
+
+    {
+       "message": "User already exists",
+       "status": 409
+    }
+
+#### Authenticate Consumer
+http://nanotu.be/auth | POST
+Authenticates consumer. Requires the following data:
+
+    username: consumer-username
+    password: consumer-password
+
+Returns statuscode 200 and the JSON
+
+    {
+        "message": "Successfully logged in as consumer",
+        "status": 200,
+        "token": "a-jwt-of-great-importance33"
+    }
