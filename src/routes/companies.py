@@ -57,7 +57,6 @@ def company_actions():
                     return response('Company was created', 201)
             else:
                 pass
-                #return response('Bad role', 201)
 
         except AttributeError:
             return response('Wrong credentials', 400)

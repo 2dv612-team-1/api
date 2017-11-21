@@ -14,7 +14,7 @@ class CompaniesTestCase(unittest.TestCase):
 
     def setUp(self):
         client = MongoClient('mongodb:27017')
-        self.__db_helper = DBHelper(client.api.companies)#companies coll!
+        self.__db_helper = DBHelper(client.api.users)
         self.__app = APP.test_client()
         self.__app.testing = True
 
@@ -32,6 +32,7 @@ class CompaniesTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue(len(response.data) != 0)
 
+    """ Removed from company route
     def test_authAsAdmin(self):
         response_auth = self.__app.post('/companies/auth',
                                         data=dict({'username': 'admin', 'password': '1234'}),
@@ -41,10 +42,11 @@ class CompaniesTestCase(unittest.TestCase):
         self.assertEqual(response_auth.status_code, 200)
         self.assertEqual(result_auth['message'], 'Successfully logged in as company')
         self.assertTrue(result_auth['token'])
+    """
 
     def test_addingCompanyAccountAsAdmin(self):
-        username_comp = 'comp'
-        password_comp = 'comp'
+        username_comp = 'userDell'
+        password_comp = 'passDell'
 
         encoded_data = jwt.encode({'role': 'admin'}, 'super-secret')
         response_auth = self.__app.post('/companies',
