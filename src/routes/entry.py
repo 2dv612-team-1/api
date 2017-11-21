@@ -9,6 +9,7 @@ def get_entry():
 
     routes = {
         'auth': '/auth',
+        'consumers': '/consumers',
         'companies': '/companies',
         'representatives': '/representatives(?token=jwt)',
         'admins': '/admins',
