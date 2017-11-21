@@ -61,7 +61,7 @@ def get_user(token):
 
     try:
         payload = jwt.decode(token, 'super-secret')
-        username = payload['username']
+        username = payload.get('username')
 
         found_user = DB.users.find_one(
             {'username': username}
@@ -70,7 +70,7 @@ def get_user(token):
         if found_user:
             return response(
                 'Successfully gather user data', 200,
-                {found_user}
+                {'data': found_user['username']}
             )
         else:
             raise AttributeError()
