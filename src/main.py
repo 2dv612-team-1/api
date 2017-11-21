@@ -7,7 +7,8 @@ from routes.entry import ENTRY
 from routes.representatives import REPRESENTATIVES
 from routes.admin import ADMIN
 from routes.companies import COMPANIES
-from routes.users import USERS
+from routes.auth import AUTH
+from routes.consumers import CONSUMERS
 from flask_cors import CORS
 
 APP = Flask(__name__)
@@ -15,9 +16,10 @@ CORS(APP)
 
 APP.register_blueprint(ENTRY)
 APP.register_blueprint(REPRESENTATIVES)
-APP.register_blueprint(USERS)
+APP.register_blueprint(CONSUMERS)
 APP.register_blueprint(ADMIN)
 APP.register_blueprint(COMPANIES)
+APP.register_blueprint(AUTH)
 
 if __name__ == '__main__':
     APP.run(host='0.0.0.0', debug=True, port=80)

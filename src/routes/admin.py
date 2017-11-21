@@ -19,7 +19,8 @@ def admin_actions():
     if request.method == 'POST':
         default_admin = {
             'username': 'admin',
-            'password': 'admin123'
+            'password': 'admin123',
+            'role': 'admin'
         }
         DB.admin.update({}, default_admin, upsert=True)
         return response('Admin account has been created', 201)
