@@ -61,7 +61,7 @@ def representative_actions():
                         {'username': representative['username']})
 
                 return response(
-                    'Successfully extracted all representatives', 200,
+                    'Successfully extracted all representatives for ' + payload['username'], 200,
                     {'representatives': _representatives}
                 )
             else:
