@@ -1,4 +1,4 @@
-from main import app
+from main import APP
 from pymongo import MongoClient
 import unittest
 import json
@@ -9,7 +9,7 @@ class UsersTest(unittest.TestCase):
     def setUp(self):
         client = MongoClient('mongodb:27017')
         self.__db_users = client.api.users
-        self.__app = app.test_client()
+        self.__app = APP.test_client()
         self.__app.testing = True;
         self.__test_data = []
         self.__createTestData()

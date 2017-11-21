@@ -1,19 +1,21 @@
-
-from routes.companies import db
-from main import app
+from main import APP
+from pymongo import MongoClient
 import unittest
+import json
 
 class CompaniesTestCase(unittest.TestCase):
 
     def setUp(self):
-        self.app = app.test_client()
+        client = MongoClient('mongodb:27017')
+        self.__db_users = client.api.users
+        self.app = APP.test_client()
         self.app.testing = True;
 
     def tearDown(self):
         pass
 
     def test_getCompanies(self):
-        companiesExistInDB = self.__checkIfCompaniesHasContent()
+        companiesExistInDB = self.__checkIfCompaniesCollectionHasContent()
         response = self.app.get('/companies')
 
         if companiesExistInDB:
@@ -22,7 +24,7 @@ class CompaniesTestCase(unittest.TestCase):
             self.assertEqual(response.status_code, 200)
     
     def __checkIfCompaniesCollectionHasContent(self):
-        if (db.companies.find().count() != 0):
+        if (self.__db_users.find().count() != 0):
             companiesExist = True;
         else:
             companiesExist = False;
