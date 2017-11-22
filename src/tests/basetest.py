@@ -2,7 +2,7 @@ from unittest import TestCase
 from main import APP
 from pymongo import MongoClient
 from db_helper import DBHelper
-
+import random, string
 
 class BaseTest(TestCase):
 
@@ -14,3 +14,10 @@ class BaseTest(TestCase):
 
     def tearDown(self):
         self._db_helper.deleteTestDataInDB()
+
+    def _getRandomUserNameAndPasswordOflenEight(self):
+        return self.__generateRandomWord(8), self.__generateRandomWord(8)
+
+    def __generateRandomWord(self, len_for_word):
+        letters = string.ascii_lowercase
+        return ''.join(random.choice(letters) for i in range(len_for_word))

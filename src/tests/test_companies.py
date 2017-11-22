@@ -16,13 +16,14 @@ class CompaniesTestCase(BaseTest):
         self.assertEqual(response.status_code, 200)
         self.assertTrue(len(response.data) != 0)
 
-    def test_addingCompanyAccountAsAdmin(self):
+    def test_creatingNewCompanyAccountAsAdmin(self):
         username_comp = 'userDell'
         password_comp = 'passDell'
-
         encoded_data = jwt.encode({'role': 'admin'}, 'super-secret')
-        response_auth = self._app.post('/companies',
-                                        data=dict({'username': username_comp, 'password': password_comp, 'jwt': encoded_data}))
+
+        response_auth = self._app.post('/companies', data=dict({'username': username_comp,
+                                                                'password': password_comp,
+                                                                'jwt': encoded_data}))
 
         if self._db_helper.userExistInDB(username_comp):
             self.assertEqual(response_auth.status_code, 409)
