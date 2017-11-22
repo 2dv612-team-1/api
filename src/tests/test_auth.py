@@ -1,4 +1,4 @@
-
+import random, string
 import json
 from basetest import BaseTest
 
@@ -10,7 +10,9 @@ class AuthTestCase(BaseTest):
             self.__authWithValidUserCredentials(user['username'], user['password'])
 
     def test_authInvalidUsernameAndPassword(self):
-        auth_data = self.__getResponseDataFromPostRequest('badusername', 'badpassword')
+        random_username, random_password = self.__getRandomUserNameAndPasswordOflenEight()
+        auth_data = self.__getResponseDataFromPostRequest(random_username, random_password)
+
         self.assertEquals(auth_data['status'], 400)
         self.assertEqual(auth_data['message'],'Wrong credentials')
         self.assertRaises(KeyError, lambda: auth_data['token'])
@@ -25,3 +27,10 @@ class AuthTestCase(BaseTest):
     def __getResponseDataFromPostRequest(self, username, password):
         response_auth = self._app.post('/auth', data=dict({'username': username, 'password': password}))
         return json.loads(response_auth.data)
+
+    def __getRandomUserNameAndPasswordOflenEight(self):
+        return self.__generateRandomWord(8), self.__generateRandomWord(8)
+
+    def __generateRandomWord(self, len_for_word):
+        letters = string.ascii_lowercase
+        return ''.join(random.choice(letters) for i in range(len_for_word))
