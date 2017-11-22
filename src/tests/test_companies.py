@@ -30,8 +30,8 @@ class CompaniesTestCase(BaseTest):
         self.assertEqual(response_data['message'], 'Username already exists')
 
     def test_creatingNewCompanyAccountAsOtherRolesThenConsumer(self):
-        roles = ['consumer', 'company', 'representative'];
-        for role in roles:
+        roles_to_test = [role for role in self.roles if role != 'admin']
+        for role in roles_to_test:
             comp_username, comp_password = self._getRandomUserNameAndPasswordOflenEight()
             response_data = self.__getResponseDataFromPostRequest(role, comp_username, comp_password)
             self.assertEqual(response_data['status'], 400)

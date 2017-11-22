@@ -7,6 +7,7 @@ import random, string
 class BaseTest(TestCase):
 
     def setUp(self):
+        self.roles = ['consumer', 'company', 'representative', 'admin'];
         client = MongoClient('mongodb:27017')
         self._db_helper = DBHelper(client.api.users)
         self._app = APP.test_client()
