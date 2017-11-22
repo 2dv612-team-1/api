@@ -92,35 +92,6 @@ def create_representative(name):
 
             representative_exists = DB.users.find_one({'username': username})
 
-<<<<<<< HEAD
-        try:
-            token = form['jwt']
-            payload = jwt.decode(token, 'super-secret')
-
-            if payload['role'] == 'admin':
-
-                username = form['username']
-                password = form['password']
-
-                company = {
-                    'username': username,
-                    'password': password,
-                    'role': 'company'
-                }
-
-                company_exists = DB.users.find_one({'username': username})
-
-                if company_exists:
-                    return response('Company already exists', 409)
-                else:
-                    DB.users.insert(company)
-                    return response('Company was created', 201)
-            else:
-                pass
-
-        except AttributeError:
-            return response('Wrong credentials', 400)
-=======
             if representative_exists:
                 return response('Username already exists', 409)
             else:
@@ -130,4 +101,3 @@ def create_representative(name):
             return response('You are not a company', 400)
     except AttributeError:
         return response('Wrong credentials', 400)
->>>>>>> origin
