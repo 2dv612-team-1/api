@@ -13,6 +13,7 @@ class AuthTestCase(BaseTest):
         auth_data = self.__getResponseDataFromPostRequest('badusername', 'badpassword')
         self.assertEquals(auth_data['status'], 400)
         self.assertEqual(auth_data['message'],'Wrong credentials')
+        self.assertRaises(KeyError, lambda: auth_data['token'])
 
     def __authWithValidUserCredentials(self, username, password):
         auth_data = self.__getResponseDataFromPostRequest(username, password)
