@@ -2,6 +2,7 @@ import unittest
 import jwt
 from basetest import BaseTest
 
+
 class CompaniesTestCase(BaseTest):
 
     def test_getCompaniesOnEmptyCollection(self):
