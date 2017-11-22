@@ -3,6 +3,13 @@ import jwt
 import json
 from basetest import BaseTest
 
+#"""Creates company"""
+#"""Extracts companies"""
+
+#Todo
+# """Gets list of representatives from specific company"""
+# """Creates representative"""
+# """Creates representative"""
 
 class CompaniesTestCase(BaseTest):
 
@@ -30,14 +37,13 @@ class CompaniesTestCase(BaseTest):
         self.assertEqual(response_data['status'], 409)
         self.assertEqual(response_data['message'], 'Username already exists')
 
-    def test_creatingNewCompanyAccountAsOtherRolesThenConsumer(self):
+    def test_creatingNewCompanyAccountAsOtherRolesThenAdmin(self):
         roles_to_test = [role for role in self.roles if role != 'admin']
         for role in roles_to_test:
             comp_username, comp_password = self._getRandomUserNameAndPasswordOflenEight()
             response_data = self.__getResponseDataFromPostRequest(role, comp_username, comp_password)
             self.assertEqual(response_data['status'], 400)
             self.assertEqual(response_data['message'], 'You have to be an admin to create company')
-
 
     def __getResponseDataFromPostRequest(self, as_role, username, password):
         encoded_data = jwt.encode({'role': as_role}, 'super-secret')
