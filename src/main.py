@@ -16,9 +16,10 @@ APP = Flask(__name__)
 CORS(APP)
 LIMITER = Limiter(
     APP,
-    key_func=get_remote_address,
-    default_limits=["50 per day", "10 per hour"]
+    key_func=get_remote_address
 )
+
+LIMITER.limit("50/day;10/hour")(AUTH)
 
 APP.register_blueprint(ENTRY)
 APP.register_blueprint(CONSUMERS)
