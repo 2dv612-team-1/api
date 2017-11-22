@@ -42,9 +42,15 @@ class DBHelper():
     def getRoleForUser(self, user_name):
         return self.__db_users.find_one({'username': user_name}, {'role': 1})
 
-    def deleteTestDataInDB(self):
+    def getFirstUserNameAndPasswordFromRole(self, user_role):
+        return self.__db_users.find_one({'role': user_role}, {'username': 1, 'password': 1})
+
+    def deleteAllTestDataInDB(self):
         for user in self.__test_data:
             self.__db_users.remove(user)
+
+    def deleteOneUserTestData(self, username):
+        return self.__db_users.remove({'username': username})
 
     def userExistInDB(self, user_name):
         if self.__db_users.find({'username': user_name}):

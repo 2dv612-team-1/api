@@ -13,8 +13,9 @@ class BaseTest(TestCase):
         self._app.testing = True
 
     def tearDown(self):
-        self._db_helper.deleteTestDataInDB()
+        self._db_helper.deleteAllTestDataInDB()
 
+    #Add code to return unique pass & name
     def _getRandomUserNameAndPasswordOflenEight(self):
         return self.__generateRandomWord(8), self.__generateRandomWord(8)
 
