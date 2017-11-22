@@ -9,10 +9,12 @@ from basetest import BaseTest
 
 class AuthTestCase(BaseTest):
 
+    #Test @AUTH.route('/auth', methods=['POST'])
     def test_authEveryUserInDB(self):
         for user in self._db_helper.getUsers():
             self.__authWithValidUserCredentials(user['username'], user['password'])
 
+    #Test @AUTH.route('/auth', methods=['POST'])
     def test_authWithInvalidUsernameAndPassword(self):
         random_username, random_password = self._getRandomUserNameAndPasswordOflenEight()
         auth_data = self.__getResponseDataFromPostRequest(random_username, random_password)
