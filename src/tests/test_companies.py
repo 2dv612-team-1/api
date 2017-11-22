@@ -10,12 +10,13 @@ class CompaniesTestCase(BaseTest):
         self._db_helper.deleteAllTestDataInDB()
         response = self._app.get('/companies')
         self.assertEqual(response.status_code, 200)
+        self.assertTrue(self._db_helper.getUsers().count() == 0)
         self._db_helper.addTestDataToDB()
 
     def test_getCompaniesOnPopulatedCollection(self):
         response = self._app.get('/companies')
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(len(response.data) != 0)
+        self.assertTrue(self._db_helper.getUsers().count() != 0)
 
     def test_creatingNewCompanyAccountAsAdmin(self):
         comp_username, comp_password = self._getRandomUserNameAndPasswordOflenEight()

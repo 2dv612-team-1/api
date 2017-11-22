@@ -46,8 +46,7 @@ class DBHelper():
         return self.__db_users.find_one({'role': user_role}, {'username': 1, 'password': 1})
 
     def deleteAllTestDataInDB(self):
-        for user in self.__test_data:
-            self.__db_users.remove(user)
+        self.__db_users.drop()
 
     def deleteOneUserTestData(self, username):
         return self.__db_users.remove({'username': username})
