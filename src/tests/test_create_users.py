@@ -1,10 +1,12 @@
+#Generic DB test
+
 import unittest
 from basetest import BaseTest
 
 #Todo
 #Rename
 
-class UsersTest(BaseTest):
+class DBTest(BaseTest):
     
     def test_runTestDepOnRole(self):
         for user in self._db_helper.getUsers():

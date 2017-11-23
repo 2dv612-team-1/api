@@ -61,6 +61,7 @@ def get_user(token):
     """Gets current user"""
 
     try:
+        token = request.args['token']
         payload = jwt.decode(token, 'super-secret')
         username = payload.get('username')
 

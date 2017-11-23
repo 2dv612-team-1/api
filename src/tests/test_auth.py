@@ -4,8 +4,7 @@ from basetest import BaseTest
 #Done
 #"""Authenticates any user"""
 
-#Todo
-# fix database corr, add test for limiter
+#Todo fix database corr, add test for limiter
 
 class AuthTestCase(BaseTest):
 

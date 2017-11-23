@@ -1,6 +1,5 @@
 import unittest
 import jwt
-import json
 from basetest import BaseTest
 
 #Done
@@ -34,7 +33,7 @@ class CompaniesTestCase(BaseTest):
     #Test @COMPANIES.route('/companies', methods=['POST'])
     def test_creatingNewCompanyAccountAsAdmin(self):
         comp_username, comp_password = self._getRandomUserNameAndPasswordOflenEight()
-        response_data = self.__getResponseDataFromPostRequest('/companies', 'admin', comp_username, comp_password)
+        response_data = self._getResponseDataFromPostRequest('/companies', 'admin', comp_username, comp_password)
 
         self.assertEqual(response_data['status'], 201)
         self.assertTrue(self._db_helper.deleteOneUserTestData(comp_username))
@@ -42,17 +41,17 @@ class CompaniesTestCase(BaseTest):
     #Test @COMPANIES.route('/companies', methods=['POST'])
     def test_creatingAlreadyExisingCompanyAccountAsAdmin(self):
         user_comp = self._db_helper.getFirstUserNameAndPasswordFromRole('company')
-        response_data = self.__getResponseDataFromPostRequest('/companies', 'admin', user_comp['username'], user_comp['password'])
+        response_data = self._getResponseDataFromPostRequest('/companies', 'admin', user_comp['username'], user_comp['password'])
 
         self.assertEqual(response_data['status'], 409)
         self.assertEqual(response_data['message'], 'Username already exists')
 
     #Test @COMPANIES.route('/companies', methods=['POST'])
     def test_creatingNewCompanyAccountAsOtherRolesThenAdmin(self):
-        roles_to_test = [role for role in self.roles if role != 'admin']
+        roles_to_test = [role for role in self._db_helper.getRoles() if role != 'admin']
         for role in roles_to_test:
             comp_username, comp_password = self._getRandomUserNameAndPasswordOflenEight()
-            response_data = self.__getResponseDataFromPostRequest('/companies', role, comp_username, comp_password)
+            response_data = self._getResponseDataFromPostRequest('/companies', role, comp_username, comp_password)
 
             self.assertEqual(response_data['status'], 400)
             self.assertEqual(response_data['message'], 'You have to be an admin to create company')
@@ -72,7 +71,7 @@ class CompaniesTestCase(BaseTest):
     #Test @COMPANIES.route('/companies/<name>/representatives', methods=['POST'])
     def test_createRepresentativeAsValidCompanyRepresentativeExist(self):
         path = '/companies/' + 'userDell' + '/representatives'
-        response_data = self.__getResponseDataFromPostRequest(path, 'company', 'rep1', 'rep1')
+        response_data = self._getResponseDataFromPostRequest(path, 'company', 'rep1', 'rep1')
 
         self.assertEqual(response_data['status'], 409)
         self.assertEqual(response_data['message'], 'Username already exists')
@@ -80,7 +79,7 @@ class CompaniesTestCase(BaseTest):
     #Test @COMPANIES.route('/companies/<name>/representatives', methods=['POST'])
     def test_createRepresentativeAsValidCompanyRepresentativeDoesNotExist(self):
         path = '/companies/' + 'userDell' + '/representatives'
-        response_data = self.__getResponseDataFromPostRequest(path, 'company', 'new_username', 'new_username')
+        response_data = self._getResponseDataFromPostRequest(path, 'company', 'new_username', 'new_username')
 
         self.assertEqual(response_data['status'], 201)
         self.assertEqual(response_data['message'], 'Representative was created')
@@ -89,7 +88,7 @@ class CompaniesTestCase(BaseTest):
     #Test @COMPANIES.route('/companies/<name>/representatives', methods=['POST'])
     def test_createRepresentativeAsInvalidCompanyRepresentativetExist(self):
         path = '/companies/' + 'invalid_company' + '/representatives'
-        response_data = self.__getResponseDataFromPostRequest(path, 'consumer', 'rep1', 'rep1')
+        response_data = self._getResponseDataFromPostRequest(path, 'consumer', 'rep1', 'rep1')
 
         self.assertEqual(response_data['status'], 400)
         self.assertEqual(response_data['message'], 'You are not a company')
@@ -97,7 +96,7 @@ class CompaniesTestCase(BaseTest):
     #Test @COMPANIES.route('/companies/<name>/representatives', methods=['POST'])
     def test_createRepresentativeAsInvalidCompanyRepresentativeDoesNotExist(self):
         path = '/companies/' + 'invalid_company' + '/representatives'
-        response_data = self.__getResponseDataFromPostRequest(path, 'consumer', 'new_username', 'new_username')
+        response_data = self._getResponseDataFromPostRequest(path, 'consumer', 'new_username', 'new_username')
 
         self.assertEqual(response_data['status'], 400)
         self.assertEqual(response_data['message'], 'You are not a company')
@@ -110,20 +109,10 @@ class CompaniesTestCase(BaseTest):
         path = '/companies/' + 'invalid_company' + '/representatives'
 
         encoded_data = jwt.encode({'role': 'consumer'}, 'wrong-secret')
-        response_data = self.__getResponseDataFromPostRequest(path, 'consumer', 'new_username', 'new_username', encoded_data)
+        #response_data = self.__getResponseDataFromPostRequest(path, 'consumer', 'new_username', 'new_username', encoded_data)
 
-        self.assertEqual(response_data['status'], 400)
-        self.assertEqual(response_data['message'], 'You are not a company')
-
-    #private helper/util
-    def __getResponseDataFromPostRequest(self, path='',  role='', username='', password='', encoded_data = None):
-        if encoded_data is None:
-            encoded_data = jwt.encode({'role': role}, 'super-secret')
-
-        response_auth = self._app.post(path, data = dict({'username': username,
-                                                       'password': password,
-                                                       'jwt': encoded_data}))
-        return json.loads(response_auth.data)
+        #self.assertEqual(response_data['status'], 400)
+        #self.assertEqual(response_data['message'], 'You are not a company')
 
 if __name__ == '__main__':
     unittest.main()

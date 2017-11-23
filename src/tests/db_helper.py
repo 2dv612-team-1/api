@@ -1,4 +1,4 @@
-# Dbconnector
+# Creates test data used in unittests
 
 
 class DBHelper():
@@ -35,6 +35,9 @@ class DBHelper():
     def addTestDataToDB(self):
         for user in self.__test_data:
             self.__db_users.insert(user)
+
+    def getRoles(self):
+        return ['consumer', 'company', 'representative', 'admin']
 
     def getUsers(self):
         return self.__db_users.find()
