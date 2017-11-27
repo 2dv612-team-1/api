@@ -8,7 +8,7 @@ class SuperDAL:
         self.db_conn = client.api
 
     """Auth user by comparing username and password"""
-    def auth_user(self, username, password):
+    def auth_and_return_user(self, username, password):
         found_user = self.db_conn.users.find_one({'username': username, 'password': password})
         return found_user
 
@@ -17,7 +17,7 @@ class SuperDAL:
         found_user = self.db_conn.users.find_one({'username': username})
         return found_user
 
-    """Iterates users collection and returns list of usernames with role of company"""
+    """Iterates users collection and returns list of usernames with role => company"""
     def get_companies(self):
         companies = []
         for company in self.db_conn.users.find({'role': 'company'}):
