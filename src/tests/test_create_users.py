@@ -3,8 +3,8 @@
 import unittest
 from basetest import BaseTest
 
-#Todo
-#Rename
+# Todo
+# Rename .py file
 
 class DBTest(BaseTest):
     

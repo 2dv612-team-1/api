@@ -16,7 +16,7 @@ class BaseTest(TestCase):
     def tearDown(self):
         self._db_helper.deleteAllTestDataInDB()
 
-    #Todo add code to return unique pass & name
+    # Todo add code to return unique pass & name
     def _getRandomUserNameAndPasswordOflenEight(self):
         return self.__generateRandomWord(8), self.__generateRandomWord(8)
 
@@ -24,7 +24,7 @@ class BaseTest(TestCase):
         letters = string.ascii_lowercase
         return ''.join(random.choice(letters) for i in range(len_for_word))
 
-    #private helper/util
+    # private helper/util
     def _getResponseDataFromPostRequest(self, path='',  role='', username='', password='', encoded_data = None):
         if encoded_data is None:
             encoded_data = jwt.encode({'role': role}, 'super-secret')

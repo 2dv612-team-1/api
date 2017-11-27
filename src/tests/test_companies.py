@@ -8,9 +8,9 @@ from basetest import BaseTest
 """Gets list of representatives from specific company"""
 """Creates representative"""
 
-#Todo
+# Todo
 # Pick test values from db!
-
+# Server crash when sending wrong secret: jwt.exceptions.DecodeError: Signature verification failed
 
 class CompaniesTestCase(BaseTest):
 
@@ -109,7 +109,7 @@ class CompaniesTestCase(BaseTest):
         path = '/companies/' + 'invalid_company' + '/representatives'
 
         encoded_data = jwt.encode({'role': 'consumer'}, 'wrong-secret')
-        #response_data = self.__getResponseDataFromPostRequest(path, 'consumer', 'new_username', 'new_username', encoded_data)
+        # response_data = self.__getResponseDataFromPostRequest(path, 'consumer', 'new_username', 'new_username', encoded_data)
 
         #self.assertEqual(response_data['status'], 400)
         #self.assertEqual(response_data['message'], 'You are not a company')
