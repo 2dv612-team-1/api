@@ -254,3 +254,35 @@ Returns statuscode 200 and the JSON
         "status": 200,
         "token": "a-jwt-of-great-importance33"
     }
+
+#### Get Categories
+https://nanotu.be/categories | GET
+Gets all available categories.
+
+    "message": [
+        {
+            "category": "toaster",
+            "category_id": 0
+        },
+        {
+            "category": "not-toaster",
+            "category_id": 1
+        }
+    ],
+    "status": 200
+
+#### Create Category
+https://nanotu.be/categories | POST
+Creates a new category. Requires the following data:
+
+    "jwt": "an.admin.jwt",
+    "category": "new-category-name"
+
+Returns statuscode 201 and the JSON
+
+    {
+        "message": "Category created",
+        "status": 201
+    }
+
+
