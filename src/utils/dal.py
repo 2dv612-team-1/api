@@ -68,4 +68,4 @@ class SuperDAL:
 
             self.db_conn.users.insert(representative)
 
-return False
+        return False
