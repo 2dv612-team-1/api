@@ -40,12 +40,12 @@ def create_categories():
             if category_exists:
                 raise AttributeError()
 
-            existing_categories = DB.categories.find()
+            existing_categories = DB.categories.find().distinct('category')
+            category_id = len(existing_categories)
 
-            # category_id = existing_categories.len()
             DB.categories.insert({
                 'category': category,
-                'category_id': 0
+                'category_id': category_id
             })
             return response('Category created', 201)
 
