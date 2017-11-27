@@ -5,6 +5,8 @@ Categories Route
 from flask import Blueprint, request
 from pymongo import MongoClient
 from utils.response import response
+from exceptions.WrongCredentials import WrongCredentials
+from exceptions.AlreadyExists import AlreadyExists
 import jwt
 
 CLIENT = MongoClient('mongodb:27017')
@@ -20,7 +22,7 @@ def get_categories():
     for category in DB.categories.find():
         categories_data.append({
             'category': category.get('category'),
-            'category_id': category.get('category_id')
+            '_id': str(category.get('_id'))
         })
 
     return response(categories_data, 200)
@@ -31,23 +33,31 @@ def create_categories():
     """Creates a new category"""
 
     try:
-        token = request.form.get('jwt')
-        category = request.form['category']
-        payload = jwt.decode(token, 'super-secret')
+        try:
+            token = request.form['jwt']
+            category = request.form['category']
+        except Exception:
+            raise WrongCredentials()
+
+        try:
+            payload = jwt.decode(token, 'super-secret')
+        except Exception:
+            raise AttributeError()
 
         if payload['role'] == 'admin':
-            category_exists = DB.categories.find_one({ 'category': category })
+            category_exists = DB.categories.find_one({'category': category})
             if category_exists:
-                raise AttributeError()
-
-            existing_categories = DB.categories.find().distinct('category')
-            category_id = len(existing_categories)
+                raise AlreadyExists()
 
             DB.categories.insert({
-                'category': category,
-                'category_id': category_id
+                'category': category
             })
+
             return response('Category created', 201)
 
     except AttributeError:
-        return response('Wrong credentials', 400)
+        return response('Broken JWT', 400)
+    except WrongCredentials:
+        return response('Invalid credentials', 400)
+    except AlreadyExists:
+        return response('Category exists', 409)
