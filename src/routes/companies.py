@@ -51,7 +51,7 @@ def company_creation():
 @COMPANIES.route('/companies/<name>/representatives')
 def get_representatives(name):
     """Gets list of representatives from specific company"""
-    company = super_dal.find_user_by_name({'username': name})
+    company = super_dal.find_user_by_name(name)
     if company:
         representatives = super_dal.get_representatives(name)
         return response(name, 200, {'representatives': representatives})
