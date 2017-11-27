@@ -1,6 +1,11 @@
 from pymongo import MongoClient
 
-"""Super Data Access Layer"""
+""" Super Data Access Layer
+
+    self.db_conn        => client.api
+    self.db_conn.users  => users collection
+    self.db_conn.admin  => admin collection
+"""
 
 class SuperDAL:
     def __init__(self):
