@@ -8,6 +8,7 @@ from routes.admin import ADMIN
 from routes.companies import COMPANIES
 from routes.auth import AUTH
 from routes.consumers import CONSUMERS
+from routes.categories import CATEGORIES
 from flask_cors import CORS
 
 APP = Flask(__name__)
@@ -17,6 +18,7 @@ APP.register_blueprint(ENTRY)
 APP.register_blueprint(CONSUMERS)
 APP.register_blueprint(ADMIN)
 APP.register_blueprint(COMPANIES)
+APP.register_blueprint(CATEGORIES)
 APP.register_blueprint(AUTH)
 
 if __name__ == '__main__':
