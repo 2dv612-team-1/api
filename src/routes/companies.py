@@ -17,7 +17,7 @@ COMPANIES = Blueprint('companies', __name__)
 def company_actions():
     """Extracts companies"""
     try:
-        data = super_dal.get_companies()
+        data = super_dal.get_users_with_role('company')
         return response('Successfully extracted all companies', 200, {'companies': data})
     except SystemError:
         return response('Something went wrong while retreiving the data', 500)

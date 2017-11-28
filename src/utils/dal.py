@@ -23,11 +23,11 @@ class SuperDAL:
         return found_user
 
     """Iterates users collection and returns dict of usernames with role => company"""
-    def get_companies(self):
-        companies = []
-        for company in self.db_conn.users.find({'role': 'company'}):
-            companies.append({'username': company['username']})
-        return companies
+    def get_users_with_role(self, role):
+        users = []
+        for user in self.db_conn.users.find({'role': role}):
+            users.append({'username': user['username']})
+        return users
 
     """Iterates users collection and returns list of usernames with role of representatives"""
     def get_representatives(self, company_username):
@@ -86,4 +86,3 @@ class SuperDAL:
             self.db_conn.users.insert(user)
 
         return False
-    
