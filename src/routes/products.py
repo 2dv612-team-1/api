@@ -27,7 +27,8 @@ def get_products():
             'title': product.get('title'),
             'category': product.get('category'),
             'description': product.get('description'),
-            'createdBy': product.get('createdBy')
+            'createdBy': product.get('createdBy'),
+            '_id': str(product.get('_id'))
         })
 
     return response(products_data, 200)
