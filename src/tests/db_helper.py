@@ -6,39 +6,71 @@ class DBHelper():
         self.__db_users = db_conn.users
         self.__db_admin = db_conn.admin
         self.__user_test_data = []
+
+        self.__db_users.drop()
+        self.__db_admin.drop()
+
         self.__createUsersTestData()
-        self.addUserTestDataToDB()
+        self.__createAdminTestData()
 
     def __createAdminTestData(self):
-        pass
+
+        default_admin = {
+            'username': 'admin',
+            'password': 'admin123',
+            'role': 'admin'
+        }
+
+        self.__db_admin.update({}, default_admin, upsert=True)
 
     def __createUsersTestData(self):
 
-        """" Consumer Data """
-        consumer_data = {'PersonalInfo': {'name': 'Eggbert', 'age': 34},
-                         'Manuals': ('manual_1', 'manual_2', 'manual_2')}
-        self.__user_test_data.append({'username': 'consumer1', 'password': 'consumer1', 'role': 'consumer', 'data': consumer_data})
+        user1 = {
+            'username': 'user1',
+            'password': 'user2',
+            'role': 'consumer'
+        }
 
-        """ Admin Data 
-        admin_data = {'Dell': {'username': 'userDell', 'password': 'passDell'},
-                      'Apple': {'username': 'userApple', 'password': 'passApple'},
-                      'Samsung': {'username': 'userSams', 'password': 'passSams'}}
+        user2 = {
+            'username': 'user2',
+            'password': 'user2',
+            'role': 'consumer'
+        }
 
-        self.__test_data.append({'username': 'admin', 'password': '1234', 'role': 'admin', 'data': admin_data})
-        """
+        user3 = {
+            'username': 'user3',
+            'password': 'user3',
+            'owner': 'user_dell',
+            'role': 'representative'
+        }
 
-        """ Company Data """
-        company_data = {'Representatives': [{'username': 'rep1', 'password': 'rep1'},
-                                            {'username': 'rep2', 'password': 'rep2'},
-                                            {'username': 'rep3', 'password': 'rep3'}]}
-        self.__user_test_data.append({'username': 'userDell', 'password': 'passDell', 'role': 'company', 'data': company_data})
+        user4 = {
+            'username': 'user4',
+            'password': 'user4',
+            'owner': 'user_apple',
+            'role': 'representative'
+        }
 
-        """ Representative Data """
-        self.__user_test_data.append({'username': 'rep1', 'password': 'rep1', 'role': 'representative', 'data': {'company': 'Dell'}})
-        self.__user_test_data.append({'username': 'rep2', 'password': 'rep2', 'role': 'representative', 'data': {'company': 'Apple'}})
-        self.__user_test_data.append({'username': 'rep3', 'password': 'rep3', 'role': 'representative', 'data': {'company': 'Samsung'}})
+        user5 = {
+            'username': 'user_apple',
+            'password': 'user_apple',
+            'role': 'company'
+        }
 
-    def addUserTestDataToDB(self):
+        user6 = {
+            'username': 'user_dell',
+            'password': 'user_dell',
+            'role': 'company'
+        }
+
+        self.__user_test_data.append(user1)
+        self.__user_test_data.append(user2)
+        self.__user_test_data.append(user3)
+        self.__user_test_data.append(user4)
+        self.__user_test_data.append(user5)
+        self.__user_test_data.append(user6)
+
+    def addTestDataToDB(self):
         for user in self.__user_test_data:
             self.__db_users.insert(user)
 
