@@ -6,22 +6,16 @@ import os
 from flask import Blueprint, request
 from pymongo import MongoClient
 from utils.response import response
+from utils.extensionCheck import allowed_file
 from werkzeug.utils import secure_filename
 import jwt
 
 UPLOAD_FOLDER = './uploads'
-ALLOWED_EXTENSIONS = set(['pdf'])
 PRODUCTS = Blueprint('products', __name__)
 CLIENT = MongoClient('mongodb:27017')
 DB = CLIENT.api
 
 # add bcrypt
-
-# Break out to util
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
 @PRODUCTS.route('/products/upload', methods=['POST'])
 def upload_actions():
     if 'file' not in request.files:
