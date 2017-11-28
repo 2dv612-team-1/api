@@ -4,7 +4,7 @@ Auth route
 
 from flask import Blueprint, request
 from utils.response import response
-from utils.DAL import SuperDAL
+from utils.dal import SuperDAL
 import jwt
 
 super_dal = SuperDAL()
