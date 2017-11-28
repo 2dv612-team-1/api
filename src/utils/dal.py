@@ -2,9 +2,10 @@ from pymongo import MongoClient
 
 """ Super Data Access Layer
 
-    self.db_conn        => client.api
-    self.db_conn.users  => users collection
-    self.db_conn.admin  => admin collection
+    self.db_conn            => client.api
+    self.db_conn.users      => users collection
+    self.db_conn.admin      => admin collection
+    self.db_conn.categories => categories collection
 """
 
 class SuperDAL:
@@ -40,6 +41,23 @@ class SuperDAL:
         for representative in self.db_conn.users.find({'owner': company_username}):
             representatives.append({'username': representative['username']})
         return representatives
+    #
+    def get_categories_and_id(self):
+        categories_data = []
+        for category in self.db_conn.categories.find():
+            categories_data.append({
+                'category': category.get('category'),
+                '_id': str(category.get('_id'))
+            })
+
+        return categories_data
+    #
+    def create_category(self, category):
+        if self.db_conn.categories.find({'category': category}).count() != 0:
+            return True
+        else:
+            self.db_conn.categories.insert({'category': category})
+            return False
 
     """Create representative account, if representative account with given username and password does not already exist"""
     def create_representative(self, username, password, owner):
