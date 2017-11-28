@@ -55,9 +55,7 @@ def get_user(token):
         payload = jwt.decode(token, 'super-secret')
         username = payload.get('username')
 
-        found_user = DB.users.find_one(
-            {'username': username}
-        )
+        found_user = super_dal.find_user_by_name(username)
 
         if found_user:
             return response(
