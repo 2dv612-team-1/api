@@ -43,7 +43,7 @@ class SuperDAL:
 
     """Create representative account, if representative account with given username and password does not already exist"""
     def create_representative(self, username, password, owner):
-        if self.db_conn.users.find_one({'username': username}):
+        if self.db_conn.users.find({'username': username}).count() != 0:
             return True
         else:
 
@@ -55,13 +55,12 @@ class SuperDAL:
             }
 
             self.db_conn.users.insert(representative)
-
-        return False
+            return False
 
     """Create company account, if company account with given username and password does not already exist"""
     def create_company(self, username, password):
 
-        if self.db_conn.users.find_one({'username': username}):
+        if self.db_conn.users.find({'username': username}).count() != 0:
             return True
         else:
 
@@ -72,13 +71,12 @@ class SuperDAL:
             }
 
             self.db_conn.users.insert(company)
-
-        return False
+            return False
 
     """Create consumer account, if consumer account with given username and password does not already exist"""
     def create_consumer(self, username, password):
 
-        if self.db_conn.users.find_one(username):
+        if self.db_conn.users.find({'username': username}).count() != 0:
             return True
         else:
 
@@ -89,8 +87,7 @@ class SuperDAL:
             }
 
             self.db_conn.users.insert(user)
-
-        return False
+            return False
 
     """Creates default admin account in admin collection"""
     def create_default_admin(self):
