@@ -6,6 +6,10 @@ from pymongo import MongoClient
     self.db_conn.users      => users collection
     self.db_conn.admin      => admin collection
     self.db_conn.categories => categories collection
+    
+    self.db_conn.products   => products collection      {'filepath':uploads/filename, 
+                                                            'owner':company name,
+                                                            'category':category name}
 """
 
 class SuperDAL:
@@ -41,6 +45,7 @@ class SuperDAL:
         for representative in self.db_conn.users.find({'owner': company_username}):
             representatives.append({'username': representative['username']})
         return representatives
+
     #
     def get_categories_and_id(self):
         categories_data = []
@@ -51,6 +56,7 @@ class SuperDAL:
             })
 
         return categories_data
+
     #
     def create_category(self, category):
         if self.db_conn.categories.find({'category': category}).count() != 0:
