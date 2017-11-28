@@ -262,11 +262,11 @@ Gets all available categories.
     "message": [
         {
             "category": "toaster",
-            "category_id": 0
+            "_id": 0
         },
         {
             "category": "not-toaster",
-            "category_id": 1
+            "_id": 1
         }
     ],
     "status": 200
