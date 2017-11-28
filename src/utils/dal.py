@@ -7,7 +7,9 @@ from pymongo import MongoClient
     self.db_conn.admin      => admin collection
     self.db_conn.categories => categories collection
     
-    self.db_conn.products   => products collection      {'filepath':uploads/filename, 
+    self.db_conn.products   => products collection      {'  _id:autogen
+                                                            filepath':uploads/filename,
+                                                            'title/display name': random title
                                                             'owner':company name,
                                                             'category':category name}
 """
@@ -32,7 +34,7 @@ class SuperDAL:
         found_user = self.db_conn.users.find_one({'username': username})
         return found_user
 
-    """Iterates users collection and returns dict of usernames with assigned role"""
+    """Iterates users collection and returns dict of usernames with role"""
     def get_users_with_role(self, role):
         users = []
         for user in self.db_conn.users.find({'role': role}):
@@ -46,8 +48,8 @@ class SuperDAL:
             representatives.append({'username': representative['username']})
         return representatives
 
-    #
-    def get_categories_and_id(self):
+    # not used in route
+    def get_categories(self):
         categories_data = []
         for category in self.db_conn.categories.find():
             categories_data.append({
@@ -57,13 +59,21 @@ class SuperDAL:
 
         return categories_data
 
-    #
+    # not used in route
     def create_category(self, category):
         if self.db_conn.categories.find({'category': category}).count() != 0:
             return True
         else:
             self.db_conn.categories.insert({'category': category})
             return False
+
+    # todo
+    def get_products(self):
+        pass
+
+    # todo
+    def create_product(self):
+        pass
 
     """Create representative account, if representative account with given username and password does not already exist"""
     def create_representative(self, username, password, owner):
