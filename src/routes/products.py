@@ -24,11 +24,9 @@ def get_products():
     products_data = []
     for product in DB.products.find():
         products_data.append({
-            'name': product.get('name'),
-            'serialNo': product.get('serialNo'),
-            'producer': product.get('producer'),
+            'title': product.get('title'),
             'category': product.get('category'),
-            'desc': product.get('desc'),
+            'description': product.get('description'),
             'createdBy': product.get('createdBy')
         })
 
@@ -54,16 +52,19 @@ def create_product():
             new_product = {
                 'category': request.form['category'],
                 'title': request.form['title'],
-                'description': request.form['description']
+                'description': request.form['description'],
+                'createdBy': payload['username']
             }
         except Exception:
             return response('Wrong information', 400)
 
-        if DB.products.find(new_product):
+        if DB.products.find_one(new_product):
             return response('Product already exists', 409)
 
         DB.products.insert(new_product)
         return response('Product was created', 201)
+    else:
+        return response('You are not a representative', 400)
 
 
 @PRODUCTS.route('/products/upload', methods=['POST'])
