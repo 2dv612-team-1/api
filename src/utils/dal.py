@@ -35,7 +35,7 @@ class SuperDAL:
         return users
 
     """Iterates users collection and returns list of usernames with role of representatives"""
-    def get_representatives(self, company_username):
+    def get_representatives_for_company(self, company_username):
         representatives = []
         for representative in self.db_conn.users.find({'owner': company_username}):
             representatives.append({'username': representative['username']})

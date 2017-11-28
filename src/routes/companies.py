@@ -52,7 +52,7 @@ def get_representatives(name):
     """Gets list of representatives from specific company"""
     company = super_dal.find_user_by_name(name)
     if company:
-        representatives = super_dal.get_representatives(name)
+        representatives = super_dal.get_representatives_for_company(name)
         return response(name, 200, {'representatives': representatives})
     else:
         return response('Invalid company', 400)
