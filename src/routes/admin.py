@@ -3,13 +3,13 @@ Admin routes
 """
 
 from flask import Blueprint, request
-from pymongo import MongoClient
 from utils.response import response
+from utils.dal import SuperDAL
 import jwt
 
-CLIENT = MongoClient('mongodb:27017')
+super_dal = SuperDAL()
 ADMIN = Blueprint('admin', __name__)
-DB = CLIENT.api
+
 
 
 @ADMIN.route('/admins', methods=['POST'])
@@ -17,12 +17,7 @@ def admin_actions():
     """When requested create admin account"""
 
     if request.method == 'POST':
-        default_admin = {
-            'username': 'admin',
-            'password': 'admin123',
-            'role': 'admin'
-        }
-        DB.admin.update({}, default_admin, upsert=True)
+        super_dal.create_default_admin()
         return response('Admin account has been created', 201)
 
 

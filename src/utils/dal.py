@@ -86,3 +86,14 @@ class SuperDAL:
             self.db_conn.users.insert(user)
 
         return False
+
+    """Creates default admin account in admin collection"""
+    def create_default_admin(self):
+
+        default_admin = {
+            'username': 'admin',
+            'password': 'admin123',
+            'role': 'admin'
+        }
+
+        self.db_conn.admin.update({}, default_admin, upsert=True)
