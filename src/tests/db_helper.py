@@ -3,7 +3,8 @@
 
 class DBHelper():
     def __init__(self, db_conn):
-        self.__db_users = db_conn
+        self.__db_users = db_conn.users
+        self.__db_admin = db_conn.admin
         self.__user_test_data = []
         self.__createUsersTestData()
         self.addUserTestDataToDB()

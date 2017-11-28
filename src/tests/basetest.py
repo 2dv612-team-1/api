@@ -9,7 +9,7 @@ class BaseTest(TestCase):
 
     def setUp(self):
         client = MongoClient('mongodb:27017')
-        self._db_helper = DBHelper(client.api.users)
+        self._db_helper = DBHelper(client.api)
         self._app = APP.test_client()
         self._app.testing = True
 
