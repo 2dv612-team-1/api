@@ -4,12 +4,11 @@ Company routes
 
 from flask import Blueprint, request
 from utils.response import response
-from utils.DAL import SuperDAL
+from utils.dal import SuperDAL
 import jwt
 
 super_dal = SuperDAL()
 COMPANIES = Blueprint('companies', __name__)
-
 
 # add bcrypt
 
@@ -18,7 +17,7 @@ COMPANIES = Blueprint('companies', __name__)
 def company_actions():
     """Extracts companies"""
     try:
-        data = super_dal.get_companies()
+        data = super_dal.get_users_with_role('company')
         return response('Successfully extracted all companies', 200, {'companies': data})
     except SystemError:
         return response('Something went wrong while retreiving the data', 500)
@@ -53,12 +52,12 @@ def get_representatives(name):
     """Gets list of representatives from specific company"""
     company = super_dal.find_user_by_name(name)
     if company:
-        representatives = super_dal.get_representatives(name)
+        representatives = super_dal.get_representatives_for_company(name)
         return response(name, 200, {'representatives': representatives})
     else:
         return response('Invalid company', 400)
 
-
+# name => owner
 @COMPANIES.route('/companies/<name>/representatives', methods=['POST'])
 def create_representative(name):
     """Creates representative"""
