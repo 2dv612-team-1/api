@@ -22,7 +22,7 @@ class SuperDAL:
         found_user = self.db_conn.users.find_one({'username': username})
         return found_user
 
-    """Iterates users collection and returns dict of usernames with role => company"""
+    """Iterates users collection and returns dict of usernames with assigned role"""
     def get_users_with_role(self, role):
         users = []
         for user in self.db_conn.users.find({'role': role}):
