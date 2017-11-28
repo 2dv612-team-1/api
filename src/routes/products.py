@@ -15,7 +15,23 @@ PRODUCTS = Blueprint('products', __name__)
 CLIENT = MongoClient('mongodb:27017')
 DB = CLIENT.api
 
-# add bcrypt
+@PRODUCTS.route('/products')
+def get_products():
+    """Gets all available products"""
+
+    products_data = []
+    for product in DB.products.find():
+        products_data.append({
+            'name': product.get('name'),
+            'serialNo': product.get('serialNo'),
+            'producer': product.get('producer'),
+            'category': product.get('category'),
+            'desc': product.get('desc'),
+            'createdBy': product.get('createdBy') 
+        })
+
+    return response(products_data, 200)
+
 @PRODUCTS.route('/products/upload', methods=['POST'])
 def upload_actions():
     if 'file' not in request.files:
