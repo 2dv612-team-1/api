@@ -5,6 +5,7 @@ Products route
 import os
 from flask import Blueprint, request
 from pymongo import MongoClient
+from exceptions.TamperedToken import TamperedToken
 from utils.response import response
 from utils.extensionCheck import allowed_file
 from werkzeug.utils import secure_filename
@@ -27,10 +28,30 @@ def get_products():
             'producer': product.get('producer'),
             'category': product.get('category'),
             'desc': product.get('desc'),
-            'createdBy': product.get('createdBy') 
+            'createdBy': product.get('createdBy')
         })
 
     return response(products_data, 200)
+
+@PRODUCTS.route('/products', methods=['POST'])
+def create_product():
+    """Create a product"""
+
+    try:
+        try:
+            token = request.form['jwt']
+        except Exception:
+            raise AttributeError()
+
+        try:
+            payload = jwt.decode(token, 'super-secret')
+        except Exception:
+            raise TamperedToken()
+
+    except AttributeError:
+        return response('', 400)
+    
+
 
 @PRODUCTS.route('/products/upload', methods=['POST'])
 def upload_actions():
