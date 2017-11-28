@@ -36,9 +36,8 @@ def user_actions():
 
     if request.method == 'GET':
         try:
-            _users = []
-            for user in DB.users.find({'role': 'consumer'}):
-                _users.append({'username': user['username']})
+
+            _users = super_dal.get_users_with_role('consumer')
 
             return response(
                 'Successfully extracted all users', 200,
