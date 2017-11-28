@@ -36,12 +36,14 @@ class CompaniesTestCase(BaseTest):
         response_data = self._getResponseDataFromPostRequest('/companies', 'admin', comp_username, comp_password)
 
         self.assertEqual(response_data['status'], 201)
+
         self.assertTrue(self._db_helper.deleteOneUserTestData(comp_username))
 
     #Test @COMPANIES.route('/companies', methods=['POST'])
     def test_creatingAlreadyExisingCompanyAccountAsAdmin(self):
-        user_comp = self._db_helper.getFirstUserNameAndPasswordFromRole('company')
-        response_data = self._getResponseDataFromPostRequest('/companies', 'admin', user_comp['username'], user_comp['password'])
+        username = 'userapple'
+        password = 'userapple'
+        response_data = self._getResponseDataFromPostRequest('/companies', 'admin', username, password)
 
         self.assertEqual(response_data['status'], 409)
         self.assertEqual(response_data['message'], 'Username already exists')
@@ -64,26 +66,27 @@ class CompaniesTestCase(BaseTest):
 
     #Test @COMPANIES.route('/companies/<name>/representatives')
     def test_getListOfRepresentativesFromValidCompanyName(self):
-        response = self._app.get('/companies/' + 'userDell' + '/representatives')
+        response = self._app.get('/companies/' + 'userapple' + '/representatives')
 
         self.assertEqual(response.status_code, 200)
 
     #Test @COMPANIES.route('/companies/<name>/representatives', methods=['POST'])
     def test_createRepresentativeAsValidCompanyRepresentativeExist(self):
-        path = '/companies/' + 'userDell' + '/representatives'
-        response_data = self._getResponseDataFromPostRequest(path, 'company', 'rep1', 'rep1')
-
+        path = '/companies/' + 'userdell' + '/representatives'
+        response_data = self._getResponseDataFromPostRequest(path, 'company', 'user3', 'user3')
         self.assertEqual(response_data['status'], 409)
         self.assertEqual(response_data['message'], 'Username already exists')
 
+
     #Test @COMPANIES.route('/companies/<name>/representatives', methods=['POST'])
     def test_createRepresentativeAsValidCompanyRepresentativeDoesNotExist(self):
-        path = '/companies/' + 'userDell' + '/representatives'
-        response_data = self._getResponseDataFromPostRequest(path, 'company', 'new_username', 'new_username')
+        path = '/companies/' + 'userdell' + '/representatives'
+        response_data = self._getResponseDataFromPostRequest(path, 'company', 'random', 'random')
 
         self.assertEqual(response_data['status'], 201)
         self.assertEqual(response_data['message'], 'Representative was created')
         self.assertTrue(self._db_helper.deleteOneUserTestData('new_username'))
+
 
     #Test @COMPANIES.route('/companies/<name>/representatives', methods=['POST'])
     def test_createRepresentativeAsInvalidCompanyRepresentativetExist(self):

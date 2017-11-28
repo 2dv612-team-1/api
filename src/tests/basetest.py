@@ -24,7 +24,8 @@ class BaseTest(TestCase):
         letters = string.ascii_lowercase
         return ''.join(random.choice(letters) for i in range(len_for_word))
 
-    # private helper/util
+
+    # helper/util
     def _getResponseDataFromPostRequest(self, path='',  role='', username='', password='', encoded_data = None):
         if encoded_data is None:
             encoded_data = jwt.encode({'role': role}, 'super-secret')

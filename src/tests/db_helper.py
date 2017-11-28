@@ -7,9 +7,6 @@ class DBHelper():
         self.__db_admin = db_conn.admin
         self.__user_test_data = []
 
-        self.__db_users.drop()
-        self.__db_admin.drop()
-
         self.__createUsersTestData()
         self.__createAdminTestData()
 
@@ -27,7 +24,7 @@ class DBHelper():
 
         user1 = {
             'username': 'user1',
-            'password': 'user2',
+            'password': 'user1',
             'role': 'consumer'
         }
 
@@ -40,7 +37,7 @@ class DBHelper():
         user3 = {
             'username': 'user3',
             'password': 'user3',
-            'owner': 'user_dell',
+            'owner': 'userdell',
             'role': 'representative'
         }
 
@@ -52,14 +49,14 @@ class DBHelper():
         }
 
         user5 = {
-            'username': 'user_apple',
-            'password': 'user_apple',
+            'username': 'userapple',
+            'password': 'userapple',
             'role': 'company'
         }
 
         user6 = {
-            'username': 'user_dell',
-            'password': 'user_dell',
+            'username': 'userdell',
+            'password': 'userdell',
             'role': 'company'
         }
 
@@ -69,6 +66,8 @@ class DBHelper():
         self.__user_test_data.append(user4)
         self.__user_test_data.append(user5)
         self.__user_test_data.append(user6)
+
+        self.addTestDataToDB()
 
     def addTestDataToDB(self):
         for user in self.__user_test_data:
@@ -88,6 +87,7 @@ class DBHelper():
 
     def deleteAllTestDataInDB(self):
         self.__db_users.drop()
+        self.__db_admin.drop()
 
     def deleteOneUserTestData(self, username):
         return self.__db_users.remove({'username': username})
