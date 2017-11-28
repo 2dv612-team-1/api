@@ -38,19 +38,21 @@ def create_product():
     """Create a product"""
 
     try:
-        try:
-            token = request.form['jwt']
-        except Exception:
-            raise AttributeError()
+        token = request.form['jwt']
+    except Exception:
+        return response('No JWT', 400)
 
-        try:
-            payload = jwt.decode(token, 'super-secret')
-        except Exception:
-            raise TamperedToken()
+    try:
+        payload = jwt.decode(token, 'super-secret')
+    except Exception:
+        return response('Tampered token', 400)
 
-    except AttributeError:
-        return response('', 400)
-    
+    try:
+        category = request.form['category']
+        title = request.form['title']
+        description = request.form['description']
+    except Exception:
+        return response('Wrong information', 400)
 
 
 @PRODUCTS.route('/products/upload', methods=['POST'])
