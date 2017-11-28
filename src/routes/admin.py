@@ -30,8 +30,7 @@ def admin_auth():
             username = request.form['username']
             password = request.form['password']
 
-            found_admin = DB.admin.find_one(
-                {'username': username, 'password': password})
+            found_admin = super_dal.auth_and_return_admin(username, password)
 
             if found_admin:
                 payload = {'username': username, 'role': 'admin'}
