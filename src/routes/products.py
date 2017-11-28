@@ -8,6 +8,7 @@ from pymongo import MongoClient
 from exceptions.TamperedToken import TamperedToken
 from utils.response import response
 from utils.extensionCheck import allowed_file
+from bson.objectid import ObjectId
 from werkzeug.utils import secure_filename
 import jwt
 
@@ -67,6 +68,24 @@ def create_product():
     else:
         return response('You are not a representative', 400)
 
+@PRODUCTS.route('/products/<_id>')
+def get_product(_id):
+    """Gets a single product"""
+
+    try:
+        product = DB.products.find_one({'_id': ObjectId(_id) })
+    except Exception:
+        return response('Not a valid id', 400)
+
+    if product:
+        return response({
+            'category': product['category'],
+            'title': product['title'],
+            'description': product['description'],
+            'createdBy': product['createdBy']
+        }, 200)
+    else:
+        return response('No product with that id', 200)
 
 @PRODUCTS.route('/products/upload', methods=['POST'])
 def upload_actions():
