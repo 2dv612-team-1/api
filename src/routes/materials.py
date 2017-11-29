@@ -6,7 +6,7 @@ from flask import Blueprint, send_from_directory
 from utils.response import response
 from pymongo import MongoClient
 
-UPLOAD_FOLDER = './uploads'
+UPLOAD_FOLDER = './materials'
 MATERIALS = Blueprint('materials', __name__)
 CLIENT = MongoClient('mongodb:27017')
 DB = CLIENT.api
