@@ -1,4 +1,5 @@
-from mongo_client import db_conn
+
+from .mongo_client import db_conn
 import jwt
 
 """

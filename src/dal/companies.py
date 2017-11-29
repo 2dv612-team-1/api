@@ -1,4 +1,4 @@
-from mongo_client import db_conn
+from .mongo_client import db_conn
 import jwt
 
 """Create company account, if company account with given username and password does not already exist"""

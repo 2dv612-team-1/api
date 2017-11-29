@@ -1,4 +1,4 @@
-from mongo_client import db_conn
+from .mongo_client import db_conn
 from exceptions.WrongCredentials import WrongCredentials
 from exceptions.AlreadyExists import AlreadyExists
 import jwt
