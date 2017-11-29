@@ -4,10 +4,9 @@ Company routes
 
 from flask import Blueprint, request
 from utils.response import response
-from dal.users import get_users_with_role, find_user_by_name
+from dal.users import get_users_with_role
 from dal.companies import create_company, get_representatives_for_company, create_representative
 
-import jwt
 
 COMPANIES = Blueprint('companies', __name__)
 

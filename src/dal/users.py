@@ -25,10 +25,16 @@ def auth_and_return_user(form):
 
 """Search for user by username"""
 
-# add token and handle
-def find_user_by_name(name):
-    found_user = db_conn.users.find_one({'username': name})
-    return found_user
+
+def check_user_token(token):
+    payload = jwt.decode(token, 'super-secret')
+    username = payload.get('username')
+
+    found_user = db_conn.users.find_one({'username': username})
+    if found_user:
+        return username
+    else:
+        return AttributeError()
 
 
 """Iterates users collection and returns dict of usernames with role"""

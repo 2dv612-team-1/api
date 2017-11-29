@@ -4,9 +4,8 @@ Consumers
 
 from flask import Blueprint, request
 from utils.response import response
-from dal.users import get_users_with_role, find_user_by_name
+from dal.users import get_users_with_role, check_user_token
 from dal.consumer import create_consumer
-import jwt
 
 CONSUMERS = Blueprint('consumers', __name__)
 
@@ -36,17 +35,9 @@ def get_user(token):
     """Gets current user"""
 
     try:
-        payload = jwt.decode(token, 'super-secret')
-        username = payload.get('username')
 
-        found_user = find_user_by_name(username)
+        username = check_user_token(token)
+        return response('Successfully gather user data', 200, {'data': username})
 
-        if found_user:
-            return response(
-                'Successfully gather user data', 200,
-                {'data': found_user['username']}
-            )
-        else:
-            raise AttributeError()
     except AttributeError:
         return response('Wrong credentials', 400)
