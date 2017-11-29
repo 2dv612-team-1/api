@@ -49,51 +49,48 @@ def create_product():
     except Exception:
         return response('Tampered token', 400)
 
-    if payload['role'] == 'representative':
-        try:
-            file = request.files['file']
-        except Exception:
-            return response('No key \'file\' is present', 400)
+    if payload['role'] != 'representative':
+       return response('You are not a representative', 400)
 
-        try:
-            filename = secure_filename(file.filename)
-        except Exception:
-            return response(str(request.files), 200)
-            return response('No file present in request', 400)
+    try:
+        file = request.files['file']
+    except Exception:
+        return response('No key \'file\' is present', 400)
 
-        return response('Successfully uploaded the file', 200)
+    try:
+        filename = secure_filename(file.filename)
+    except Exception:
+        return response('No file present in request', 400)
 
-        try:
-            new_product = {
-                'category': request.form['category'],
-                'title': request.form['title'],
-                'description': request.form['description'],
-                'createdBy': payload['username']
-            }
-        except Exception:
-            return response('Wrong information', 400)
+    try:
+        new_product = {
+            'category': request.form['category'],
+            'title': request.form['title'],
+            'description': request.form['description'],
+            'createdBy': payload['username']
+        }
+    except Exception:
+        return response('Wrong information', 400)
 
-        try:
-            file_folder = os.path.join(UPLOAD_FOLDER, new_product['category'])
-        except Exception:
-            return response('Could not create directory', 409)
+    try:
+        file_folder = os.path.join(UPLOAD_FOLDER, new_product['category'])
+    except Exception:
+        return response('Could not create directory', 409)
 
-        try:
-            if not os.path.exists(file_folder):
-                os.makedirs(file_folder)
-            file_path = os.path.join(file_folder, filename)
-            file.save(file_path)
-            new_product.update({'file': file_path})
-        except Exception:
-            return response('Could not create file', 409)
+    try:
+        if not os.path.exists(file_folder):
+            os.makedirs(file_folder)
+        file_path = os.path.join(file_folder, filename)
+        file.save(file_path)
+        new_product.update({'file': file_path})
+    except Exception:
+        return response('Could not create file', 409)
 
-        if DB.products.find_one(new_product):
-            return response('Product already exists', 409)
+    if DB.products.find_one(new_product):
+        return response('Product already exists', 409)
 
-        DB.products.insert(new_product)
-        return response('Product was created', 201)
-    else:
-        return response('You are not a representative', 400)
+    DB.products.insert(new_product)
+    return response('Product was created', 201)
 
 
 @PRODUCTS.route('/products/<_id>')
