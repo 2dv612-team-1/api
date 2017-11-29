@@ -4,10 +4,9 @@ Consumers
 
 from flask import Blueprint, request
 from utils.response import response
-from utils.dal import SuperDAL
-import jwt
+from dal.users import get_users_with_role, check_user_token
+from dal.consumer import create_consumer
 
-super_dal = SuperDAL()
 CONSUMERS = Blueprint('consumers', __name__)
 
 
@@ -19,30 +18,20 @@ def user_actions():
     """Creates user"""
 
     if request.method == 'POST':
-        form = request.form
-
         try:
-            username = form['username']
-            password = form['password']
 
-            user_exists = super_dal.create_consumer(username, password)
+            create_consumer(request.form)
+            return response('User was created', 201)
 
-            if user_exists:
-                return response('User already exists', 409)
-            else:
-                return response('User was created', 201)
         except AttributeError:
             return response('Wrong credentials', 400)
 
     if request.method == 'GET':
         try:
 
-            _users = super_dal.get_users_with_role('consumer')
+            users = get_users_with_role('consumer')
+            return response('Successfully extracted all users', 200, {'users': users})
 
-            return response(
-                'Successfully extracted all users', 200,
-                {'users': _users}
-            )
         except SystemError:
             return response('Something went wrong while retreiving the data', 500)
 
@@ -52,17 +41,9 @@ def get_user(token):
     """Gets current user"""
 
     try:
-        payload = jwt.decode(token, 'super-secret')
-        username = payload.get('username')
 
-        found_user = super_dal.find_user_by_name(username)
+        username = check_user_token(token)
+        return response('Successfully gather user data', 200, {'data': username})
 
-        if found_user:
-            return response(
-                'Successfully gather user data', 200,
-                {'data': found_user['username']}
-            )
-        else:
-            raise AttributeError()
     except AttributeError:
         return response('Wrong credentials', 400)
