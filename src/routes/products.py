@@ -59,7 +59,9 @@ def create_product():
         return response('No key \'file\' is present', 400)
 
     try:
-        filename = secure_filename(file.filename)
+        filename = secure_filename(file.filename).split('.')
+        time_stamp = str(time.time()).split('.')[0]
+        file_time = filename[0] + '-' + time_stamp + '.' + filename[1]
     except Exception:
         return response('No file present in request', 400)
 
@@ -82,7 +84,7 @@ def create_product():
     try:
         if not os.path.exists(file_folder):
             os.makedirs(file_folder)
-        file_path = os.path.join(file_folder, str(time.time()) + filename)
+        file_path = os.path.join(file_folder, file_time)
         file.save(file_path)
         new_product.update({'file': file_path})
     except Exception:
