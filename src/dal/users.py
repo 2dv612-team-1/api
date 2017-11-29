@@ -13,8 +13,8 @@ def auth_and_return_user(form):
 """Search for user by username"""
 
 # add token and handle
-def find_user_by_name(form):
-    found_user = db_conn.users.find_one({'username': form['username']})
+def find_user_by_name(name):
+    found_user = db_conn.users.find_one({'username': name})
     return found_user
 
 

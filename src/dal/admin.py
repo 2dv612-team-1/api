@@ -14,7 +14,7 @@ def auth_and_return_admin(form):
 """Creates default admin account in admin collection"""
 
 
-def create_default_admin(self):
+def create_default_admin():
     default_admin = {
         'username': 'admin',
         'password': 'admin123',
