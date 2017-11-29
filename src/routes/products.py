@@ -50,7 +50,7 @@ def create_product():
         return response('Tampered token', 400)
 
     if payload['role'] != 'representative':
-       return response('You are not a representative', 400)
+        return response('You are not a representative', 400)
 
     try:
         file = request.files['file']
