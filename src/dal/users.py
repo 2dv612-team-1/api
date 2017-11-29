@@ -20,7 +20,7 @@ def auth_and_return_user(form):
         return encoded, found_user['role']
 
     else:
-        return AttributeError()
+        raise AttributeError()
 
 
 """Search for user by username"""
