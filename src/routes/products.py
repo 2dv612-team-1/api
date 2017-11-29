@@ -17,7 +17,6 @@ PRODUCTS = Blueprint('products', __name__)
 CLIENT = MongoClient('mongodb:27017')
 DB = CLIENT.api
 
-
 @PRODUCTS.route('/products')
 def get_products():
     """Gets all available products"""
@@ -40,7 +39,7 @@ def create_product():
     """Create a product"""
 
     try:
-        token = request.form['jwt']
+        token = request.form['jwt'].value
     except Exception:
         return response('No JWT', 400)
 
@@ -78,13 +77,18 @@ def get_product(_id):
     except Exception:
         return response('Not a valid id', 400)
 
-    if product:
-        return response({
+    try:
+        get_product = {
             'category': product['category'],
             'title': product['title'],
             'description': product['description'],
             'createdBy': product['createdBy']
-        }, 200)
+        }
+    except Exception:
+        return response('Cannot find product', 400)
+
+    if product:
+        return response(get_product, 200)
     else:
         return response('No product with that id', 200)
 
