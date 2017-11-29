@@ -11,6 +11,7 @@ from utils.extensionCheck import allowed_file
 from bson.objectid import ObjectId
 from werkzeug.utils import secure_filename
 import jwt
+import time
 
 UPLOAD_FOLDER = './uploads'
 PRODUCTS = Blueprint('products', __name__)
@@ -81,7 +82,7 @@ def create_product():
     try:
         if not os.path.exists(file_folder):
             os.makedirs(file_folder)
-        file_path = os.path.join(file_folder, filename)
+        file_path = os.path.join(file_folder, str(time.time()) + filename)
         file.save(file_path)
         new_product.update({'file': file_path})
     except Exception:
