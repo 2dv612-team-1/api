@@ -40,7 +40,7 @@ def create_product():
     """Create a product"""
 
     try:
-        token = request.form['jwt'].value
+        token = request.form['jwt']
     except Exception:
         return response('No JWT', 400)
 
@@ -56,8 +56,9 @@ def create_product():
             return response('No key \'file\' is present', 400)
 
         try:
-            filename = secure_filename(file['filename'])
+            filename = secure_filename(file.filename)
         except Exception:
+            return response(str(request.files), 200)
             return response('No file present in request', 400)
 
         return response('Successfully uploaded the file', 200)
