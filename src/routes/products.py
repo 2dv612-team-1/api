@@ -13,7 +13,7 @@ from werkzeug.utils import secure_filename
 import jwt
 import time
 
-UPLOAD_FOLDER = './uploads'
+UPLOAD_FOLDER = './materials'
 PRODUCTS = Blueprint('products', __name__)
 CLIENT = MongoClient('mongodb:27017')
 DB = CLIENT.api
@@ -118,7 +118,4 @@ def get_product(_id):
     except Exception:
         return response('Cannot find product', 400)
 
-    if product:
-        return response(get_product, 200)
-    else:
-        return response('No product with that id', 200)
+    return response(get_product, 200)
