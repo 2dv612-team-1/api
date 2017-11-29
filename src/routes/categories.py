@@ -3,28 +3,19 @@ Categories Route
 """
 
 from flask import Blueprint, request
-from pymongo import MongoClient
+from dal.categories import get_categories, create_category
 from utils.response import response
 from exceptions.WrongCredentials import WrongCredentials
 from exceptions.AlreadyExists import AlreadyExists
 import jwt
 
-CLIENT = MongoClient('mongodb:27017')
 CATEGORIES = Blueprint('CATEGORIES', __name__)
-DB = CLIENT.api
 
 
 @CATEGORIES.route('/categories')
 def get_categories():
     """Gets all available categories"""
-
-    categories_data = []
-    for category in DB.categories.find():
-        categories_data.append({
-            'category': category.get('category'),
-            '_id': str(category.get('_id'))
-        })
-
+    categories_data = get_categories()
     return response(categories_data, 200)
 
 
