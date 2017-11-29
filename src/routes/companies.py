@@ -5,6 +5,8 @@ Company routes
 from flask import Blueprint, request
 from utils.response import response
 from dal.users import get_users_with_role, find_user_by_name
+from dal.companies import create_company
+
 import jwt
 
 super_dal = SuperDAL()
@@ -27,22 +29,14 @@ def company_actions():
 def company_creation():
     """Creates company"""
     try:
-        form = request.form
-        token = form['jwt']
-        payload = jwt.decode(token, 'super-secret')
 
-        if payload['role'] == 'admin':
-            username = form['username']
-            password = form['password']
+        company_exists = super_dal.create_company(request.form)
 
-            company_exists = super_dal.create_company(username, password)
-
-            if company_exists:
-                return response('Username already exists', 409)
-            else:
-                return response('Company was created', 201)
+        if company_exists:
+            return response('Username already exists', 409)
         else:
-            return response('You have to be an admin to create company', 400)
+            return response('Company was created', 201)
+
     except AttributeError:
         return response('Wrong credentials', 400)
 
