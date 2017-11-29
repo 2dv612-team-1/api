@@ -5,7 +5,7 @@ Company routes
 from flask import Blueprint, request
 from utils.response import response
 from dal.users import get_users_with_role, find_user_by_name
-from dal.companies import create_company, get_representatives_for_company
+from dal.companies import create_company, get_representatives_for_company, create_representative
 
 import jwt
 
@@ -55,21 +55,17 @@ def get_representatives(name):
 def create_representative(name):
     """Creates representative"""
     try:
-        form = request.form
-        token = form['jwt']
-        payload = jwt.decode(token, 'super-secret')
 
-        if payload['role'] == 'company':
-            username = form['username']
-            password = form['password']
+        representative_exists = create_representative(request.form, name)
 
-            representative_exists = super_dal.create_representative(username, password, name)
+        if representative_exists:
+            return response('Username already exists', 409)
+        else:
+            return response('Representative was created', 201)
 
-            if representative_exists:
-                return response('Username already exists', 409)
-            else:
-                return response('Representative was created', 201)
+        """
         else:
             return response('You are not a company', 400)
+        """
     except AttributeError:
         return response('Wrong credentials', 400)
