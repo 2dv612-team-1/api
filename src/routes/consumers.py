@@ -19,13 +19,9 @@ def user_actions():
     """Creates user"""
 
     if request.method == 'POST':
-        form = request.form
-
         try:
-            username = form['username']
-            password = form['password']
 
-            user_exists = create_consumer(username, password)
+            user_exists = create_consumer(request.form)
 
             if user_exists:
                 return response('User already exists', 409)
