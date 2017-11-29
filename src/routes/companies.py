@@ -9,7 +9,6 @@ from dal.companies import create_company
 
 import jwt
 
-super_dal = SuperDAL()
 COMPANIES = Blueprint('companies', __name__)
 
 # add bcrypt
@@ -30,7 +29,7 @@ def company_creation():
     """Creates company"""
     try:
 
-        company_exists = super_dal.create_company(request.form)
+        company_exists = create_company(request.form)
 
         if company_exists:
             return response('Username already exists', 409)
