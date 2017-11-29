@@ -26,3 +26,15 @@ def create_company(form):
 
         db_conn.users.insert(company)
         return False
+
+def get_representatives_for_company(company_name):
+    if db_conn.users.find_one({'username': company_name}):
+
+        representatives = []
+
+        for representative in db_conn.users.find({'owner': company_name}):
+            representatives.append({'username': representative['username']})
+        return representatives
+
+    else:
+        return AttributeError()

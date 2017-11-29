@@ -5,7 +5,7 @@ Company routes
 from flask import Blueprint, request
 from utils.response import response
 from dal.users import get_users_with_role, find_user_by_name
-from dal.companies import create_company
+from dal.companies import create_company, get_representatives_for_company
 
 import jwt
 
@@ -43,11 +43,11 @@ def company_creation():
 @COMPANIES.route('/companies/<name>/representatives')
 def get_representatives(name):
     """Gets list of representatives from specific company"""
-    company = find_user_by_name(name)
-    if company:
-        representatives = super_dal.get_representatives_for_company(name)
+    try:
+        representatives = get_representatives_for_company(name)
         return response(name, 200, {'representatives': representatives})
-    else:
+
+    except AttributeError:
         return response('Invalid company', 400)
 
 # name => owner
