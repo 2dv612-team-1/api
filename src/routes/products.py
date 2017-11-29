@@ -30,7 +30,8 @@ def get_products():
             'category': product.get('category'),
             'description': product.get('description'),
             'createdBy': product.get('createdBy'),
-            '_id': str(product.get('_id'))
+            '_id': str(product.get('_id')),
+            'path': product.get('path')
         })
 
     return response(products_data, 200)
@@ -86,7 +87,7 @@ def create_product():
             os.makedirs(file_folder)
         file_path = os.path.join(file_folder, file_time)
         file.save(file_path)
-        new_product.update({'file': file_path})
+        new_product.update({'path': file_path[1:len(file_path)]})
     except Exception:
         return response('Could not create file', 409)
 
@@ -111,7 +112,8 @@ def get_product(_id):
             'category': product['category'],
             'title': product['title'],
             'description': product['description'],
-            'createdBy': product['createdBy']
+            'createdBy': product['createdBy'],
+            'path': product['path']
         }
     except Exception:
         return response('Cannot find product', 400)
