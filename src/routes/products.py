@@ -19,14 +19,16 @@ def upload_actions():
 
     # Get from JWT instead
     file_company = request.form['company']
+    # Get from URL id
+    product = 'a'
 
-    f = files(request.files)
-    # Check user error
+    f = files()
     try:
-        f.check_request_files()
+        f.check_request_files(request.files)
     except AttributeError as e:
         return response(str(e), 400)
 
-    f.save(file_company)
+    f.create_file_path(file_company, product)
+    f.save()
 
     return response('Successfully uploaded material', 200)
