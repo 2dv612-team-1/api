@@ -35,6 +35,7 @@ def get_representatives_for_company(company_name):
 
         for representative in db_conn.users.find({'owner': company_name}):
             representatives.append({'username': representative['username']})
+
         return representatives
 
     else:

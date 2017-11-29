@@ -19,13 +19,19 @@ def user_actions():
 
     if request.method == 'POST':
         try:
-            return create_consumer(request.form)
+
+            create_consumer(request.form)
+            return response('User was created', 201)
+
         except AttributeError:
             return response('Wrong credentials', 400)
 
     if request.method == 'GET':
         try:
-            return get_users_with_role('consumer')
+
+            users = get_users_with_role('consumer')
+            return response('Successfully extracted all users', 200, {'users': users})
+
         except SystemError:
             return response('Something went wrong while retreiving the data', 500)
 

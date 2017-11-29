@@ -7,7 +7,7 @@ import jwt
 
 """Auth user by comparing username and password in users collection"""
 
-#returns role and encoded
+
 def auth_and_return_user(form):
     username = form['username']
     password = form['password']

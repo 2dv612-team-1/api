@@ -19,5 +19,4 @@ def create_consumer(form):
         }
 
         db_conn.users.insert(user)
-        return response('User was created', 201)
 
