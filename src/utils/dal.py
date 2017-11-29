@@ -19,11 +19,6 @@ class SuperDAL:
         client = MongoClient('mongodb:27017')
         self.db_conn = client.api
 
-    """Auth admin by comparing username and password in admin collection"""
-    def auth_and_return_admin(self, username, password):
-        found_admin = self.db_conn.admin.find_one({'username': username, 'password': password})
-        return found_admin
-
     """Search for user by username"""
     def find_user_by_name(self, username):
         found_user = self.db_conn.users.find_one({'username': username})
