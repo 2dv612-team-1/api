@@ -3,13 +3,13 @@ Consumers
 """
 
 from flask import Blueprint, request
-from pymongo import MongoClient
 from utils.response import response
+from utils.dal import SuperDAL
 import jwt
 
+super_dal = SuperDAL()
 CONSUMERS = Blueprint('consumers', __name__)
-CLIENT = MongoClient('mongodb:27017')
-DB = CLIENT.api
+
 
 # add bcrypt
 
@@ -25,28 +25,19 @@ def user_actions():
             username = form['username']
             password = form['password']
 
-            user = {
-                'username': username,
-                'password': password,
-                'role': 'consumer'
-            }
-
-            user_exists = DB.users.find_one(
-                {'username': username})
+            user_exists = super_dal.create_consumer(username, password)
 
             if user_exists:
                 return response('User already exists', 409)
             else:
-                DB.users.insert(user)
                 return response('User was created', 201)
         except AttributeError:
             return response('Wrong credentials', 400)
 
     if request.method == 'GET':
         try:
-            _users = []
-            for user in DB.users.find({'role': 'consumer'}):
-                _users.append({'username': user['username']})
+
+            _users = super_dal.get_users_with_role('consumer')
 
             return response(
                 'Successfully extracted all users', 200,
@@ -64,9 +55,7 @@ def get_user(token):
         payload = jwt.decode(token, 'super-secret')
         username = payload.get('username')
 
-        found_user = DB.users.find_one(
-            {'username': username}
-        )
+        found_user = super_dal.find_user_by_name(username)
 
         if found_user:
             return response(

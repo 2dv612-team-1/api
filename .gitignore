@@ -4,3 +4,5 @@ node_modules
 *.log
 .vscode/
 uploads
+.idea
+.idea/workspace.xml

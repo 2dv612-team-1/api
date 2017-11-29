@@ -3,13 +3,12 @@ Auth route
 """
 
 from flask import Blueprint, request
-from pymongo import MongoClient
 from utils.response import response
+from utils.dal import SuperDAL
 import jwt
 
+super_dal = SuperDAL()
 AUTH = Blueprint('auth', __name__)
-CLIENT = MongoClient('mongodb:27017')
-DB = CLIENT.api
 
 # add bcrypt
 
@@ -22,8 +21,7 @@ def auth_actions():
         username = request.form['username']
         password = request.form['password']
 
-        found_user = DB.users.find_one(
-            {'username': username, 'password': password})
+        found_user = super_dal.auth_and_return_user(username, password)
 
         if found_user:
             payload = {'username': username, 'role': found_user['role']}
