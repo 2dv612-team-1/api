@@ -18,7 +18,7 @@ def auth_actions():
 
     try:
 
-        found_user = auth_and_return_user(request.form)
+        found_user = auth_and_return_user(request)
 
         if found_user:
             payload = {'username': found_user['username'], 'role': found_user['role']}
