@@ -17,8 +17,7 @@ COMPANIES = Blueprint('companies', __name__)
 def company_actions():
     """Extracts companies"""
     try:
-        data = get_users_with_role('company')
-        return response('Successfully extracted all companies', 200, {'companies': data})
+        return get_users_with_role('company')
     except SystemError:
         return response('Something went wrong while retreiving the data', 500)
 
