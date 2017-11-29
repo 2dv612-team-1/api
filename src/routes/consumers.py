@@ -26,13 +26,7 @@ def user_actions():
 
     if request.method == 'GET':
         try:
-
-            _users = get_users_with_role('consumer')
-
-            return response(
-                'Successfully extracted all users', 200,
-                {'users': _users}
-            )
+            return get_users_with_role('consumer')
         except SystemError:
             return response('Something went wrong while retreiving the data', 500)
 

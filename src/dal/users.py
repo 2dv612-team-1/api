@@ -1,5 +1,5 @@
 from mongo_client import db_conn
-
+from utils.response import response
 
 """Auth user by comparing username and password in users collection"""
 
@@ -22,8 +22,8 @@ def find_user_by_name(name):
 
 
 def get_users_with_role(form):
-
     users = []
     for user in db_conn.users.find({'role': form['role']}):
         users.append({'username': user['username']})
-    return users
+
+    return response('Successfully extracted all users', 200,{'users': users})
