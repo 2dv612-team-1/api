@@ -4,10 +4,9 @@ Admin routes
 
 from flask import Blueprint, request
 from utils.response import response
-from utils.dal import SuperDAL
 import jwt
+from dal.admin import auth_and_return_admin, create_default_admin
 
-super_dal = SuperDAL()
 ADMIN = Blueprint('admin', __name__)
 
 
@@ -17,7 +16,7 @@ def admin_actions():
     """When requested create admin account"""
 
     if request.method == 'POST':
-        super_dal.create_default_admin()
+        create_default_admin()
         return response('Admin account has been created', 201)
 
 
@@ -27,13 +26,11 @@ def admin_auth():
 
     if request.method == 'POST':
         try:
-            username = request.form['username']
-            password = request.form['password']
 
-            found_admin = super_dal.auth_and_return_admin(username, password)
+            found_admin = auth_and_return_admin(request.form)
 
             if found_admin:
-                payload = {'username': username, 'role': 'admin'}
+                payload = {'username': found_admin['username'], 'role': 'admin'}
                 encoded = jwt.encode(payload, 'super-secret')
                 return response('Successfully logged in as admin',
                                        200,

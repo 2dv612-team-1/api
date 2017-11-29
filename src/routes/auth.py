@@ -4,7 +4,7 @@ Auth route
 
 from flask import Blueprint, request
 from utils.response import response
-from dal.auth import auth_and_return_user
+from dal.users import auth_and_return_user
 import jwt
 
 AUTH = Blueprint('auth', __name__)
@@ -18,7 +18,7 @@ def auth_actions():
 
     try:
 
-        found_user = auth_and_return_user(request)
+        found_user = auth_and_return_user(request.form)
 
         if found_user:
             payload = {'username': found_user['username'], 'role': found_user['role']}

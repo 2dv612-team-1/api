@@ -19,18 +19,6 @@ class SuperDAL:
         client = MongoClient('mongodb:27017')
         self.db_conn = client.api
 
-    """Search for user by username"""
-    def find_user_by_name(self, username):
-        found_user = self.db_conn.users.find_one({'username': username})
-        return found_user
-
-    """Iterates users collection and returns dict of usernames with role"""
-    def get_users_with_role(self, role):
-        users = []
-        for user in self.db_conn.users.find({'role': role}):
-            users.append({'username': user['username']})
-        return users
-
     """Iterates users collection and returns list of usernames with role of representatives"""
     def get_representatives_for_company(self, company_username):
         representatives = []
@@ -112,14 +100,3 @@ class SuperDAL:
 
             self.db_conn.users.insert(user)
             return False
-
-    """Creates default admin account in admin collection"""
-    def create_default_admin(self):
-
-        default_admin = {
-            'username': 'admin',
-            'password': 'admin123',
-            'role': 'admin'
-        }
-
-        self.db_conn.admin.update({}, default_admin, upsert=True)

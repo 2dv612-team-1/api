@@ -4,7 +4,7 @@ Consumers
 
 from flask import Blueprint, request
 from utils.response import response
-from utils.dal import SuperDAL
+from dal.users import get_users_with_role, find_user_by_name
 import jwt
 
 super_dal = SuperDAL()
@@ -37,7 +37,7 @@ def user_actions():
     if request.method == 'GET':
         try:
 
-            _users = super_dal.get_users_with_role('consumer')
+            _users = get_users_with_role('consumer')
 
             return response(
                 'Successfully extracted all users', 200,
@@ -55,7 +55,7 @@ def get_user(token):
         payload = jwt.decode(token, 'super-secret')
         username = payload.get('username')
 
-        found_user = super_dal.find_user_by_name(username)
+        found_user = find_user_by_name(username)
 
         if found_user:
             return response(

@@ -4,7 +4,7 @@ Company routes
 
 from flask import Blueprint, request
 from utils.response import response
-from utils.dal import SuperDAL
+from dal.users import get_users_with_role
 import jwt
 
 super_dal = SuperDAL()
@@ -17,7 +17,7 @@ COMPANIES = Blueprint('companies', __name__)
 def company_actions():
     """Extracts companies"""
     try:
-        data = super_dal.get_users_with_role('company')
+        data = get_users_with_role('company')
         return response('Successfully extracted all companies', 200, {'companies': data})
     except SystemError:
         return response('Something went wrong while retreiving the data', 500)
