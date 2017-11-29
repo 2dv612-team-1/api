@@ -17,4 +17,4 @@ def get_file(company, filename):
     try:
         return send_from_directory(UPLOAD_FOLDER + '/' + company, filename)
     except Exception:
-         return response('No such file', 400)
+         return response('No such file', 404)
