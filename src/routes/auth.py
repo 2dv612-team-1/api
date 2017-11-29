@@ -4,10 +4,9 @@ Auth route
 
 from flask import Blueprint, request
 from utils.response import response
-from utils.dal import SuperDAL
+from dal.auth import auth_and_return_user
 import jwt
 
-super_dal = SuperDAL()
 AUTH = Blueprint('auth', __name__)
 
 # add bcrypt
@@ -21,7 +20,7 @@ def auth_actions():
         username = request.form['username']
         password = request.form['password']
 
-        found_user = super_dal.auth_and_return_user(username, password)
+        found_user = auth_and_return_user(username, password)
 
         if found_user:
             payload = {'username': username, 'role': found_user['role']}
