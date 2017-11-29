@@ -73,7 +73,8 @@ def create_product():
         return response('Wrong information', 400)
 
     try:
-        file_folder = os.path.join(UPLOAD_FOLDER, new_product['category'])
+        representative = DB.users.find_one({'username': payload['username']})
+        file_folder = os.path.join(UPLOAD_FOLDER, representative['owner'])
     except Exception:
         return response('Could not create directory', 409)
 
