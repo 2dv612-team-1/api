@@ -27,7 +27,7 @@ def admin_auth():
         try:
 
             encoded_data = auth_and_return_admin(request.form)
-            return response('Successfully logged in as admin',200, {'token': encoded_data.decode('utf-8')})
+            return response('Successfully logged in as admin', 200, {'token': encoded_data.decode('utf-8')})
 
         except AttributeError:
             return response('Wrong credentials', 400)

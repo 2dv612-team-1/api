@@ -1,6 +1,10 @@
 from mongo_client import db_conn
 import jwt
 
+"""
+    db_conn.admin   => client.api.admin
+"""
+
 """Auth admin by comparing username and password in admin collection"""
 
 

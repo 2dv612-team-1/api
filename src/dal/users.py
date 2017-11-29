@@ -1,13 +1,26 @@
 from mongo_client import db_conn
-from utils.response import response
+import jwt
+
+"""
+    db_conn.users   => client.api.users
+"""
 
 """Auth user by comparing username and password in users collection"""
 
-
+#returns role and encoded
 def auth_and_return_user(form):
+    username = form['username']
+    password = form['password']
 
-    found_user = db_conn.users.find_one({'username': form['username'], 'password': form['password']})
-    return found_user
+    found_user = db_conn.users.find_one({'username': username, 'password': password})
+
+    if found_user:
+        payload = {'username': found_user['username'], 'role': found_user['role']}
+        encoded = jwt.encode(payload, 'super-secret')
+        return encoded, found_user['role']
+
+    else:
+        return AttributeError()
 
 
 """Search for user by username"""
