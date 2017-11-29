@@ -20,13 +20,7 @@ def user_actions():
 
     if request.method == 'POST':
         try:
-
-            user_exists = create_consumer(request.form)
-
-            if user_exists:
-                return response('User already exists', 409)
-            else:
-                return response('User was created', 201)
+            return create_consumer(request.form)
         except AttributeError:
             return response('Wrong credentials', 400)
 
