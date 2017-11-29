@@ -16,8 +16,7 @@ def admin_actions():
     """When requested create admin account"""
 
     if request.method == 'POST':
-        create_default_admin()
-        return response('Admin account has been created', 201)
+        return create_default_admin()
 
 
 @ADMIN.route('/admins/auth', methods=['POST'])

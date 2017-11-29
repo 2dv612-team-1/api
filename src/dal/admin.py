@@ -1,4 +1,5 @@
 from mongo_client import db_conn
+from utils.response import response
 
 """Auth admin by comparing username and password in admin collection"""
 
@@ -22,3 +23,4 @@ def create_default_admin():
     }
 
     db_conn.admin.update({}, default_admin, upsert=True)
+    return response('Admin account has been created', 201)
