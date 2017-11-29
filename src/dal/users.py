@@ -39,4 +39,4 @@ def get_users_with_role(form):
     for user in db_conn.users.find({'role': form['role']}):
         users.append({'username': user['username']})
 
-    return response('Successfully extracted all users', 200,{'users': users})
+    return users
