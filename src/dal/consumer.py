@@ -9,7 +9,7 @@ def create_consumer(form):
     password = form['password']
 
     if db_conn.users.find({'username': username}).count() != 0:
-        return response('User already exists', 409)
+        return True
     else:
 
         user = {
@@ -19,4 +19,5 @@ def create_consumer(form):
         }
 
         db_conn.users.insert(user)
+        return False
 

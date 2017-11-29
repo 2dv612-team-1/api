@@ -1,5 +1,4 @@
 import unittest
-import jwt
 from basetest import BaseTest
 
 #Done
@@ -22,6 +21,7 @@ class CompaniesTestCase(BaseTest):
         self.assertEqual(response.status_code, 200)
         self.assertTrue(self._db_helper.getUsers().count() == 0)
         self._db_helper.addTestDataToDB()
+
 
     #Test @COMPANIES.route('/companies')
     def test_getCompaniesOnPopulatedCollection(self):
@@ -56,7 +56,7 @@ class CompaniesTestCase(BaseTest):
             response_data = self._getResponseDataFromPostRequest('/companies', role, comp_username, comp_password)
 
             self.assertEqual(response_data['status'], 400)
-            self.assertEqual(response_data['message'], 'You have to be an admin to create company')
+            self.assertEqual(response_data['message'], 'Wrong credentials')
 
     #Test @COMPANIES.route('/companies/<name>/representatives')
     def test_getListOfRepresentativesFromInvalidCompanyUsername(self):
@@ -70,12 +70,15 @@ class CompaniesTestCase(BaseTest):
 
         self.assertEqual(response.status_code, 200)
 
+
     #Test @COMPANIES.route('/companies/<name>/representatives', methods=['POST'])
     def test_createRepresentativeAsValidCompanyRepresentativeExist(self):
         path = '/companies/' + 'userdell' + '/representatives'
         response_data = self._getResponseDataFromPostRequest(path, 'company', 'user3', 'user3')
+
         self.assertEqual(response_data['status'], 409)
         self.assertEqual(response_data['message'], 'Username already exists')
+
 
 
     #Test @COMPANIES.route('/companies/<name>/representatives', methods=['POST'])
@@ -88,13 +91,15 @@ class CompaniesTestCase(BaseTest):
         self.assertTrue(self._db_helper.deleteOneUserTestData('new_username'))
 
 
+
     #Test @COMPANIES.route('/companies/<name>/representatives', methods=['POST'])
     def test_createRepresentativeAsInvalidCompanyRepresentativetExist(self):
         path = '/companies/' + 'invalid_company' + '/representatives'
         response_data = self._getResponseDataFromPostRequest(path, 'consumer', 'rep1', 'rep1')
 
         self.assertEqual(response_data['status'], 400)
-        self.assertEqual(response_data['message'], 'You are not a company')
+        self.assertEqual(response_data['message'], 'Wrong credentials')
+
 
     #Test @COMPANIES.route('/companies/<name>/representatives', methods=['POST'])
     def test_createRepresentativeAsInvalidCompanyRepresentativeDoesNotExist(self):
@@ -102,21 +107,22 @@ class CompaniesTestCase(BaseTest):
         response_data = self._getResponseDataFromPostRequest(path, 'consumer', 'new_username', 'new_username')
 
         self.assertEqual(response_data['status'], 400)
-        self.assertEqual(response_data['message'], 'You are not a company')
+        self.assertEqual(response_data['message'], 'Wrong credentials')
+
 
     """ jwt.exceptions.DecodeError: Signature verification failed
         Cant get response: "return response('Wrong credentials', 400)" from route
-    """
+    
     #Test @COMPANIES.route('/companies/<name>/representatives', methods=['POST'])
     def test_createRepresentativeAsInvalidCompanyRepresentativeDoesNotExistWrongCredentials(self):
         path = '/companies/' + 'invalid_company' + '/representatives'
 
         encoded_data = jwt.encode({'role': 'consumer'}, 'wrong-secret')
-        # response_data = self.__getResponseDataFromPostRequest(path, 'consumer', 'new_username', 'new_username', encoded_data)
+        response_data = self._getResponseDataFromPostRequest(path, 'consumer', 'new_username', 'new_username', encoded_data)
 
-        #self.assertEqual(response_data['status'], 400)
-        #self.assertEqual(response_data['message'], 'You are not a company')
-
+        self.assertEqual(response_data['status'], 400)
+        self.assertEqual(response_data['message'], 'Wrong credentials')
+    """
 if __name__ == '__main__':
     unittest.main()
 

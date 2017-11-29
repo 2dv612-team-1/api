@@ -30,6 +30,7 @@ class ConsumerTestCase(BaseTest):
         self.assertEqual(response_data['message'], 'User was created')
         self.assertTrue(self._db_helper.deleteOneUserTestData(cons_username))
 
+
     #Test @CONSUMERS.route('/consumers', methods=['GET', 'POST'])
     def test_getConsumers(self):
         path = '/consumers'

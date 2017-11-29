@@ -12,7 +12,7 @@ def create_company(form):
         username = form['username']
         password = form['password']
     else:
-        return AttributeError()
+        raise AttributeError()
 
     if db_conn.users.find({'username': username}).count() != 0:
         return True
@@ -39,10 +39,10 @@ def get_representatives_for_company(company_name):
         return representatives
 
     else:
-        return AttributeError()
+        raise AttributeError()
 
 
-def create_representative(form, owner):
+def dal_create_representative(form, owner):
 
     token = form['jwt']
     payload = jwt.decode(token, 'super-secret')
@@ -51,7 +51,7 @@ def create_representative(form, owner):
         username = form['username']
         password = form['password']
     else:
-        return AttributeError() #Need custom return to trigger 'You are not a company' response in route
+        raise AttributeError() #Need custom return to trigger 'You are not a company' response in route
 
     if db_conn.users.find({'username': username}).count() != 0:
         return True
