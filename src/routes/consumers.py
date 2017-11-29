@@ -5,9 +5,9 @@ Consumers
 from flask import Blueprint, request
 from utils.response import response
 from dal.users import get_users_with_role, find_user_by_name
+from dal.consumer import create_consumer
 import jwt
 
-super_dal = SuperDAL()
 CONSUMERS = Blueprint('consumers', __name__)
 
 
@@ -25,7 +25,7 @@ def user_actions():
             username = form['username']
             password = form['password']
 
-            user_exists = super_dal.create_consumer(username, password)
+            user_exists = create_consumer(username, password)
 
             if user_exists:
                 return response('User already exists', 409)

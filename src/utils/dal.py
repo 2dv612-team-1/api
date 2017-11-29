@@ -84,19 +84,3 @@ class SuperDAL:
 
             self.db_conn.users.insert(company)
             return False
-
-    """Create consumer account, if consumer account with given username and password does not already exist"""
-    def create_consumer(self, username, password):
-
-        if self.db_conn.users.find({'username': username}).count() != 0:
-            return True
-        else:
-
-            user = {
-                'username': username,
-                'password': password,
-                'role': 'consumer'
-            }
-
-            self.db_conn.users.insert(user)
-            return False
