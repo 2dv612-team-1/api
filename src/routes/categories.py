@@ -7,7 +7,6 @@ from dal.categories import get_categories, create_category
 from utils.response import response
 from exceptions.WrongCredentials import WrongCredentials
 from exceptions.AlreadyExists import AlreadyExists
-import jwt
 
 CATEGORIES = Blueprint('CATEGORIES', __name__)
 
@@ -24,27 +23,8 @@ def create_categories():
     """Creates a new category"""
 
     try:
-        try:
-            token = request.form['jwt']
-            category = request.form['category']
-        except Exception:
-            raise WrongCredentials()
-
-        try:
-            payload = jwt.decode(token, 'super-secret')
-        except Exception:
-            raise AttributeError()
-
-        if payload['role'] == 'admin':
-            category_exists = DB.categories.find_one({'category': category})
-            if category_exists:
-                raise AlreadyExists()
-
-            DB.categories.insert({
-                'category': category
-            })
-
-            return response('Category created', 201)
+        create_category(request.form)
+        return response('Category created', 201)
 
     except AttributeError:
         return response('Broken JWT', 400)
