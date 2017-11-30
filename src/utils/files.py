@@ -57,14 +57,11 @@ def save(path, files, product):
     for file in files:
         filename = secure_filename(file.filename).split('.')
         file_folder = create_folder(path)
-        time_stamp = str(time.time()).split('.')[0]
+        time_stamp = str(time.time()).replace('.', '')
         file_time = filename[0] + '-' + time_stamp + '.' + filename[1]
         file_path = os.path.join(file_folder, file_time)
         file.save(file_path)
-        data.append({
-            'path': file_path[1:len(file_path)],
-            'url': '/' + product['producer'] + '/' + product['serialNo'] + '/' + file_time
-        })
+        data.append(file_time)
 
     return data
 
