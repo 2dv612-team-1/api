@@ -21,7 +21,7 @@ def auth_and_return_admin(form):
         return encoded
 
     else:
-        return AttributeError()
+        raise AttributeError()
 
 
 """Creates default admin account in admin collection"""
