@@ -13,11 +13,9 @@ class ConsumerTestCase(BaseTest):
         path = '/consumers'
         response_data = self._getResponseDataFromPostRequest(path, 'consumer', 'user1', 'user1')
 
-        if self._db_helper.userExistInDB('user1'):
-            self.assertEqual(response_data['status'], 409)
-            self.assertEqual(response_data['message'], 'User already exists')
-        else:
-            pass
+        self.assertEqual(response_data['status'], 409)
+        self.assertEqual(response_data['message'], 'User already exists')
+
 
     #Test @CONSUMERS.route('/consumers', methods=['GET', 'POST'])
     def test_createNewConsumer(self):

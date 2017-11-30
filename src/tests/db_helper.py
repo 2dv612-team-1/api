@@ -5,10 +5,12 @@ class DBHelper():
     def __init__(self, db_conn):
         self.__db_users = db_conn.users
         self.__db_admin = db_conn.admin
+        self.__db_categories = db_conn.categories
         self.__user_test_data = []
 
         self.__createUsersTestData()
         self.__createAdminTestData()
+        self.createCategoriesTestData()
 
     def __createAdminTestData(self):
 
@@ -69,6 +71,16 @@ class DBHelper():
 
         self.addTestDataToDB()
 
+    def createCategoriesTestData(self):
+        category1 = {
+            'category': 'Dishwasher'
+        }
+        category2 = {
+            'category': 'Freezer'
+        }
+        self.__db_categories.insert(category1)
+        self.__db_categories.insert(category2)
+
     def addTestDataToDB(self):
         for user in self.__user_test_data:
             self.__db_users.insert(user)
@@ -88,9 +100,13 @@ class DBHelper():
     def deleteAllTestDataInDB(self):
         self.__db_users.drop()
         self.__db_admin.drop()
+        self.__db_categories.drop()
 
     def deleteOneUserTestData(self, username):
         return self.__db_users.remove({'username': username})
+
+    def deleteCategory(self, category):
+        return self.__db_categories.remove({'username': category})
 
     def userExistInDB(self, user_name):
         if self.__db_users.find({'username': user_name}):

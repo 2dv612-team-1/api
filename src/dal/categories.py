@@ -4,7 +4,7 @@ from exceptions.AlreadyExists import AlreadyExists
 import jwt
 
 
-def get_categories():
+def dal_get_categories():
     categories_data = []
     for category in db_conn.categories.find():
         categories_data.append({
@@ -15,7 +15,7 @@ def get_categories():
     return categories_data
 
 
-def create_category(form):
+def dal_create_category(form):
     try:
         token = form['jwt']
         category = form['category']
