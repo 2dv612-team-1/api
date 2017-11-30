@@ -23,15 +23,15 @@ def get_products():
     products_data = []
     for product in DB.products.find():
         products_data.append({
-            'title': product.get('title'),
+            'name': product.get('name'),
             'category': product.get('category'),
             'description': product.get('description'),
             'createdBy': product.get('createdBy'),
             '_id': str(product.get('_id')),
-            'path': product.get('path')
+            'paths': product.get('paths')
         })
 
-    return response(products_data, 200)
+    return response('Successfully retreived all the products', 200, { 'data': { 'products': products_data } })
 
 
 @PRODUCTS.route('/products', methods=['POST'])
@@ -59,6 +59,7 @@ def create_product():
     try:
         representative = DB.users.find_one({'username': payload['username']})
         company = representative['owner']
+        current_app.logger.info(company)
         new_product = {
             'category': request.form['category'],
             'name': request.form['name'],
@@ -82,11 +83,11 @@ def create_product():
     _id = DB.products.insert(new_product)
 
     try:
-        path = create_file_path(company, new_product['name'])
+        path = create_file_path(company, str(_id))
         filenames = save(path, request.files.getlist('file'), new_product)
         paths = list()
         for filename in filenames:
-            paths.append({'path': '/materials/' + company + '/products/' + str(_id) + '/' + filename})
+            paths.append({'path': '/materials/' + company + '/' + str(_id) + '/' + filename})
 
     except Exception as e:
         return response(str(e), 409)
