@@ -6,7 +6,7 @@ from pymongo import MongoClient
     self.db_conn.users      => users collection
     self.db_conn.admin      => admin collection
     self.db_conn.categories => categories collection
-    
+
     self.db_conn.products   => products collection      {'  _id:autogen
                                                             filepath':uploads/filename,
                                                             'title/display name': random title
@@ -67,9 +67,13 @@ class SuperDAL:
             self.db_conn.categories.insert({'category': category})
             return False
 
-    # todo
-    def get_products(self):
-        pass
+    def get_products(self, filter = {}):
+        products = []
+        for product in self.db_conn.products.find(filter):
+            product.update({'_id': str(product['_id'])})
+            products.append(product)
+
+        return products
 
     # todo
     def create_product(self):
