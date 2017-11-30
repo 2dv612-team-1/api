@@ -29,8 +29,6 @@ def check_request_files(request_files):
     """
 
     req_files = request_files
-    if len(req_files) < 1:
-        raise AttributeError('Files missing from request')
     for file_key in req_files:
         current_app.logger.info(file_key)
         if not file_key == 'file':
