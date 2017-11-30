@@ -43,13 +43,17 @@ def check_request_files(request_files):
 def create_file_path(company, product):
     return os.path.join(company, product)
 
-def save(path, files, product):
+def save(path, files):
     """Saves the files to the specified path which should be based on company and product name
 
     Creates folder if not exists and places file in there based on company and product name
 
     Arguments:
         path {string} -- A path string created by joining company name with product name
+        files {list} -- request.files.getlist('file')
+
+    Returns:
+        list -- filenames after time stamp has been appended
     """
 
     data = []
