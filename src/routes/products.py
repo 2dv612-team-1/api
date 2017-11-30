@@ -133,8 +133,6 @@ def get_product(_id):
 @PRODUCTS.route('/products/<_id>/upload', methods=['POST'])
 def upload_actions(_id):
 
-    # Get from JWT instead
-    # file_company = request.form['company']
     try:
         token = request.form['jwt']
     except Exception:
