@@ -15,6 +15,6 @@ DB = CLIENT.api
 @MATERIALS.route('/materials/<company>/<product_id>/<path:filename>')
 def get_file(company, product_id, filename):
     try:
-        return send_from_directory(UPLOAD_FOLDER + '/' + company, filename)
+        return send_from_directory(UPLOAD_FOLDER + '/' + company + '/' + product_id, filename)
     except Exception:
          return response('No such file', 404)
