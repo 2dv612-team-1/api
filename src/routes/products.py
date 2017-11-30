@@ -3,7 +3,7 @@ Products route
 """
 
 from flask import Blueprint, request, current_app
-from pymongo import MongoClient
+from pymongo import MongoClient, ReturnDocument
 from exceptions.TamperedToken import TamperedToken
 from utils.response import response
 from utils.files import check_request_files, create_file_path, save
@@ -28,10 +28,14 @@ def get_products():
             'description': product.get('description'),
             'createdBy': product.get('createdBy'),
             '_id': str(product.get('_id')),
-            'paths': product.get('paths')
+            'files': product.get('files')
         })
 
-    return response('Successfully retreived all the products', 200, { 'data': { 'products': products_data } })
+    return response(
+        'Successfully retreived all the products',
+        200,
+        { 'data': { 'products': products_data } }
+    )
 
 
 @PRODUCTS.route('/products', methods=['POST'])
@@ -83,21 +87,21 @@ def create_product():
 
     try:
         path = create_file_path(company, str(_id))
-        filenames = save(path, request.files.getlist('file'), new_product)
-        paths = list()
+        filenames = save(path, request.files.getlist('file'))
+        files = list()
         for filename in filenames:
-            paths.append({'path': '/materials/' + company + '/' + str(_id) + '/' + filename})
+            files.append({'file': '/materials/' + company + '/' + str(_id) + '/' + filename})
 
     except Exception as e:
         return response(str(e), 409)
 
     DB.products.find_one_and_update(
         {'_id': ObjectId(_id)},
-        {'$set': {'paths': paths}}
+        {'$set': {'files': files}}
     )
     new_product.update({
         '_id': str(_id),
-        'paths': paths
+        'files': files
     })
     return response('Product was created', 201, { 'data': {'product': new_product}})
 
@@ -117,7 +121,7 @@ def get_product(_id):
             'name': product['name'],
             'description': product['description'],
             'createdBy': product['createdBy'],
-            'paths': product['paths'],
+            'files': product['files'],
             'serialNo': product['serialNo'],
             'producer': product['producer']
         }
@@ -126,20 +130,57 @@ def get_product(_id):
 
     return response('Found product', 200, { 'data': { 'product': get_product } })
 
-@PRODUCTS.route('/products/upload', methods=['POST'])
-def upload_actions():
+@PRODUCTS.route('/products/<_id>/upload', methods=['POST'])
+def upload_actions(_id):
 
     # Get from JWT instead
-    file_company = request.form['company']
-    # Get from URL id
-    product = 'a'
+    # file_company = request.form['company']
+    try:
+        token = request.form['jwt']
+    except Exception:
+        return response('No JWT', 400)
+
+    try:
+        payload = jwt.decode(token, 'super-secret')
+    except Exception:
+        return response('Tampered token', 400)
+
+    if payload['role'] != 'representative':
+        return response('You are not a representative', 400)
+
+    representative = DB.users.find_one({'username': payload['username']})
+    file_company = representative['owner']
 
     try:
         check_request_files(request.files)
     except AttributeError as e:
         return response(str(e), 400)
 
-    path = create_file_path(file_company, product)
-    save(path, request.files.getlist('file'))
+    try:
+        product = DB.products.find_one({'_id': ObjectId(_id), 'producer': file_company})
+    except Exception as e:
+        return response(str(e), 400)
 
-    return response('Successfully uploaded material', 200)
+    try:
+        path = create_file_path(file_company, _id)
+        filenames = save(path, request.files.getlist('file'))
+        files = list()
+        for filename in filenames:
+            files.append({'file': '/materials/' + file_company + '/' + str(_id) + '/' + filename})
+
+    except Exception as e:
+        return response(str(e), 409)
+
+    updated_product = DB.products.find_one_and_update(
+        {'_id': ObjectId(_id)},
+        {'$push': {'files': { '$each':files}}},
+        return_document=ReturnDocument.AFTER
+    )
+    updated_product.update({
+        '_id': str(updated_product['_id'])
+    })
+    return response(
+        'Successfully uploaded material to the product',
+        200,
+        { 'data': {'product': updated_product} }
+    )
