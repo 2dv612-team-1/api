@@ -95,7 +95,11 @@ def create_product():
         {'_id': ObjectId(_id)},
         {'$set': {'paths': paths}}
     )
-    return response('Product was created', 201)
+    new_product.update({
+        '_id': str(_id),
+        'paths': paths
+    })
+    return response('Product was created', 201, { 'data': {'product': new_product}})
 
 
 @PRODUCTS.route('/products/<_id>')
@@ -113,12 +117,14 @@ def get_product(_id):
             'name': product['name'],
             'description': product['description'],
             'createdBy': product['createdBy'],
-            'path': product['path']
+            'paths': product['paths'],
+            'serialNo': product['serialNo'],
+            'producer': product['producer']
         }
     except Exception:
         return response('Cannot find product', 400)
 
-    return response(get_product, 200)
+    return response('Found product', 200, { 'data': { 'product': get_product } })
 
 @PRODUCTS.route('/products/upload', methods=['POST'])
 def upload_actions():
