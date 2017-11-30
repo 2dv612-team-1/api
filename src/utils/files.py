@@ -31,8 +31,8 @@ def check_request_files(request_files):
     req_files = request_files
     for file_key in req_files:
         current_app.logger.info(file_key)
-        if not file_key == 'file':
-            raise AttributeError('Form key for files must be \'file\'')
+        if not file_key == 'files':
+            raise AttributeError('Form key for files must be \'files\'')
     files = req_files.getlist('file')
     for file in files:
         if not allowed_file(file.filename):
@@ -48,7 +48,7 @@ def save(path, files):
 
     Arguments:
         path {string} -- A path string created by joining company name with product name
-        files {list} -- request.files.getlist('file')
+        files {list} -- request.files.getlist('files')
 
     Returns:
         list -- filenames after time stamp has been appended
