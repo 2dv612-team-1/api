@@ -351,6 +351,7 @@ Uploads material to the specified product. Requires the following data:
     "files": [pdf.files.to.upload]
 
 Returns the following JSON:
+
     {
         "data": {
             "product": {
