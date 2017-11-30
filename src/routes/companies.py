@@ -6,6 +6,7 @@ from flask import Blueprint, request
 from utils.response import response
 from dal.users import get_users_with_role
 from dal.companies import create_company, get_representatives_for_company, dal_create_representative
+from dal.products import get_products
 
 
 COMPANIES = Blueprint('companies', __name__)
@@ -70,7 +71,7 @@ def create_representative(name):
 def get_product(name):
     """Gets all products for the company"""
 
-    products = super_dal.get_products({'producer':name})
+    products = get_products({'producer':name})
 
     return response(
         'Successfully retreived all the products for company ' + name,
