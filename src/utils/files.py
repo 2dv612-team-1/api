@@ -43,7 +43,7 @@ def check_request_files(request_files):
 def create_file_path(company, product):
     return os.path.join(company, product)
 
-def save(path, files):
+def save(path, files, product):
     """Saves the files to the specified path which should be based on company and product name
 
     Creates folder if not exists and places file in there based on company and product name
@@ -52,11 +52,21 @@ def save(path, files):
         path {string} -- A path string created by joining company name with product name
     """
 
+    data = []
+
     for file in files:
-        filename = secure_filename(file.filename)
+        filename = secure_filename(file.filename).split('.')
         file_folder = create_folder(path)
-        file_path = os.path.join(file_folder, filename)
+        time_stamp = str(time.time()).split('.')[0]
+        file_time = filename[0] + '-' + time_stamp + '.' + filename[1]
+        file_path = os.path.join(file_folder, file_time)
         file.save(file_path)
+        data.append({
+            'path': file_path[1:len(file_path)],
+            'url': '/' + product['producer'] + '/' + product['serialNo'] + '/' + file_time
+        })
+
+    return data
 
 def create_folder(path):
     file_folder = os.path.join(UPLOAD_FOLDER, path)
