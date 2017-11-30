@@ -64,3 +64,18 @@ def create_representative(name):
 
     except AttributeError:
         return response('Wrong credentials', 400)
+
+
+@COMPANIES.route('/companies/<name>/products')
+def get_product(name):
+    """Gets all products for the company"""
+
+    products = super_dal.get_products({'producer':name})
+
+    return response(
+        'Successfully retreived all the products for company ' + name,
+        200,
+        { 'data':
+            { 'products': products }
+        }
+    )
