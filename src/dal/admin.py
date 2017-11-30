@@ -1,4 +1,5 @@
-from mongo_client import db_conn
+
+from .mongo_client import db_conn
 import jwt
 
 """
@@ -20,7 +21,7 @@ def auth_and_return_admin(form):
         return encoded
 
     else:
-        return AttributeError()
+        raise AttributeError()
 
 
 """Creates default admin account in admin collection"""

@@ -1,4 +1,4 @@
-from mongo_client import db_conn
+from .mongo_client import db_conn
 import jwt
 
 """
@@ -20,7 +20,7 @@ def auth_and_return_user(form):
         return encoded, found_user['role']
 
     else:
-        return AttributeError()
+        raise AttributeError()
 
 
 """Search for user by username"""
@@ -40,9 +40,9 @@ def check_user_token(token):
 """Iterates users collection and returns dict of usernames with role"""
 
 
-def get_users_with_role(form):
+def get_users_with_role(role):
     users = []
-    for user in db_conn.users.find({'role': form['role']}):
+    for user in db_conn.users.find({'role': role}):
         users.append({'username': user['username']})
 
     return users

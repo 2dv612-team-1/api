@@ -7,11 +7,7 @@ from pymongo import MongoClient
     self.db_conn.admin      => admin collection
     self.db_conn.categories => categories collection
 
-    self.db_conn.products   => products collection      {'  _id:autogen
-                                                            filepath':uploads/filename,
-                                                            'title/display name': random title
-                                                            'owner':company name,
-                                                            'category':category name} ?
+    self.db_conn.products   => products collection
 """
 
 client = MongoClient('mongodb:27017')

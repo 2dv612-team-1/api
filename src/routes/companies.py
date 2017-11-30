@@ -5,7 +5,7 @@ Company routes
 from flask import Blueprint, request
 from utils.response import response
 from dal.users import get_users_with_role
-from dal.companies import create_company, get_representatives_for_company, create_representative
+from dal.companies import create_company, get_representatives_for_company, dal_create_representative
 
 
 COMPANIES = Blueprint('companies', __name__)
@@ -20,7 +20,7 @@ def company_actions():
         users = get_users_with_role('company')
         return response('Successfully extracted all users', 200, {'users': users})
     except SystemError:
-        return response('Something went wrong while retreiving the data', 500)
+        return response('Something went wrong while retrieving the data', 500)
 
 
 @COMPANIES.route('/companies', methods=['POST'])
@@ -55,16 +55,12 @@ def create_representative(name):
     """Creates representative"""
     try:
 
-        representative_exists = create_representative(request.form, name)
+        representative_exists = dal_create_representative(request.form, name)
 
         if representative_exists:
             return response('Username already exists', 409)
         else:
             return response('Representative was created', 201)
 
-        """
-        else:
-            return response('You are not a company', 400)
-        """
     except AttributeError:
         return response('Wrong credentials', 400)
