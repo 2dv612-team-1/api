@@ -12,17 +12,17 @@ from routes.products import PRODUCTS
 from routes.categories import CATEGORIES
 from routes.materials import MATERIALS
 from flask_cors import CORS
-from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
+# from flask_limiter import Limiter
+# from flask_limiter.util import get_remote_address
 
 APP = Flask(__name__)
 CORS(APP)
-LIMITER = Limiter(
-    APP,
-    key_func=get_remote_address
-)
+# LIMITER = Limiter(
+#     APP,
+#     key_func=get_remote_address
+# )
 
-LIMITER.limit("50/day;10/hour")(AUTH)
+# LIMITER.limit("50/day;10/hour")(AUTH)
 
 APP.register_blueprint(ENTRY)
 APP.register_blueprint(CONSUMERS)
