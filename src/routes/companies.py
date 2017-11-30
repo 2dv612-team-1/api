@@ -80,3 +80,9 @@ def create_representative(name):
             return response('You are not a company', 400)
     except AttributeError:
         return response('Wrong credentials', 400)
+
+@COMPANIES.route('/companies/<name>/products')
+def get_product(name):
+    """Gets all products for the company"""
+
+
