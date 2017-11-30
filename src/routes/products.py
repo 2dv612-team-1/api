@@ -23,12 +23,13 @@ def get_products():
     products_data = []
     for product in DB.products.find():
         products_data.append({
-            'name': product.get('name'),
-            'category': product.get('category'),
-            'description': product.get('description'),
-            'createdBy': product.get('createdBy'),
-            '_id': str(product.get('_id')),
-            'files': product.get('files')
+            'name': product['name'],
+            'category': product['category'],
+            'description': product['description'],
+            'createdBy': product['createdBy'],
+            '_id': str(product['_id']),
+            'files': product['files'],
+            'producer': product['producer']
         })
 
     return response(
@@ -69,7 +70,8 @@ def create_product():
             'description': request.form['description'],
             'serialNo': request.form['serialNo'],
             'createdBy': payload['username'],
-            'producer': company
+            'producer': company,
+            'files': list()
         }
     except Exception:
         return response('Wrong information', 400)
@@ -150,6 +152,8 @@ def upload_actions(_id):
     file_company = representative['owner']
 
     try:
+        if len(request.files) < 1:
+            raise AttributeError('Files missing from request')
         check_request_files(request.files)
     except AttributeError as e:
         return response(str(e), 400)
