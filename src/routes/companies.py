@@ -85,4 +85,12 @@ def create_representative(name):
 def get_product(name):
     """Gets all products for the company"""
 
+    products = super_dal.get_products({'producer':name})
 
+    return response(
+        'Successfully retreived all the products for company ' + name,
+        200,
+        { 'data':
+            { 'products': products }
+        }
+    )
