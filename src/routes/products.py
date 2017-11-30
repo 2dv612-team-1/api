@@ -70,20 +70,22 @@ def create_product():
     except Exception:
         return response('Wrong information', 400)
 
-    searchObj = {
+    search_obj = {
         'name': new_product['name'],
         'producer': company,
         'serialNo': new_product['serialNo']
     }
 
-    if DB.products.find_one(searchObj):
+    if DB.products.find_one(search_obj):
         return response('Product already exists', 409)
+
 
     try:
         path = create_file_path(company, new_product['name'])
-        save(path, request.files.getlist('file'))
-        url = '/' + company + '/' + new_product['serialNo']
-        new_product.update({'url': url, 'path': path})
+        data = save(path, request.files.getlist('file'), new_product)
+        for d in data:
+            new_product.update({'url': d['url'], 'path': d['path']})
+
     except Exception:
         return response('Could not create file', 409)
 
@@ -91,27 +93,27 @@ def create_product():
     return response('Product was created', 201)
 
 
-@PRODUCTS.route('/products/<serial_no>')
-def get_product(_id):
-    """Gets a single product"""
+# @PRODUCTS.route('/products/<serial_no>')
+# def get_product(_id):
+#     """Gets a single product"""
 
-    try:
-        product = DB.products.find_one({'producer': 'serialNo': serial_no})
-    except Exception:
-        return response('Not a valid id', 400)
+#     try:
+#         product = DB.products.find_one({'producer': 'serialNo': serial_no})
+#     except Exception:
+#         return response('Not a valid id', 400)
 
-    try:
-        get_product = {
-            'category': product['category'],
-            'title': product['title'],
-            'description': product['description'],
-            'createdBy': product['createdBy'],
-            'path': product['path']
-        }
-    except Exception:
-        return response('Cannot find product', 400)
+#     try:
+#         get_product = {
+#             'category': product['category'],
+#             'title': product['title'],
+#             'description': product['description'],
+#             'createdBy': product['createdBy'],
+#             'path': product['path']
+#         }
+#     except Exception:
+#         return response('Cannot find product', 400)
 
-    return response(get_product, 200)
+#     return response(get_product, 200)
 
 @PRODUCTS.route('/products/upload', methods=['POST'])
 def upload_actions():
