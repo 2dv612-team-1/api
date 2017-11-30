@@ -89,7 +89,7 @@ def create_product():
 
     try:
         path = create_file_path(company, str(_id))
-        filenames = save(path, request.files.getlist('file'))
+        filenames = save(path, request.files.getlist('files'))
         files = list()
         for filename in filenames:
             files.append({'file': '/materials/' + company + '/' + str(_id) + '/' + filename})
@@ -165,7 +165,7 @@ def upload_actions(_id):
 
     try:
         path = create_file_path(file_company, _id)
-        filenames = save(path, request.files.getlist('file'))
+        filenames = save(path, request.files.getlist('files'))
         files = list()
         for filename in filenames:
             files.append({'file': '/materials/' + file_company + '/' + str(_id) + '/' + filename})
