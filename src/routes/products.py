@@ -59,7 +59,6 @@ def create_product():
     try:
         representative = DB.users.find_one({'username': payload['username']})
         company = representative['owner']
-        current_app.logger.info(company)
         new_product = {
             'category': request.form['category'],
             'name': request.form['name'],
