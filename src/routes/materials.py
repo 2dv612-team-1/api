@@ -12,8 +12,8 @@ CLIENT = MongoClient('mongodb:27017')
 DB = CLIENT.api
 
 
-@MATERIALS.route('/materials/<company>/<path:filename>')
-def get_file(company, filename):
+@MATERIALS.route('/materials/<company>/<product_id>/<path:filename>')
+def get_file(company, product_id, filename):
     try:
         return send_from_directory(UPLOAD_FOLDER + '/' + company, filename)
     except Exception:
