@@ -10,6 +10,7 @@ from routes.auth import AUTH
 from routes.consumers import CONSUMERS
 from routes.products import PRODUCTS
 from routes.categories import CATEGORIES
+from routes.materials import MATERIALS
 from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
@@ -28,6 +29,7 @@ APP.register_blueprint(CONSUMERS)
 APP.register_blueprint(ADMIN)
 APP.register_blueprint(COMPANIES)
 APP.register_blueprint(CATEGORIES)
+APP.register_blueprint(MATERIALS)
 APP.register_blueprint(AUTH)
 APP.register_blueprint(PRODUCTS)
 
