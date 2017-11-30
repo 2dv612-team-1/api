@@ -23,6 +23,7 @@ def create_categories():
     """Creates a new category"""
 
     try:
+        
         create_category(request.form)
         return response('Category created', 201)
 

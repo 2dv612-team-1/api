@@ -20,7 +20,7 @@ def company_actions():
         users = get_users_with_role('company')
         return response('Successfully extracted all users', 200, {'users': users})
     except SystemError:
-        return response('Something went wrong while retreiving the data', 500)
+        return response('Something went wrong while retrieving the data', 500)
 
 
 @COMPANIES.route('/companies', methods=['POST'])

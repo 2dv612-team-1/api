@@ -36,7 +36,6 @@ class CompaniesTestCase(BaseTest):
         response_data = self._getResponseDataFromPostRequest('/companies', 'admin', comp_username, comp_password)
 
         self.assertEqual(response_data['status'], 201)
-
         self.assertTrue(self._db_helper.deleteOneUserTestData(comp_username))
 
     #Test @COMPANIES.route('/companies', methods=['POST'])
@@ -89,7 +88,6 @@ class CompaniesTestCase(BaseTest):
         self.assertEqual(response_data['status'], 201)
         self.assertEqual(response_data['message'], 'Representative was created')
         self.assertTrue(self._db_helper.deleteOneUserTestData('new_username'))
-
 
 
     #Test @COMPANIES.route('/companies/<name>/representatives', methods=['POST'])

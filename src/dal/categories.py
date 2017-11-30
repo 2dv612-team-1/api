@@ -14,23 +14,24 @@ def get_categories():
 
     return categories_data
 
-# Return or raise exception
+
 def create_category(form):
     try:
         token = form['jwt']
         category = form['category']
+
     except Exception:
-        return WrongCredentials()
+        raise WrongCredentials()
     try:
         payload = jwt.decode(token, 'super-secret')
 
     except Exception:
-        return AttributeError()
+        raise AttributeError()
 
     if payload['role'] == 'admin':
         category_exists = db_conn.categories.find_one({'category': category})
 
         if category_exists:
-            return AlreadyExists()
+            raise AlreadyExists()
 
         db_conn.categories.insert({'category': category})
