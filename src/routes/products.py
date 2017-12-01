@@ -92,12 +92,10 @@ def create_product():
         filenames = save(path, request.files.getlist('files'))
 
         files = list(map(lambda filename: {
-            'file': {
-                'path': '/materials/' + company + '/' + str(_id) + '/' + filename,
-                'stars': list(),
-                'votes': 0,
-                'comments': list()
-            }
+            'path': '/materials/' + company + '/' + str(_id) + '/' + filename,
+            'stars': list(),
+            'votes': 0,
+            'comments': list()
         }, filenames))
 
     except Exception as e:
@@ -138,7 +136,7 @@ def get_product(_id):
 
     return response('Found product', 200, { 'data': { 'product': get_product } })
 
-@PRODUCTS.route('/products/<_id>/upload', methods=['POST'])
+@PRODUCTS.route('/products/<_id>/materials', methods=['POST'])
 def upload_actions(_id):
 
     try:
@@ -173,15 +171,11 @@ def upload_actions(_id):
         path = create_file_path(file_company, _id)
         filenames = save(path, request.files.getlist('files'))
         files = list(map(lambda filename: {
-            'file': {
-                'path': '/materials/' + file_company + '/' + str(_id) + '/' + filename,
-                'stars': list(),
-                'votes': 0,
-                'comments': list()
-            }
+            'path': '/materials/' + file_company + '/' + str(_id) + '/' + filename,
+            'stars': list(),
+            'votes': 0,
+            'comments': list()
         }, filenames))
-
-
     except Exception as e:
         return response(str(e), 409)
 
