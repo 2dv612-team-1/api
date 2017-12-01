@@ -189,6 +189,6 @@ def upload_actions(_id):
     })
     return response(
         'Successfully uploaded material to the product',
-        200,
+        201,
         { 'data': {'product': updated_product} }
     )
