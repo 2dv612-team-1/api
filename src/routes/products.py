@@ -2,7 +2,6 @@
 Products route
 """
 
-<<<<<<< HEAD
 import os
 from flask import Blueprint, request
 from pymongo import MongoClient
@@ -12,7 +11,7 @@ import jwt
 
 UPLOAD_FOLDER = './uploads'
 ALLOWED_EXTENSIONS = set(['pdf'])
-=======
+
 from flask import Blueprint, request, current_app
 from pymongo import MongoClient, ReturnDocument
 from exceptions.TamperedToken import TamperedToken
@@ -21,38 +20,13 @@ from utils.files import check_request_files, create_file_path, save
 from bson.objectid import ObjectId
 import jwt
 
->>>>>>> origin/master
+
 PRODUCTS = Blueprint('products', __name__)
 CLIENT = MongoClient('mongodb:27017')
 DB = CLIENT.api
 
 # add bcrypt
 
-<<<<<<< HEAD
-# Break out to util
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-@PRODUCTS.route('/products/upload', methods=['POST'])
-def upload_actions():
-    if 'file' not in request.files:
-        return response('File param should be \'file\'', 400)
-    file = request.files['file']
-    file_category = request.form['category']
-    # if user does not select file, browser also
-    # submit a empty part without filename
-    if file.filename == '':
-        return response('No file present in request', 400)
-    if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-        file_folder = os.path.join(UPLOAD_FOLDER, file_category)
-        if not os.path.exists(file_folder):
-            os.makedirs(file_folder)
-        file_path = os.path.join(file_folder, filename)
-        file.save(file_path)
-        return response('Successfully uploaded the file', 200)
-=======
 @PRODUCTS.route('/products')
 def get_products():
     """Gets all available products"""
@@ -223,4 +197,3 @@ def upload_actions(_id):
         200,
         { 'data': {'product': updated_product} }
     )
->>>>>>> origin/master
