@@ -90,9 +90,15 @@ def create_product():
     try:
         path = create_file_path(company, str(_id))
         filenames = save(path, request.files.getlist('files'))
-        files = list()
-        for filename in filenames:
-            files.append({'file': '/materials/' + company + '/' + str(_id) + '/' + filename})
+
+        files = list(map(lambda filename: {
+            'file': {
+                'file': '/materials/' + company + '/' + str(_id) + '/' + filename,
+                'stars': list(),
+                'votes': 0,
+                'comments': list()
+            }
+        }, filenames))
 
     except Exception as e:
         return response(str(e), 409)
