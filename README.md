@@ -344,7 +344,7 @@ Returns the following JSON:
     }
 
 #### Upload material to product
-https://nanotu.be/products/<_id>/upload | POST
+https://nanotu.be/products/<_id>/materials | POST
 Uploads material to the specified product. Requires the following data:
 
     "jwt": "a.representative.jwt",
