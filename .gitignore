@@ -3,5 +3,10 @@ src/__pycache__/
 node_modules
 *.log
 .vscode/
+<<<<<<< HEAD
+=======
+materials
+.swp
+>>>>>>> origin/master
 .idea
 .idea/workspace.xml

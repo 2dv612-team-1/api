@@ -4,6 +4,7 @@ Auth route
 
 from flask import Blueprint, request
 from utils.response import response
+
 from dal.users import auth_and_return_user
 
 AUTH = Blueprint('auth', __name__)

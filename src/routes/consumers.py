@@ -4,9 +4,15 @@ Consumers
 
 from flask import Blueprint, request
 from utils.response import response
+<<<<<<< HEAD
 from dal.users import get_users_with_role, check_user_token
 from dal.consumer import create_consumer
+=======
+from utils.dal import SuperDAL
+import jwt
+>>>>>>> origin/master
 
+super_dal = SuperDAL()
 CONSUMERS = Blueprint('consumers', __name__)
 
 

@@ -254,3 +254,209 @@ Returns statuscode 200 and the JSON
         "status": 200,
         "token": "a-jwt-of-great-importance33"
     }
+
+#### Get Categories
+https://nanotu.be/categories | GET
+Gets all available categories.
+
+    "message": [
+        {
+            "category": "toaster",
+            "_id": 0
+        },
+        {
+            "category": "not-toaster",
+            "_id": 1
+        }
+    ],
+    "status": 200
+
+#### Create Category
+https://nanotu.be/categories | POST
+Creates a new category. Requires the following data:
+
+    "jwt": "an.admin.jwt",
+    "category": "new-category-name"
+
+Returns statuscode 201 and the JSON
+
+    {
+        "message": "Category created",
+        "status": 201
+    }
+
+#### Get products
+https://nanotu.be/products | GET
+Gets all products in the system.
+
+Returns statuscode 200 and the JSON
+
+    {
+        "message": "Successfully retreived all the products",
+        "status": 200,
+        "data": {
+            "products": [
+                {
+                    "_id": "5a201042e3214800071cf307",
+                    "category": "cars",
+                    "createdBy": "ElonMusk",
+                    "description": "en gul bil",
+                    "files": [
+                        {
+                            "file": "/materials/tesla/productID/filename-15120535634336069.pdf"
+                        }
+                    ],
+                    "name": "gul bil",
+                    "producer": "tesla"
+                }
+            ]
+        }
+    }
+
+#### Create product
+https://nanotu.be/products | POST
+Creates a new product. Requires the following data:
+
+    "jwt": "a.representative.jwt",
+    "name": "product.name",
+    "serialNo": "product.serial.number",
+    "description": "product.description",
+    "category": "product.category",
+    "files": [] //optional array of files
+
+Returns the following JSON:
+
+    {
+        "data": {
+            "product": {
+                "_id": "5a2025d4e32148031032e9d4",
+                "category": "cars",
+                "createdBy": "ElonMusk",
+                "description": "en blå bil",
+                "files": [], //If no files were present in the POST request
+                "name": "blå bil",
+                "producer": "tesla",
+                "serialNo": "122"
+            }
+        },
+        "message": "Product was created",
+        "status": 201
+    }
+
+#### Upload material to product
+https://nanotu.be/products/<_id>/upload | POST
+Uploads material to the specified product. Requires the following data:
+
+    "jwt": "a.representative.jwt",
+    "files": [pdf.files.to.upload]
+
+Returns the following JSON:
+
+    {
+        "data": {
+            "product": {
+                "_id": "5a202ddfe3214803f7dc192a",
+                "category": "cars",
+                "createdBy": "ElonMusk",
+                "description": "en blå bil",
+                "files": [
+                    {
+                        "file": "/materials/tesla/product_id/filename-1512058335748237.pdf"
+                    },
+                    {
+                        "file": "/materials/tesla/product_id/filename-15120583750399292.pdf"
+                    },
+                    {
+                        "file": "/materials/tesla/product_id/filename-15120583750524912.pdf"
+                    },
+                    {
+                        "file": "/materials/tesla/product_id/filename-15120583750654202.pdf"
+                    }
+                ],
+                "name": "blå bil",
+                "producer": "tesla",
+                "serialNo": "1223"
+            }
+        },
+        "message": "Successfully uploaded material to the product",
+        "status": 200
+    }
+
+
+#### Get product info
+https://nanotu.be/products/<_id> | GET
+Gets the information for the specified product. Returns the following JSON:
+
+    {
+        "data": {
+            "product": {
+                "_id": "5a202ddfe3214803f7dc192a",
+                "category": "cars",
+                "createdBy": "ElonMusk",
+                "description": "en blå bil",
+                "files": [
+                    {
+                        "file": "/materials/tesla/product_id/filename-1512058335748237.pdf"
+                    },
+                    {
+                        "file": "/materials/tesla/product_id/filename-15120583750399292.pdf"
+                    },
+                    {
+                        "file": "/materials/tesla/product_id/filename-15120583750524912.pdf"
+                    },
+                    {
+                        "file": "/materials/tesla/product_id/filename-15120583750654202.pdf"
+                    }
+                ],
+                "name": "blå bil",
+                "producer": "tesla",
+                "serialNo": "1223"
+            }
+        },
+        "message": "Successfully uploaded material to the product",
+        "status": 200
+    }
+
+#### Get all products for a company
+https://nanotu.be/companies/<name>/products | GET
+Returns all the listed products of the specified company as the following JSON:
+
+    {
+        "data": {
+            "products": [
+                {
+                    "_id": "5a201b3be32148027dfa18dd",
+                    "category": "super_awesome_cars",
+                    "createdBy": "ElonMusk",
+                    "description": "en gul bil",
+                    "files": [],
+                    "name": "gul bil",
+                    "producer": "tesla",
+                    "serialNo": "123333"
+                },
+                {
+                    "_id": "5a202ddfe3214803f7dc192a",
+                    "category": "super_awesome_cars",
+                    "createdBy": "ElonMusk",
+                    "description": "en blå bil",
+                    "files": [
+                        {
+                            "file": "/materials/tesla/product_id/filename-1512058335748237.pdf"
+                        },
+                        {
+                            "file": "/materials/tesla/product_id/filename-15120583750399292.pdf"
+                        }
+                    ],
+                    "name": "blå bil",
+                    "producer": "tesla",
+                    "serialNo": "1223"
+                }
+            ]
+        },
+        "message": "Successfully retreived all the products for company tesla",
+        "status": 200
+    }
+
+#### Get material
+https://nanotu.be/materials/<company>/<product_id>/<filename> | GET
+Returns the saved file
