@@ -54,7 +54,9 @@ def save(path, files):
         list -- filenames after time stamp has been appended
     """
 
-    data = []
+    file_with_stamp = []
+    file_without_stamp = []
+
 
     for file in files:
         filename = secure_filename(file.filename).split('.')
@@ -63,9 +65,12 @@ def save(path, files):
         file_time = filename[0] + '-' + time_stamp + '.' + filename[1]
         file_path = os.path.join(file_folder, file_time)
         file.save(file_path)
-        data.append(file_time)
+        file_with_stamp.append({
+            'file_time': file_time,
+            'file_name': filename[0]
+        })
 
-    return data
+    return file_with_stamp 
 
 def create_folder(path):
     file_folder = os.path.join(UPLOAD_FOLDER, path)
