@@ -16,6 +16,7 @@ DB = CLIENT.api
 
 # add bcrypt
 
+
 @PRODUCTS.route('/products')
 def get_products():
     """Gets all available products"""
@@ -35,7 +36,7 @@ def get_products():
     return response(
         'Successfully retreived all the products',
         200,
-        { 'data': { 'products': products_data } }
+        {'data': {'products': products_data}}
     )
 
 
@@ -110,7 +111,7 @@ def create_product():
         '_id': str(_id),
         'files': files
     })
-    return response('Product was created', 201, { 'data': {'product': new_product}})
+    return response('Product was created', 201, {'data': {'product': new_product}})
 
 
 @PRODUCTS.route('/products/<_id>')
@@ -134,7 +135,8 @@ def get_product(_id):
     except Exception:
         return response('Cannot find product', 400)
 
-    return response('Found product', 200, { 'data': { 'product': get_product } })
+    return response('Found product', 200, {'data': {'product': get_product}})
+
 
 @PRODUCTS.route('/products/<_id>/materials', methods=['POST'])
 def upload_actions(_id):
@@ -163,7 +165,8 @@ def upload_actions(_id):
         return response(str(e), 400)
 
     try:
-        product = DB.products.find_one({'_id': ObjectId(_id), 'producer': file_company})
+        product = DB.products.find_one(
+            {'_id': ObjectId(_id), 'producer': file_company})
     except Exception as e:
         return response(str(e), 400)
 
@@ -172,6 +175,7 @@ def upload_actions(_id):
         filenames = save(path, request.files.getlist('files'))
         # return response(str(filenames[]), 200)
         files = list(map(lambda filename: {
+            'material': filename['file_time'],
             'path': '/materials/' + file_company + '/' + str(_id) + '/' + filename['file_time'],
             'name': filename['file_name'],
             'stars': list(),
@@ -184,7 +188,7 @@ def upload_actions(_id):
 
     updated_product = DB.products.find_one_and_update(
         {'_id': ObjectId(_id)},
-        {'$push': {'files': { '$each':files}}},
+        {'$push': {'files': {'$each': files}}},
         return_document=ReturnDocument.AFTER
     )
     updated_product.update({
@@ -193,11 +197,17 @@ def upload_actions(_id):
     return response(
         'Successfully uploaded material to the product',
         201,
-        { 'data': {'product': updated_product} }
+        {'data': {'product': updated_product}}
     )
 
-@PRODUCTS.route('/products/<product_id>/materials/<material_id>/rate', methods=['POST'])
-def rate_material():
+
+@PRODUCTS.route('/products/<product_id>/materials/<material_name>/rate', methods=['POST'])
+def rate_material(product_id, material_name):
     """Used to rate material"""
+    updated = DB.products.find_one_and_update(
+        {'_id': ObjectId(product_id), 'files.material': material_name},
+        {'$inc': {'files.$.votes': 1}},
+    )
+
     return "hej"
     # try:
