@@ -206,6 +206,15 @@ def rate_material(product_id, material_name):
     """Used to rate material"""
 
     try:
+        token = request.form['jwt']
+        payload = jwt.decode(token, 'super-secret')
+    except Exception:
+        return response('Expected jwt key', 400)
+
+    if payload['role'] != 'consumer':
+        return response('Have to be consumer to rate', 400)
+
+    try:
         star = request.form['star']
     except Exception:
         return response('Expected star key', 400)
@@ -223,6 +232,4 @@ def rate_material(product_id, material_name):
         {'$inc': {'files.$.votes': 1}},
     )
 
-
     return response(str(updated), 200) 
-    # try:
