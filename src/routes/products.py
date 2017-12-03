@@ -204,10 +204,25 @@ def upload_actions(_id):
 @PRODUCTS.route('/products/<product_id>/materials/<material_name>/rate', methods=['POST'])
 def rate_material(product_id, material_name):
     """Used to rate material"""
+
+    try:
+        star = request.form['star']
+    except Exception:
+        return response('Expected star key', 400)
+
+    try:
+        starInt = int(star)
+    except Exception:
+        return response('Expected star to be int', 400)
+
+    if starInt > 5 or starInt < 1:
+        return response('Expected star value to be between 1 and 5', 400)
+
     updated = DB.products.find_one_and_update(
         {'_id': ObjectId(product_id), 'files.material': material_name},
         {'$inc': {'files.$.votes': 1}},
     )
 
-    return "hej"
+
+    return response(str(updated), 200) 
     # try:
