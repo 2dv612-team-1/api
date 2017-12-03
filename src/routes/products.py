@@ -91,10 +91,10 @@ def create_product():
     try:
         path = create_file_path(company, str(_id))
         filenames = save(path, request.files.getlist('files'))
-
         files = list(map(lambda filename: {
-            'path': '/materials/' + company + '/' + str(_id) + '/' + filename,
-            'name': filename,
+            'material': filename['file_time'],
+            'path': '/materials/' + company + '/' + str(_id) + '/' + filename['file_time'],
+            'name': filename['file_name'],
             'stars': list(),
             'votes': 0,
             'comments': list()
@@ -173,7 +173,6 @@ def upload_actions(_id):
     try:
         path = create_file_path(file_company, _id)
         filenames = save(path, request.files.getlist('files'))
-        # return response(str(filenames[]), 200)
         files = list(map(lambda filename: {
             'material': filename['file_time'],
             'path': '/materials/' + file_company + '/' + str(_id) + '/' + filename['file_time'],
@@ -229,7 +228,7 @@ def rate_material(product_id, material_name):
 
     updated = DB.products.find_one_and_update(
         {'_id': ObjectId(product_id), 'files.material': material_name},
-        {'$inc': {'files.$.votes': 1}},
+        {'$inc': {'files.$.votes': 1}, '$push': {'files.$.stars': starInt}}
     )
 
-    return response(str(updated), 200) 
+    return response(str(updated), 200)
