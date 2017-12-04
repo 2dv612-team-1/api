@@ -214,16 +214,16 @@ def rate_material(product_id, material_name):
         return response('Have to be consumer to rate', 400)
 
     try:
-        star = request.form['star']
+        rate = request.form['rate']
     except Exception:
-        return response('Expected star key', 400)
+        return response('Expected rate key', 400)
 
     try:
-        starInt = int(star)
+        rateInt = int(rate)
     except Exception:
-        return response('Expected star to be int', 400)
+        return response('Expected rate to be int', 400)
 
-    if starInt > 5 or starInt < 1:
+    if rateInt > 5 or rateInt < 1:
         return response('Expected star value to be between 1 and 5', 400)
 
     user_has_voted = DB.products.find_one({
@@ -237,13 +237,13 @@ def rate_material(product_id, material_name):
             '_id': ObjectId(product_id),
             'files.material': material_name,
             'files.stars.username': payload['username']},
-            {'$set': {'files.0.stars.$.rate': starInt}}
+            {'$set': {'files.0.stars.$.rate': rateInt}}
         )
     else:
         updated = DB.products.find_one_and_update(
             {'_id': ObjectId(product_id), 'files.material': material_name},
             {'$inc': {'files.$.votes': 1}, '$push': {
-                'files.$.stars': {'username': payload['username'], 'rate': starInt}}}
+                'files.$.stars': {'username': payload['username'], 'rate': rateInt}}}
         )
 
     return response(str(updated), 200)
