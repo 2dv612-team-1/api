@@ -233,10 +233,11 @@ def rate_material(product_id, material_name):
     })
 
     if user_has_voted:
-        updated = DB.products.find_one_and_update(
-            {'_id': ObjectId(product_id), 'files.material': material_name},
-            {'$inc': {'files.$.votes': 1}, '$push': {
-                'files.$.stars': {'username': payload['username'], 'rate': starInt}}}
+        updated = DB.products.find_and_modify({
+            '_id': ObjectId(product_id),
+            'files.material': material_name,
+            'files.stars.username': payload['username']},
+            {'$set': {'files.0.stars.$.rate': starInt}}
         )
     else:
         updated = DB.products.find_one_and_update(
