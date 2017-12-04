@@ -344,8 +344,8 @@ Returns the following JSON:
     }
 
 #### Upload material to product
-https://nanotu.be/products/<_id>/upload | POST
-Uploads material to the specified product. Requires the following data:
+https://nanotu.be/products/<_id>/materials | POST
+Uploads material to the specified product Requires the following data:
 
     "jwt": "a.representative.jwt",
     "files": [pdf.files.to.upload]
@@ -460,3 +460,10 @@ Returns all the listed products of the specified company as the following JSON:
 #### Get material
 https://nanotu.be/materials/<company>/<product_id>/<filename> | GET
 Returns the saved file
+
+#### Rate Material
+https://nanotu.be/products/<product_id>/materials/<material_name>/rate | POST
+Gives the selected material a rating. Requires the following data:
+
+    "jwt": "a.consumer.jwt",
+    "rate": 4 (An integer between 1 and 5)
