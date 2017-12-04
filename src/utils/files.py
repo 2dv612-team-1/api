@@ -55,8 +55,6 @@ def save(path, files):
     """
 
     file_with_stamp = []
-    file_without_stamp = []
-
 
     for file in files:
         filename = secure_filename(file.filename).split('.')
