@@ -250,4 +250,14 @@ def rate_material(product_id, material_name):
                 return_document=ReturnDocument.AFTER
             )
 
-    return response(str(updated), 200)
+    current_votes = updated['files'][0]['stars']
+    vote_amount = len(current_votes)
+    total = 0
+    for value in current_votes:
+        total += value['rate']
+
+    total_vote_value = vote_amount / total
+
+    return response(str({
+        'average': total_vote_value,
+    }), 200)
