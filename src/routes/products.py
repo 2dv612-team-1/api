@@ -2,16 +2,6 @@
 Products route
 """
 
-import os
-from flask import Blueprint, request
-from pymongo import MongoClient
-from utils.response import response
-from werkzeug.utils import secure_filename
-import jwt
-
-UPLOAD_FOLDER = './uploads'
-ALLOWED_EXTENSIONS = set(['pdf'])
-
 from flask import Blueprint, request, current_app
 from pymongo import MongoClient, ReturnDocument
 from exceptions.TamperedToken import TamperedToken
@@ -19,7 +9,6 @@ from utils.response import response
 from utils.files import check_request_files, create_file_path, save
 from bson.objectid import ObjectId
 import jwt
-
 
 PRODUCTS = Blueprint('products', __name__)
 CLIENT = MongoClient('mongodb:27017')
@@ -196,4 +185,4 @@ def upload_actions(_id):
         'Successfully uploaded material to the product',
         200,
         { 'data': {'product': updated_product} }
-    )
+)
