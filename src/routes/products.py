@@ -16,6 +16,7 @@ DB = CLIENT.api
 
 # add bcrypt
 
+
 @PRODUCTS.route('/products')
 def get_products():
     """Gets all available products"""
@@ -35,7 +36,7 @@ def get_products():
     return response(
         'Successfully retreived all the products',
         200,
-        { 'data': { 'products': products_data } }
+        {'data': {'products': products_data}}
     )
 
 
@@ -90,9 +91,14 @@ def create_product():
     try:
         path = create_file_path(company, str(_id))
         filenames = save(path, request.files.getlist('files'))
-        files = list()
-        for filename in filenames:
-            files.append({'file': '/materials/' + company + '/' + str(_id) + '/' + filename})
+        files = list(map(lambda filename: {
+            'material': filename['file_time'],
+            'path': '/materials/' + company + '/' + str(_id) + '/' + filename['file_time'],
+            'name': filename['file_name'],
+            'stars': list(),
+            'votes': 0,
+            'comments': list()
+        }, filenames))
 
     except Exception as e:
         return response(str(e), 409)
@@ -105,7 +111,7 @@ def create_product():
         '_id': str(_id),
         'files': files
     })
-    return response('Product was created', 201, { 'data': {'product': new_product}})
+    return response('Product was created', 201, {'data': {'product': new_product}})
 
 
 @PRODUCTS.route('/products/<_id>')
@@ -121,7 +127,6 @@ def get_product(_id):
         get_product = {
             'category': product['category'],
             'name': product['name'],
-            'description': product['description'],
             'createdBy': product['createdBy'],
             'files': product['files'],
             'serialNo': product['serialNo'],
@@ -130,9 +135,10 @@ def get_product(_id):
     except Exception:
         return response('Cannot find product', 400)
 
-    return response('Found product', 200, { 'data': { 'product': get_product } })
+    return response('Found product', 200, {'data': {'product': get_product}})
 
-@PRODUCTS.route('/products/<_id>/upload', methods=['POST'])
+
+@PRODUCTS.route('/products/<_id>/materials', methods=['POST'])
 def upload_actions(_id):
 
     try:
@@ -159,23 +165,29 @@ def upload_actions(_id):
         return response(str(e), 400)
 
     try:
-        product = DB.products.find_one({'_id': ObjectId(_id), 'producer': file_company})
+        product = DB.products.find_one(
+            {'_id': ObjectId(_id), 'producer': file_company})
     except Exception as e:
         return response(str(e), 400)
 
     try:
         path = create_file_path(file_company, _id)
         filenames = save(path, request.files.getlist('files'))
-        files = list()
-        for filename in filenames:
-            files.append({'file': '/materials/' + file_company + '/' + str(_id) + '/' + filename})
+        files = list(map(lambda filename: {
+            'material': filename['file_time'],
+            'path': '/materials/' + file_company + '/' + str(_id) + '/' + filename['file_time'],
+            'name': filename['file_name'],
+            'stars': list(),
+            'votes': 0,
+            'comments': list()
+        }, filenames))
 
     except Exception as e:
         return response(str(e), 409)
 
     updated_product = DB.products.find_one_and_update(
         {'_id': ObjectId(_id)},
-        {'$push': {'files': { '$each':files}}},
+        {'$push': {'files': {'$each': files}}},
         return_document=ReturnDocument.AFTER
     )
     updated_product.update({
@@ -183,6 +195,55 @@ def upload_actions(_id):
     })
     return response(
         'Successfully uploaded material to the product',
-        200,
-        { 'data': {'product': updated_product} }
+        201,
+        {'data': {'product': updated_product}}
     )
+
+
+@PRODUCTS.route('/products/<product_id>/materials/<material_name>/rate', methods=['POST'])
+def rate_material(product_id, material_name):
+    """Used to rate material"""
+
+    try:
+        token = request.form['jwt']
+        payload = jwt.decode(token, 'super-secret')
+    except Exception:
+        return response('Expected jwt key', 400)
+
+    if payload['role'] != 'consumer':
+        return response('Have to be consumer to rate', 400)
+
+    try:
+        rate = request.form['rate']
+    except Exception:
+        return response('Expected rate key', 400)
+
+    try:
+        rateInt = int(rate)
+    except Exception:
+        return response('Expected rate to be int', 400)
+
+    if rateInt > 5 or rateInt < 1:
+        return response('Expected star value to be between 1 and 5', 400)
+
+    user_has_voted = DB.products.find_one({
+        '_id': ObjectId(product_id),
+        'files.material': material_name,
+        'files.stars.username': payload['username']
+    })
+
+    if user_has_voted:
+        updated = DB.products.find_and_modify({
+            '_id': ObjectId(product_id),
+            'files.material': material_name,
+            'files.stars.username': payload['username']},
+            {'$set': {'files.0.stars.$.rate': rateInt}}
+        )
+    else:
+        updated = DB.products.find_one_and_update(
+            {'_id': ObjectId(product_id), 'files.material': material_name},
+            {'$inc': {'files.$.votes': 1}, '$push': {
+                'files.$.stars': {'username': payload['username'], 'rate': rateInt}}}
+        )
+
+    return response(str(updated), 200)
