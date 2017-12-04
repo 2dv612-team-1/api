@@ -10,7 +10,7 @@ services:
       - FLASK_APP=main.py
       - FLASK_DEBUG=1
       - 'RUN=flask run --host=0.0.0.0 --port=80'
-    command: flask run --host=0.0.0.0 --port=80
+    command: bash -c "(nosetests -v || true) && flask run --host=0.0.0.0 --port=80"
 
   mongodb:
     image: mongo:3.4

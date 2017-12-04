@@ -247,3 +247,4 @@ def rate_material(product_id, material_name):
         )
 
     return response(str(updated), 200)
+

@@ -6,8 +6,7 @@ from flask import Blueprint, request
 from utils.response import response
 from dal.users import get_users_with_role
 from dal.companies import create_company, get_representatives_for_company, dal_create_representative
-from dal.products import get_products
-
+from dal.products import dal_get_products
 
 COMPANIES = Blueprint('companies', __name__)
 
@@ -18,8 +17,10 @@ COMPANIES = Blueprint('companies', __name__)
 def company_actions():
     """Extracts companies"""
     try:
+
         users = get_users_with_role('company')
         return response('Successfully extracted all users', 200, {'users': users})
+
     except SystemError:
         return response('Something went wrong while retrieving the data', 500)
 
@@ -43,6 +44,7 @@ def company_creation():
 @COMPANIES.route('/companies/<name>/representatives')
 def get_representatives(name):
     """Gets list of representatives from specific company"""
+
     try:
         representatives = get_representatives_for_company(name)
         return response(name, 200, {'representatives': representatives})
@@ -64,6 +66,7 @@ def create_representative(name):
             return response('Representative was created', 201)
 
     except AttributeError:
+
         return response('Wrong credentials', 400)
 
 
@@ -71,7 +74,7 @@ def create_representative(name):
 def get_product(name):
     """Gets all products for the company"""
 
-    products = get_products({'producer': name})
+    products = dal_get_products({'producer': name})
 
     return response(
         'Successfully retreived all the products for company ' + name,
@@ -80,3 +83,4 @@ def get_product(name):
             { 'products': products }
         }
     )
+

@@ -1,4 +1,6 @@
 pymongo
 PyJWT
 flask-cors
+nose
 flask_limiter
+

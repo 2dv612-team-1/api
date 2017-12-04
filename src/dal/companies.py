@@ -65,4 +65,5 @@ def dal_create_representative(form, owner):
         }
 
         db_conn.users.insert(representative)
+
         return False

@@ -12,6 +12,7 @@ def get_entry():
         'products': '/products',
         'consumers': '/consumers',
         'companies': '/companies',
+        'categories': '/categories',
         'admins': '/admins',
         'materials': '/materials',
         'categories': '/categories',

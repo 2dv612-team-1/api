@@ -16,6 +16,7 @@ def admin_actions():
 
     if request.method == 'POST':
         create_default_admin()
+
     return response('Admin account has been created', 201)
 
 
