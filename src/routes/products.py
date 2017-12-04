@@ -259,4 +259,5 @@ def rate_material(product_id, material_name):
 
     return response(str({
         'average': total_vote_value,
+        'amount': vote_amount
     }), 200)
