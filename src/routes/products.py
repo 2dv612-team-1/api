@@ -226,9 +226,23 @@ def rate_material(product_id, material_name):
     if starInt > 5 or starInt < 1:
         return response('Expected star value to be between 1 and 5', 400)
 
-    updated = DB.products.find_one_and_update(
-        {'_id': ObjectId(product_id), 'files.material': material_name},
-        {'$inc': {'files.$.votes': 1}, '$push': {'files.$.stars': starInt}}
-    )
+    user_has_voted = DB.products.find_one({
+        '_id': ObjectId(product_id),
+        'files.material': material_name,
+        'files.stars.username': payload['username']
+    })
+
+    if user_has_voted:
+        updated = DB.products.find_one_and_update(
+            {'_id': ObjectId(product_id), 'files.material': material_name},
+            {'$inc': {'files.$.votes': 1}, '$push': {
+                'files.$.stars': {'username': payload['username'], 'rate': starInt}}}
+        )
+    else:
+        updated = DB.products.find_one_and_update(
+            {'_id': ObjectId(product_id), 'files.material': material_name},
+            {'$inc': {'files.$.votes': 1}, '$push': {
+                'files.$.stars': {'username': payload['username'], 'rate': starInt}}}
+        )
 
     return response(str(updated), 200)
