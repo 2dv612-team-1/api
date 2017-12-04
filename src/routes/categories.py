@@ -10,7 +10,11 @@ from exceptions.AlreadyExists import AlreadyExists
 
 CATEGORIES = Blueprint('CATEGORIES', __name__)
 
-
+@CATEGORIES.route('/categories')
+def get_categories():
+    """Gets all available categories"""
+    categories_data = dal_get_categories()
+    return response(categories_data, 200)
 
 @CATEGORIES.route('/categories', methods=['POST'])
 def create_categories():

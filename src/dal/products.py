@@ -2,7 +2,7 @@ from .mongo_client import db_conn
 
 
 
-def get_products(self, filter={}):
+def dal_get_products(self, filter={}):
 
     """Gets products from db
 
