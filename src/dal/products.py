@@ -1,7 +1,9 @@
 from .mongo_client import db_conn
-#ToDO
 
-def dal_get_products(self, filter={}):
+
+
+def get_products(self, filter={}):
+
     """Gets products from db
 
     Will either get all products or based on filter (eg: {'producer': <company-name>})
@@ -16,3 +18,4 @@ def dal_get_products(self, filter={}):
         products.append(product)
 
     return products
+

@@ -4,7 +4,6 @@ Company routes
 
 from flask import Blueprint, request
 from utils.response import response
-
 from dal.users import get_users_with_role
 from dal.companies import create_company, get_representatives_for_company, dal_create_representative
 from dal.products import dal_get_products
@@ -48,7 +47,6 @@ def get_representatives(name):
 
     try:
         representatives = get_representatives_for_company(name)
-
         return response(name, 200, {'representatives': representatives})
 
     except AttributeError:
@@ -64,13 +62,13 @@ def create_representative(name):
 
         if representative_exists:
             return response('Username already exists', 409)
-
         else:
             return response('Representative was created', 201)
 
     except AttributeError:
 
         return response('Wrong credentials', 400)
+
 
 @COMPANIES.route('/companies/<name>/products')
 def get_product(name):

@@ -35,3 +35,4 @@ def dal_create_category(form):
             raise AlreadyExists()
 
         db_conn.categories.insert({'category': category})
+

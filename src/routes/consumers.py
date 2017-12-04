@@ -4,7 +4,6 @@ Consumers
 
 from flask import Blueprint, request
 from utils.response import response
-
 from dal.users import get_users_with_role, check_user_token
 from dal.consumer import create_consumer
 

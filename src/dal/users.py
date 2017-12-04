@@ -46,3 +46,4 @@ def get_users_with_role(role):
         users.append({'username': user['username']})
 
     return users
+
