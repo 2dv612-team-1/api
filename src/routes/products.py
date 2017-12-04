@@ -97,7 +97,8 @@ def create_product():
             'name': filename['file_name'],
             'stars': list(),
             'votes': 0,
-            'comments': list()
+            'comments': list(),
+            'average': 0
         }, filenames))
 
     except Exception as e:
@@ -179,7 +180,8 @@ def upload_actions(_id):
             'name': filename['file_name'],
             'stars': list(),
             'votes': 0,
-            'comments': list()
+            'comments': list(),
+            'average': 0
         }, filenames))
 
     except Exception as e:
@@ -233,17 +235,19 @@ def rate_material(product_id, material_name):
     })
 
     if user_has_voted:
-        updated = DB.products.find_and_modify({
+        updated = DB.products.find_one_and_update({
             '_id': ObjectId(product_id),
             'files.material': material_name,
             'files.stars.username': payload['username']},
-            {'$set': {'files.0.stars.$.rate': rateInt}}
+            {'$set': {'files.0.stars.$.rate': rateInt}},
+            return_document=ReturnDocument.AFTER
         )
     else:
         updated = DB.products.find_one_and_update(
             {'_id': ObjectId(product_id), 'files.material': material_name},
             {'$inc': {'files.$.votes': 1}, '$push': {
-                'files.$.stars': {'username': payload['username'], 'rate': rateInt}}}
-        )
+                'files.$.stars': {'username': payload['username'], 'rate': rateInt}}},
+                return_document=ReturnDocument.AFTER
+            )
 
     return response(str(updated), 200)
