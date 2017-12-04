@@ -4,10 +4,8 @@ Auth route
 
 from flask import Blueprint, request
 from utils.response import response
-from utils.dal import SuperDAL
-import jwt
+from dal.users import auth_and_return_user
 
-super_dal = SuperDAL()
 AUTH = Blueprint('auth', __name__)
 
 # add bcrypt
@@ -18,19 +16,9 @@ def auth_actions():
     """Authenticates any user"""
 
     try:
-        username = request.form['username']
-        password = request.form['password']
 
-        found_user = super_dal.auth_and_return_user(username, password)
+        encoded_data, role = auth_and_return_user(request.form)
+        return response('Successfully logged in as ' + role, 200, {'token': encoded_data.decode('utf-8')})
 
-        if found_user:
-            payload = {'username': username, 'role': found_user['role']}
-            encoded = jwt.encode(payload, 'super-secret')
-
-            return response('Successfully logged in as ' + found_user['role'],
-                            200,
-                            {'token': encoded.decode('utf-8')})
-        else:
-            raise AttributeError()
     except AttributeError:
         return response('Wrong credentials', 400)
