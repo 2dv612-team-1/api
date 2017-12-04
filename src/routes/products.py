@@ -255,8 +255,7 @@ def rate_material(product_id, material_name):
     total = 0
     for value in current_votes:
         total += value['rate']
-
-    total_vote_value = vote_amount / total
+    total_vote_value = total / vote_amount
 
     return response(str({
         'average': total_vote_value,
