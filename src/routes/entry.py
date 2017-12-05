@@ -14,6 +14,7 @@ def get_entry():
         'companies': '/companies',
         'admins': '/admins',
         'materials': '/materials',
+        'categories': '/categories',
         'self': '/'
     }
     return jsonify(routes)
