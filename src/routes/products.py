@@ -114,7 +114,8 @@ def create_product():
         return_document=ReturnDocument.AFTER
     )
 
-    DB.files.insert(files)
+    if files:
+        DB.files.insert(files)
 
     return response('Product was created', 201, {'data': {'product': str(new_product)}})
 
