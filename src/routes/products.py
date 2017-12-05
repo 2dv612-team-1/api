@@ -92,7 +92,7 @@ def create_product():
         path = create_file_path(company, str(_id))
         filenames = save(path, request.files.getlist('files'))
         files = list(map(lambda filename: {
-            'material': filename['file_time'],
+            'material_id': filename['file_time'],
             'path': '/materials/' + company + '/' + str(_id) + '/' + filename['file_time'],
             'name': filename['file_name'],
             'stars': list(),
@@ -101,18 +101,22 @@ def create_product():
             'average': 0
         }, filenames))
 
+        file_id = list(map(lambda file: {
+            'material_id': file['file_time']
+        }, filenames))
+
     except Exception as e:
         return response(str(e), 409)
 
-    DB.products.find_one_and_update(
+    new_product = DB.products.find_one_and_update(
         {'_id': ObjectId(_id)},
-        {'$set': {'files': files}}
+        {'$set': {'files': file_id}},
+        return_document=ReturnDocument.AFTER
     )
-    new_product.update({
-        '_id': str(_id),
-        'files': files
-    })
-    return response('Product was created', 201, {'data': {'product': new_product}})
+
+    DB.files.insert(files)
+
+    return response('Product was created', 201, {'data': {'product': str(new_product)}})
 
 
 @PRODUCTS.route('/products/<_id>')
@@ -233,22 +237,30 @@ def rate_material(product_id, material_name):
         'files.material': material_name,
         'files.stars.username': payload['username']
     })
+    return response(str(user_has_voted), 200)
 
-    if user_has_voted:
-        updated = DB.products.find_one_and_update({
-            '_id': ObjectId(product_id),
-            'files.material': material_name,
-            'files.stars.username': payload['username']},
-            {'$set': {'files.0.stars.$.rate': rateInt}},
-            return_document=ReturnDocument.AFTER
-        )
-    else:
-        updated = DB.products.find_one_and_update(
-            {'_id': ObjectId(product_id), 'files.material': material_name},
-            {'$inc': {'files.$.votes': 1}, '$push': {
-                'files.$.stars': {'username': payload['username'], 'rate': rateInt}}},
-                return_document=ReturnDocument.AFTER
-            )
+    # if user_has_voted:
+    #     for file in user_has_voted['files']:
+    #         if file['material'] == material_name:
+    #             for rate in file['stars']:
+    #                 if rate['username'] ==  payload['username']:
+    #                     rate['rate'] == rateInt
+
+
+    #     updated = DB.products.find_one_and_update({
+    #         '_id': ObjectId(product_id),
+    #         'files.material': material_name,
+    #         'files.stars.username': payload['username']},
+    #         {'$set': {'files.0.stars.$.rate': rateInt}},
+    #         return_document=ReturnDocument.AFTER
+    #     )
+    #     return response(str(updated), 200)
+    # else:
+    updated = DB.products.find_one_and_update(
+        {'_id': ObjectId(product_id), 'files.material': material_name},
+        {'$inc': {'files.votes': 1}, '$push': {
+            'files.$.stars': {'username': payload['username'], 'rate': rateInt}}}
+    )
 
     current_votes = updated['files'][0]['stars']
     vote_amount = len(current_votes)
@@ -256,6 +268,11 @@ def rate_material(product_id, material_name):
     for value in current_votes:
         total += value['rate']
     total_vote_value = total / vote_amount
+
+    works = DB.products.find_one_and_update(
+        { '_id': ObjectId(product_id), 'files.material': material_name},
+        {'$set': {'files.$.average': total_vote_value}}
+    )
 
     return response(str({
         'average': total_vote_value,
