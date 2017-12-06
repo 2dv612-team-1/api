@@ -41,5 +41,5 @@ def create_sub(category):
         sub = dal_create_subcategory(request.form, category)
         return response('Subcategory created', 201)
     except Exception:
-        return response('Could not create subcategort', 400)
+        return response('Could not create subcategory', 400)
     
