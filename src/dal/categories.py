@@ -42,7 +42,7 @@ def dal_create_category(form):
 def dal_create_subcategory(form, category):
     try:
         token = form['jwt']
-        subcategory = form['subcategory']
+        subcategory = form['category']
     except Exception:
         raise WrongCredentials()
 
