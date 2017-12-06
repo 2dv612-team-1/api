@@ -29,7 +29,6 @@ def get_products():
             'description': product['description'],
             'createdBy': product['createdBy'],
             '_id': str(product['_id']),
-            'files': product['files'],
             'producer': product['producer']
         })
 
@@ -71,8 +70,7 @@ def create_product():
             'description': request.form['description'],
             'serialNo': request.form['serialNo'],
             'createdBy': payload['username'],
-            'producer': company,
-            'files': list()
+            'producer': company
         }
     except Exception:
         return response('Wrong information', 400)
@@ -92,26 +90,23 @@ def create_product():
         path = create_file_path(company, str(_id))
         filenames = save(path, request.files.getlist('files'))
         files = list(map(lambda filename: {
-            'material': filename['file_time'],
+            'material_id': filename['file_time'],
+            'owner': str(_id),
             'path': '/materials/' + company + '/' + str(_id) + '/' + filename['file_time'],
             'name': filename['file_name'],
             'stars': list(),
             'votes': 0,
-            'comments': list()
+            'comments': list(),
+            'average': 0
         }, filenames))
 
     except Exception as e:
         return response(str(e), 409)
 
-    DB.products.find_one_and_update(
-        {'_id': ObjectId(_id)},
-        {'$set': {'files': files}}
-    )
-    new_product.update({
-        '_id': str(_id),
-        'files': files
-    })
-    return response('Product was created', 201, {'data': {'product': new_product}})
+    if files:
+        DB.files.insert(files)
+
+    return response('Product was created', 201, {'data': {'product': str(_id)}})
 
 
 @PRODUCTS.route('/products/<_id>')
@@ -120,6 +115,7 @@ def get_product(_id):
 
     try:
         product = DB.products.find_one({'_id': ObjectId(_id)})
+        files = DB.files.find({'owner': _id}, {'_id': False})
     except Exception:
         return response('Not a valid id', 400)
 
@@ -128,7 +124,7 @@ def get_product(_id):
             'category': product['category'],
             'name': product['name'],
             'createdBy': product['createdBy'],
-            'files': product['files'],
+            'files': [files for files in files],
             'serialNo': product['serialNo'],
             'producer': product['producer']
         }
@@ -165,38 +161,30 @@ def upload_actions(_id):
         return response(str(e), 400)
 
     try:
-        product = DB.products.find_one(
-            {'_id': ObjectId(_id), 'producer': file_company})
-    except Exception as e:
-        return response(str(e), 400)
-
-    try:
         path = create_file_path(file_company, _id)
         filenames = save(path, request.files.getlist('files'))
+
         files = list(map(lambda filename: {
-            'material': filename['file_time'],
+            'material_id': filename['file_time'],
+            'owner': str(_id),
             'path': '/materials/' + file_company + '/' + str(_id) + '/' + filename['file_time'],
             'name': filename['file_name'],
             'stars': list(),
             'votes': 0,
-            'comments': list()
+            'comments': list(),
+            'average': 0
         }, filenames))
 
     except Exception as e:
         return response(str(e), 409)
 
-    updated_product = DB.products.find_one_and_update(
-        {'_id': ObjectId(_id)},
-        {'$push': {'files': {'$each': files}}},
-        return_document=ReturnDocument.AFTER
-    )
-    updated_product.update({
-        '_id': str(updated_product['_id'])
-    })
+    if files:
+        DB.files.insert(files)
+
     return response(
         'Successfully uploaded material to the product',
         201,
-        {'data': {'product': updated_product}}
+        {'data': {'product': 'File uploaded'}}
     )
 
 
@@ -226,24 +214,43 @@ def rate_material(product_id, material_name):
     if rateInt > 5 or rateInt < 1:
         return response('Expected star value to be between 1 and 5', 400)
 
-    user_has_voted = DB.products.find_one({
-        '_id': ObjectId(product_id),
-        'files.material': material_name,
-        'files.stars.username': payload['username']
+    user_has_voted = DB.files.find_one({
+        'owner': str(product_id),
+        'material_id': material_name,
+        'stars.username': payload['username']
     })
 
     if user_has_voted:
-        updated = DB.products.find_and_modify({
-            '_id': ObjectId(product_id),
-            'files.material': material_name,
-            'files.stars.username': payload['username']},
-            {'$set': {'files.0.stars.$.rate': rateInt}}
+        updated = DB.files.find_one_and_update(
+            {'owner': str(product_id), 'material_id': material_name,
+             'stars.username': payload['username']},
+            {'$set': {'stars.$.rate': rateInt}},
+            return_document=ReturnDocument.AFTER
         )
     else:
-        updated = DB.products.find_one_and_update(
-            {'_id': ObjectId(product_id), 'files.material': material_name},
-            {'$inc': {'files.$.votes': 1}, '$push': {
-                'files.$.stars': {'username': payload['username'], 'rate': rateInt}}}
+        updated = DB.files.find_one_and_update(
+            {'owner': str(product_id), 'material_id': material_name},
+            {'$inc': {'votes': 1}, '$push': {
+                'stars': {'username': payload['username'], 'rate': rateInt}}},
+            return_document=ReturnDocument.AFTER
         )
 
-    return response(str(updated), 200)
+    if not updated:
+        return response('There\'s nothing to rate', 200)
+
+    current_votes = updated['stars']
+    vote_amount = len(current_votes)
+    total = 0
+    for value in current_votes:
+        total += value['rate']
+    total_vote_value = round(total / vote_amount, 1)
+
+    DB.files.find_one_and_update(
+        {'owner': str(product_id), 'material_id': material_name},
+        {'$set': {'average': total_vote_value}}
+    )
+
+    return response(str({
+        'average': total_vote_value,
+        'amount': vote_amount
+    }), 200)
