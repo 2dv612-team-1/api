@@ -33,3 +33,14 @@ def create_categories():
         return response('Invalid credentials', 400)
     except AlreadyExists:
         return response('Category exists', 409)
+
+
+@CATEGORIES.route('/categories/<category>/subcategories')
+def create_sub():
+    """Create a subcategory"""
+
+    try:
+        
+    except Exception:
+
+
