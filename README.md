@@ -401,39 +401,41 @@ Returns the following JSON:
 https://nanotu.be/products/<_id> | GET
 Gets the information for the specified product. Returns the following JSON:
 
-    {
+   {
         "data": {
             "product": {
-                "_id": "5a202ddfe3214803f7dc192a",
-                "category": "cars",
-                "createdBy": "ElonMusk",
-                "description": "en blå bil",
+                "category": "Mon Dec 04 2017 17:05:05 GMT+0100 (CET)",
+                "createdBy": "889748890",
                 "files": [
                     {
-                        "file": "/materials/tesla/product_id/filename-1512058335748237.pdf"
-                    },
-                    {
-                        "file": "/materials/tesla/product_id/filename-15120583750399292.pdf"
-                    },
-                    {
-                        "file": "/materials/tesla/product_id/filename-15120583750524912.pdf"
-                    },
-                    {
-                        "file": "/materials/tesla/product_id/filename-15120583750654202.pdf"
+                        "average": 5,
+                        "comments": [],
+                        "material_id": "hej-15125582259389868.pdf",
+                        "name": "hej",
+                        "owner": "5a27ce917ae6da0021d97ef4",
+                        "path": "/materials/242235471/5a27ce917ae6da0021d97ef4/hej-15125582259389868.pdf",
+                        "stars": [
+                            {
+                                "rate": 5,
+                                "username": "815247452"
+                            }
+                        ],
+                        "votes": 1
                     }
                 ],
-                "name": "blå bil",
-                "producer": "tesla",
-                "serialNo": "1223"
+                "name": "Toaster from test with pdf",
+                "producer": "242235471",
+                "serialNo": "242235471"
             }
         },
-        "message": "Successfully uploaded material to the product",
+        "message": "Found product",
         "status": 200
     }
 
 #### Get all products for a company
 https://nanotu.be/companies/<name>/products | GET
 Returns all the listed products of the specified company as the following JSON:
+
 
     {
         "data": {
