@@ -285,6 +285,20 @@ Returns statuscode 201 and the JSON
         "status": 201
     }
 
+#### Create Subcategory
+https://nanotu.be/categories/<parent-category>/subcategories | POST
+Creates a new sub-category. requires the following data:
+
+    "jwt": "ad.admin.jwt",
+    "category": "new-sub-category-name"
+
+Returns statuscode 201 and the JSON
+
+    {
+        "message": "Subcategory created",
+        "status": 201
+    }
+
 #### Get products
 https://nanotu.be/products | GET
 Gets all products in the system.
