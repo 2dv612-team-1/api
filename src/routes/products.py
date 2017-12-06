@@ -222,7 +222,8 @@ def rate_material(product_id, material_name):
 
     if user_has_voted:
         updated = DB.files.find_one_and_update(
-            {'owner': str(product_id), 'material_id': material_name, 'stars.username': payload['username']},
+            {'owner': str(product_id), 'material_id': material_name,
+             'stars.username': payload['username']},
             {'$set': {'stars.$.rate': rateInt}},
             return_document=ReturnDocument.AFTER
         )
@@ -234,12 +235,15 @@ def rate_material(product_id, material_name):
             return_document=ReturnDocument.AFTER
         )
 
+    if not updated:
+        return response('There\'s nothing to rate', 200)
+
     current_votes = updated['stars']
     vote_amount = len(current_votes)
     total = 0
     for value in current_votes:
         total += value['rate']
-    total_vote_value = total / vote_amount
+    total_vote_value = round(total / vote_amount, 1)
 
     DB.files.find_one_and_update(
         {'owner': str(product_id), 'material_id': material_name},
