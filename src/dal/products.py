@@ -1,7 +1,7 @@
 from .mongo_client import db_conn
 
 
-def get_products(self, filter={}):
+def get_products(name):
     """Gets products from db
 
     Will either get all products or based on filter (eg: {'producer': <company-name>})
@@ -11,7 +11,7 @@ def get_products(self, filter={}):
     """
 
     products = []
-    for product in db_conn.products.find(filter):
+    for product in db_conn.products.find({'producer': name}):
         products.append(str(product))
 
     return products

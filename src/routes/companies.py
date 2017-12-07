@@ -71,7 +71,7 @@ def create_representative(name):
 def get_product(name):
     """Gets all products for the company"""
 
-    products = get_products({'producer': name})
+    products = get_products(name)
 
     return response(
         'Successfully retreived all the products for company ' + name,
