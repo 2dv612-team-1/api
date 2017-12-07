@@ -20,7 +20,7 @@ def get_products(name):
             'name': product.get('name'),
             'description': product.get('description'),
             '_id': str(product.get('_id')),
-            'sub': product.get('sub'),
+            'subcategory': product.get('subcategory'),
             'serialNo': product.get('serialNo'),
             'createdBy': product.get('createdBy'),
             'producer': product.get('producer')
