@@ -14,8 +14,13 @@ def auth_and_return_user(form):
 
     found_user = db_conn.users.find_one({'username': username, 'password': password})
 
+    try:
+        data = found_user['data']
+    except Exception as e:
+        data = {}
+
     if found_user:
-        payload = {'username': found_user['username'], 'role': found_user['role']}
+        payload = {'username': found_user['username'], 'role': found_user['role'], 'data': data}
         encoded = jwt.encode(payload, 'super-secret')
         return encoded, found_user['role']
 
