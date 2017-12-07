@@ -26,7 +26,6 @@ def dal_create_category(form):
         raise WrongCredentials()
     try:
         payload = jwt.decode(token, 'super-secret')
-
     except Exception:
         raise AttributeError()
 
@@ -36,6 +35,13 @@ def dal_create_category(form):
         if category_exists:
             raise AlreadyExists()
 
+        is_subcategory = db_conn.categories.find_one({
+            'sub.category': category
+        })
+
+        if is_subcategory:
+            raise AlreadyExists('Category is a subcategory')
+
         db_conn.categories.insert({'category': category, 'sub': []})
 
 
@@ -44,22 +50,29 @@ def dal_create_subcategory(form, category):
         token = form['jwt']
         subcategory = form['category']
     except Exception:
-        raise WrongCredentials()
+        raise WrongCredentials('JWT or Category is missing')
 
     try:
         payload = jwt.decode(token, 'super-secret')
     except Exception:
-        raise TamperedToken()
+        raise TamperedToken('Changes has been made to JWT')
 
     if payload['role'] != 'admin':
         raise AttributeError('Not an admin')
 
     subcategory_exists = db_conn.categories.find_one({
-        'category.sub.category': subcategory
+        'sub.category': subcategory
     })
 
     if subcategory_exists:
-        raise AlreadyExists()
+        raise AlreadyExists('Subcategory exists')
+
+    is_category = db_conn.categories.find_one({
+        'category': subcategory
+    })
+
+    if is_category:
+        raise AlreadyExists('Category with that name exists')
 
     try:
         db_conn.categories.find_one_and_update(
@@ -68,4 +81,4 @@ def dal_create_subcategory(form, category):
             upsert=True
         )
     except Exception as e:
-        return str(e)     
+        return str(e)
