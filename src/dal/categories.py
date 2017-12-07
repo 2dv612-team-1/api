@@ -66,7 +66,7 @@ def dal_create_subcategory(form, category):
     })
 
     if is_category:
-        raise AlreadyExists('Category with that name exists')    
+        raise AlreadyExists('Category with that name exists')
 
     try:
         db_conn.categories.find_one_and_update(
@@ -75,4 +75,4 @@ def dal_create_subcategory(form, category):
             upsert=True
         )
     except Exception as e:
-        return str(e)     
+        return str(e)
