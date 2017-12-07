@@ -38,8 +38,8 @@ def create_sub(category):
     """Create a subcategory"""
 
     try:
-        sub = dal_create_subcategory(request.form, category)
+        dal_create_subcategory(request.form, category)
         return response('Subcategory created', 201)
-    except Exception:
-        return response('Could not create subcategory', 400)
+    except Exception as e:
+        return response(str(e), 400)
     
