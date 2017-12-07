@@ -10,8 +10,11 @@ def get_products(name):
         list -- products found in db
     """
 
+    user = db_conn.users.find_one({'username': name})
+    owner = user['data']['owner']
+
     products = []
-    for product in db_conn.products.find({'producer': name}):
+    for product in db_conn.products.find({'producer': owner}):
         products.append(str(product))
 
     return products
