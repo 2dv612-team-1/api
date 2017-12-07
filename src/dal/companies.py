@@ -33,7 +33,7 @@ def get_representatives_for_company(company_name):
 
         representatives = []
 
-        for representative in db_conn.users.find({'owner': company_name}):
+        for representative in db_conn.users.find({'data':{'owner': company_name}}):
             representatives.append({'username': representative['username']})
 
         return representatives
@@ -60,8 +60,8 @@ def dal_create_representative(form, owner):
         representative = {
             'username': username,
             'password': password,
-            'owner': owner,
-            'role': 'representative'
+            'role': 'representative',
+            'data': {'owner': owner}
         }
 
         db_conn.users.insert(representative)
