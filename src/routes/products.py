@@ -126,7 +126,8 @@ def get_product(_id):
             'createdBy': product['createdBy'],
             'files': [files for files in files],
             'serialNo': product['serialNo'],
-            'producer': product['producer']
+            'producer': product['producer'],
+            'description': product['description']
         }
     except Exception:
         return response('Cannot find product', 400)
