@@ -26,7 +26,6 @@ def dal_create_category(form):
         raise WrongCredentials()
     try:
         payload = jwt.decode(token, 'super-secret')
-
     except Exception:
         raise AttributeError()
 
@@ -35,6 +34,13 @@ def dal_create_category(form):
 
         if category_exists:
             raise AlreadyExists()
+
+        is_subcategory = db_conn.categories.find_one({
+            'category.sub.category': category
+        })
+
+        if is_subcategory:
+            raise AlreadyExists('Category is a subcategory')
 
         db_conn.categories.insert({'category': category, 'sub': []})
 
