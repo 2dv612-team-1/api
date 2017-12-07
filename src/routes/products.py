@@ -63,7 +63,7 @@ def create_product():
 
     try:
         representative = DB.users.find_one({'username': payload['username']})
-        company = representative['owner']
+        company = representative['data']['owner']
         new_product = {
             'category': request.form['category'],
             'name': request.form['name'],
