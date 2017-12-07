@@ -59,7 +59,14 @@ def dal_create_subcategory(form, category):
     })
 
     if subcategory_exists:
-        raise AlreadyExists()
+        raise AlreadyExists('Subcategory exists')
+
+    is_category = db_conn.categories.find_one({
+        'category': subcategory
+    })
+
+    if is_category:
+        raise AlreadyExists('Category with that name exists')    
 
     try:
         db_conn.categories.find_one_and_update(
