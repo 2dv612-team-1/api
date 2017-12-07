@@ -207,7 +207,7 @@ def rate_material(product_id, material_name):
         return response('Expected rate key', 400)
 
     try:
-        rateInt = float(rate)
+        rateInt = float(float(rate))
     except Exception:
         return response('Expected rate to be int', 400)
 
