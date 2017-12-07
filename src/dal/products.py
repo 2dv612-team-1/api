@@ -15,6 +15,15 @@ def get_products(name):
 
     products = []
     for product in db_conn.products.find({'producer': owner}):
-        products.append(str(product))
+        products.append({
+            'category': product.get('category'),
+            'name': product.get('name'),
+            'description': product.get('description'),
+            '_id': str(product.get('_id')),
+            'sub': product.get('sub'),
+            'serialNo': product.get('serialNo'),
+            'createdBy': product.get('createdBy'),
+            'producer': product.get('producer')
+        })
 
     return products
