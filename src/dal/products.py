@@ -12,7 +12,6 @@ def get_products(self, filter={}):
 
     products = []
     for product in db_conn.products.find(filter):
-        product.update({'_id': str(product['_id'])})
-        products.append(product)
+        products.append(str(product))
 
     return products
