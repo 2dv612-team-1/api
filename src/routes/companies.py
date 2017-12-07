@@ -19,7 +19,7 @@ def company_actions():
     """Extracts companies"""
     try:
         users = get_users_with_role('company')
-        return response('Successfully extracted all users', 200, {'users': users})
+        return response('Successfully extracted all users', 200, {'companies': users})
     except SystemError:
         return response('Something went wrong while retrieving the data', 500)
 
