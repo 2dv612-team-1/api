@@ -50,12 +50,12 @@ def dal_create_subcategory(form, category):
         token = form['jwt']
         subcategory = form['category']
     except Exception:
-        raise WrongCredentials()
+        raise WrongCredentials('JWT or Category is missing')
 
     try:
         payload = jwt.decode(token, 'super-secret')
     except Exception:
-        raise TamperedToken()
+        raise TamperedToken('Changes has been made to JWT')
 
     if payload['role'] != 'admin':
         raise AttributeError('Not an admin')
