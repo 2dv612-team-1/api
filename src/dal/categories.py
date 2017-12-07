@@ -36,7 +36,7 @@ def dal_create_category(form):
             raise AlreadyExists()
 
         is_subcategory = db_conn.categories.find_one({
-            'category.sub.category': category
+            'sub.category': category
         })
 
         if is_subcategory:
@@ -61,7 +61,7 @@ def dal_create_subcategory(form, category):
         raise AttributeError('Not an admin')
 
     subcategory_exists = db_conn.categories.find_one({
-        'category.sub.category': subcategory
+        'sub.category': subcategory
     })
 
     if subcategory_exists:
