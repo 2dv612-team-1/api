@@ -152,7 +152,7 @@ def upload_actions(_id):
         return response('You are not a representative', 400)
 
     representative = DB.users.find_one({'username': payload['username']})
-    file_company = representative['owner']
+    file_company = representative['data']['owner']
 
     try:
         if len(request.files) < 1:
