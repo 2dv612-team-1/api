@@ -1,4 +1,5 @@
 from .mongo_client import db_conn
+from utils.string import *
 import jwt
 
 """
@@ -9,20 +10,22 @@ import jwt
 
 
 def auth_and_return_user(form):
-    username = form['username']
-    password = form['password']
+    username = form[USERNAME]
+    password = form[PASSWORD]
 
-    found_user = db_conn.users.find_one({'username': username, 'password': password})
+    found_user = db_conn.users.find_one(
+        {USERNAME: username, PASSWORD: password})
 
     try:
-        data = found_user['data']
+        data = found_user[DATA]
     except Exception as e:
         data = {}
 
     if found_user:
-        payload = {'username': found_user['username'], 'role': found_user['role'], 'data': data}
+        payload = {USERNAME: found_user[USERNAME],
+                   ROLE: found_user[ROLE], DATA: data}
         encoded = jwt.encode(payload, 'super-secret')
-        return encoded, found_user['role']
+        return encoded, found_user[ROLE]
 
     else:
         raise AttributeError()
@@ -33,9 +36,9 @@ def auth_and_return_user(form):
 
 def check_user_token(token):
     payload = jwt.decode(token, 'super-secret')
-    username = payload.get('username')
+    username = payload.get(USERNAME)
 
-    found_user = db_conn.users.find_one({'username': username})
+    found_user = db_conn.users.find_one({USERNAME: username})
     if found_user:
         return username
     else:
@@ -47,7 +50,7 @@ def check_user_token(token):
 
 def get_users_with_role(role):
     users = []
-    for user in db_conn.users.find({'role': role}):
-        users.append({'username': user['username']})
+    for user in db_conn.users.find({ROLE: role}):
+        users.append({USERNAME: user[USERNAME]})
 
     return users
