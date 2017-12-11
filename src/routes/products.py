@@ -7,6 +7,12 @@ from pymongo import MongoClient, ReturnDocument
 from exceptions.TamperedToken import TamperedToken
 from utils.response import response
 from utils.files import check_request_files, create_file_path, save
+from dal.products import dal_get_products, dal_create_product_upload_files
+from exceptions.WrongCredentials import WrongCredentials
+from exceptions.AlreadyExists import AlreadyExists
+from exceptions.InvalidRole import InvalidRole
+from exceptions.BadFormData import BadFormData
+from exceptions.ErrorRequestingFiles import ErrorRequestingFiles
 from bson.objectid import ObjectId
 import jwt
 
@@ -21,16 +27,7 @@ DB = CLIENT.api
 def get_products():
     """Gets all available products"""
 
-    products_data = []
-    for product in DB.products.find():
-        products_data.append({
-            'name': product['name'],
-            'category': product['category'],
-            'description': product['description'],
-            'createdBy': product['createdBy'],
-            '_id': str(product['_id']),
-            'producer': product['producer']
-        })
+    products_data = dal_get_products()
 
     return response(
         'Successfully retreived all the products',
@@ -42,71 +39,23 @@ def get_products():
 @PRODUCTS.route('/products', methods=['POST'])
 def create_product():
     """Create a product"""
-
     try:
-        token = request.form['jwt']
-    except Exception:
-        return response('No JWT', 400)
 
-    try:
-        payload = jwt.decode(token, 'super-secret')
-    except Exception:
-        return response('Tampered token', 400)
+        _id = dal_create_product_upload_files(request.form, request.files)
+        return response('Product was created', 201, {'data': {'product': str(_id)}})
 
-    if payload['role'] != 'representative':
+    except AttributeError:
+        return response('Broken JWT', 400)
+    except WrongCredentials:
+        return response('Invalid credentials', 400)
+    except AlreadyExists:
+        return response('Category exists', 409)
+    except InvalidRole:
         return response('You are not a representative', 400)
-
-    try:
-        check_request_files(request.files)
-    except AttributeError as e:
-        return response(str(e), 400)
-
-    try:
-        representative = DB.users.find_one({'username': payload['username']})
-        company = representative['data']['owner']
-        new_product = {
-            'category': request.form['category'],
-            'name': request.form['name'],
-            'description': request.form['description'],
-            'serialNo': request.form['serialNo'],
-            'createdBy': payload['username'],
-            'producer': company
-        }
-    except Exception:
+    except BadFormData:
         return response('Wrong information', 400)
-
-    search_obj = {
-        'name': new_product['name'],
-        'producer': company,
-        'serialNo': new_product['serialNo']
-    }
-
-    if DB.products.find_one(search_obj):
-        return response('Product already exists', 409)
-
-    _id = DB.products.insert(new_product)
-
-    try:
-        path = create_file_path(company, str(_id))
-        filenames = save(path, request.files.getlist('files'))
-        files = list(map(lambda filename: {
-            'material_id': filename['file_time'],
-            'owner': str(_id),
-            'path': '/materials/' + company + '/' + str(_id) + '/' + filename['file_time'],
-            'name': filename['file_name'],
-            'stars': list(),
-            'votes': 0,
-            'comments': list(),
-            'average': 0
-        }, filenames))
-
-    except Exception as e:
-        return response(str(e), 409)
-
-    if files:
-        DB.files.insert(files)
-
-    return response('Product was created', 201, {'data': {'product': str(_id)}})
+    except ErrorRequestingFiles:
+        return response('Error requesting files', 409)
 
 
 @PRODUCTS.route('/products/<_id>')

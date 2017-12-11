@@ -1,0 +1,2 @@
+class BadFormData(Exception):
+  pass
