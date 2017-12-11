@@ -2,9 +2,7 @@
 Products route
 """
 
-from flask import Blueprint, request, current_app
-from pymongo import MongoClient, ReturnDocument
-from exceptions.TamperedToken import TamperedToken
+from flask import Blueprint, request
 from utils.response import response
 from dal.products import dal_get_products, dal_create_product_upload_files, dal_get_product_by_id, dal_upload_files, dal_rate_product
 from exceptions.WrongCredentials import WrongCredentials
@@ -15,11 +13,9 @@ from exceptions.ErrorRequestingFiles import ErrorRequestingFiles
 from exceptions.ErrorCreatingFiles import ErrorCreatingFiles
 from exceptions.NotFound import NotFound
 
-import jwt
 
 PRODUCTS = Blueprint('products', __name__)
-CLIENT = MongoClient('mongodb:27017')
-DB = CLIENT.api
+
 
 # add bcrypt
 
@@ -82,6 +78,7 @@ def upload_actions(_id):
             201,
             {'data': {'product': 'File uploaded'}}
         )
+
     except AttributeError:
         return response('Broken JWT', 400)
     except WrongCredentials:
