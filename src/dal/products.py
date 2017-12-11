@@ -6,7 +6,10 @@ from exceptions.BadFormData import BadFormData
 from exceptions.AlreadyExist import AlreadyExist
 from exceptions.ErrorCreatingFiles import ErrorCreatingFiles
 from exceptions.ErrorRequestingFiles import ErrorRequestingFiles
+from exceptions.NotFound import NotFound
 import jwt
+
+from bson.objectid import ObjectId
 
 
 def dal_get_products():
@@ -21,6 +24,33 @@ def dal_get_products():
             'producer': product['producer']
         })
     return products_data
+
+
+def dal_get_product_by_id(_id):
+    try:
+
+        product = db_conn.products.find_one({'_id': ObjectId(_id)})
+        files = db_conn.files.find({'owner': _id}, {'_id': False})
+
+    except Exception:
+        raise WrongCredentials
+
+    try:
+
+        pretty_product = {
+            'category': product['category'],
+            'name': product['name'],
+            'createdBy': product['createdBy'],
+            'files': [files for files in files],
+            'serialNo': product['serialNo'],
+            'producer': product['producer'],
+            'description': product['description']
+        }
+
+    except Exception:
+        raise NotFound()
+
+    return pretty_product
 
 
 def dal_create_product_upload_files(form, files):

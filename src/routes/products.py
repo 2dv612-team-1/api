@@ -7,13 +7,14 @@ from pymongo import MongoClient, ReturnDocument
 from exceptions.TamperedToken import TamperedToken
 from utils.response import response
 from utils.files import check_request_files, create_file_path, save
-from dal.products import dal_get_products, dal_create_product_upload_files
+from dal.products import dal_get_products, dal_create_product_upload_files, dal_get_product_by_id
 from exceptions.WrongCredentials import WrongCredentials
 from exceptions.AlreadyExists import AlreadyExists
 from exceptions.InvalidRole import InvalidRole
 from exceptions.BadFormData import BadFormData
 from exceptions.ErrorRequestingFiles import ErrorRequestingFiles
-from bson.objectid import ObjectId
+from exceptions.NotFound import NotFound
+
 import jwt
 
 PRODUCTS = Blueprint('products', __name__)
@@ -61,28 +62,15 @@ def create_product():
 @PRODUCTS.route('/products/<_id>')
 def get_product(_id):
     """Gets a single product"""
-
     try:
-        product = DB.products.find_one({'_id': ObjectId(_id)})
-        files = DB.files.find({'owner': _id}, {'_id': False})
-    except Exception:
+
+        product = dal_get_product_by_id(_id)
+        return response('Found product', 200, {'data': {'product': product}})
+
+    except WrongCredentials:
         return response('Not a valid id', 400)
-
-    try:
-        get_product = {
-            'category': product['category'],
-            'name': product['name'],
-            'createdBy': product['createdBy'],
-            'files': [files for files in files],
-            'serialNo': product['serialNo'],
-            'producer': product['producer'],
-            'description': product['description']
-        }
-    except Exception:
+    except NotFound:
         return response('Cannot find product', 400)
-
-    return response('Found product', 200, {'data': {'product': get_product}})
-
 
 @PRODUCTS.route('/products/<_id>/materials', methods=['POST'])
 def upload_actions(_id):
