@@ -2,6 +2,7 @@ from .mongo_client import db_conn
 from exceptions.WrongCredentials import WrongCredentials
 from exceptions.AlreadyExists import AlreadyExists
 from exceptions.TamperedToken import TamperedToken
+from utils.string import *
 import jwt
 
 
@@ -9,9 +10,9 @@ def dal_get_categories():
     categories_data = []
     for category in db_conn.categories.find():
         categories_data.append({
-            'category': category.get('category'),
-            '_id': str(category.get('_id')),
-            'sub': category.get('sub')
+            CATEGORY: category.get(CATEGORY),
+            ID: str(category.get(ID)),
+            SUB: category.get(SUB)
         })
 
     return categories_data
@@ -19,8 +20,8 @@ def dal_get_categories():
 
 def dal_create_category(form):
     try:
-        token = form['jwt']
-        category = form['category']
+        token = form[JWT]
+        category = form[CATEGORY]
 
     except Exception:
         raise WrongCredentials()
@@ -29,8 +30,8 @@ def dal_create_category(form):
     except Exception:
         raise AttributeError()
 
-    if payload['role'] == 'admin':
-        category_exists = db_conn.categories.find_one({'category': category})
+    if payload[ROLE] == ADMIN:
+        category_exists = db_conn.categories.find_one({CATEGORY: category})
 
         if category_exists:
             raise AlreadyExists()
@@ -42,13 +43,13 @@ def dal_create_category(form):
         if is_subcategory:
             raise AlreadyExists('Category is a subcategory')
 
-        db_conn.categories.insert({'category': category, 'sub': []})
+        db_conn.categories.insert({CATEGORY: category, SUB: []})
 
 
 def dal_create_subcategory(form, category):
     try:
-        token = form['jwt']
-        subcategory = form['category']
+        token = form[JWT]
+        subcategory = form[CATEGORY]
     except Exception:
         raise WrongCredentials('JWT or Category is missing')
 
@@ -57,18 +58,18 @@ def dal_create_subcategory(form, category):
     except Exception:
         raise TamperedToken('Changes has been made to JWT')
 
-    if payload['role'] != 'admin':
+    if payload[ROLE] != ADMIN:
         raise AttributeError('Not an admin')
 
     subcategory_exists = db_conn.categories.find_one({
-        'sub.category': subcategory
+        '%s.%s' % (SUB, CATEGORY): subcategory
     })
 
     if subcategory_exists:
         raise AlreadyExists('Subcategory exists')
 
     is_category = db_conn.categories.find_one({
-        'category': subcategory
+        CATEGORY: subcategory
     })
 
     if is_category:
@@ -76,8 +77,8 @@ def dal_create_subcategory(form, category):
 
     try:
         db_conn.categories.find_one_and_update(
-            {'category': category},
-            {'$push': {'sub': {'category': subcategory}}},
+            {CATEGORY: category},
+            {'$push': {SUB: {CATEGORY: subcategory}}},
             upsert=True
         )
     except Exception as e:
