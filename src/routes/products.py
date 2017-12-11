@@ -34,7 +34,7 @@ def get_products():
     return response(
         'Successfully retreived all the products',
         200,
-        {DATA: {PRODUCTS: products_data}}
+        {DATA: {PRODUCTSs: products_data}}
     )
 
 
@@ -105,7 +105,7 @@ def create_product():
     if files:
         DB.files.insert(files)
 
-    return response('Product was created', 201, {DATA: {PRODUCTS: str(_id)}})
+    return response('Product was created', 201, {DATA: {PRODUCTSs: str(_id)}})
 
 
 @PRODUCTS.route('/products/<_id>')
@@ -131,7 +131,7 @@ def get_product(_id):
     except Exception:
         return response('Cannot find product', 400)
 
-    return response('Found product', 200, {DATA: {PRODUCTS: get_product}})
+    return response('Found product', 200, {DATA: {PRODUCTSs: get_product}})
 
 
 @PRODUCTS.route('/products/<_id>/materials', methods=['POST'])
@@ -184,7 +184,7 @@ def upload_actions(_id):
     return response(
         'Successfully uploaded material to the product',
         201,
-        {DATA: {PRODUCTS: 'File uploaded'}}
+        {DATA: {PRODUCTSs: 'File uploaded'}}
     )
 
 
