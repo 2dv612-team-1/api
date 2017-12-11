@@ -6,6 +6,7 @@ from flask import Blueprint, request, current_app
 from pymongo import MongoClient, ReturnDocument
 from exceptions.TamperedToken import TamperedToken
 from utils.response import response
+from utils.string import *
 from utils.files import check_request_files, create_file_path, save
 from bson.objectid import ObjectId
 import jwt
@@ -21,21 +22,19 @@ DB = CLIENT.api
 def get_products():
     """Gets all available products"""
 
-    products_data = []
-    for product in DB.products.find():
-        products_data.append({
-            'name': product['name'],
-            'category': product['category'],
-            'description': product['description'],
-            'createdBy': product['createdBy'],
-            '_id': str(product['_id']),
-            'producer': product['producer']
-        })
+    products_data = list(map(lambda product: {
+        NAME: product[NAME],
+        CATEGORY: product[CATEGORY],
+        DESCRIPTION: product[DESCRIPTION],
+        CREATEDBY: product[CREATEDBY],
+        ID: str(product[ID]),
+        PRODUCER: product[PRODUCER]
+    }, DB.products.find()))
 
     return response(
         'Successfully retreived all the products',
         200,
-        {'data': {'products': products_data}}
+        {DATA: {PRODUCTS: products_data}}
     )
 
 
@@ -44,7 +43,7 @@ def create_product():
     """Create a product"""
 
     try:
-        token = request.form['jwt']
+        token = request.form[JWT]
     except Exception:
         return response('No JWT', 400)
 
@@ -53,7 +52,7 @@ def create_product():
     except Exception:
         return response('Tampered token', 400)
 
-    if payload['role'] != 'representative':
+    if payload[ROLE] != REPRESENTATIVE:
         return response('You are not a representative', 400)
 
     try:
@@ -62,23 +61,23 @@ def create_product():
         return response(str(e), 400)
 
     try:
-        representative = DB.users.find_one({'username': payload['username']})
-        company = representative['data']['owner']
+        representative = DB.users.find_one({USERNAME: payload[USERNAME]})
+        company = representative[DATA][OWNER]
         new_product = {
-            'category': request.form['category'],
-            'name': request.form['name'],
-            'description': request.form['description'],
-            'serialNo': request.form['serialNo'],
-            'createdBy': payload['username'],
-            'producer': company
+            CATEGORY: request.form[CATEGORY],
+            NAME: request.form[NAME],
+            DESCRIPTION: request.form[DESCRIPTION],
+            SERIALNO: request.form[SERIALNO],
+            CREATEDBY: payload[USERNAME],
+            PRODUCER: company
         }
     except Exception:
         return response('Wrong information', 400)
 
     search_obj = {
-        'name': new_product['name'],
-        'producer': company,
-        'serialNo': new_product['serialNo']
+        NAME: new_product[NAME],
+        PRODUCER: company,
+        SERIALNO: new_product[SERIALNO]
     }
 
     if DB.products.find_one(search_obj):
@@ -88,16 +87,16 @@ def create_product():
 
     try:
         path = create_file_path(company, str(_id))
-        filenames = save(path, request.files.getlist('files'))
+        filenames = save(path, request.files.getlist(FILES))
         files = list(map(lambda filename: {
-            'material_id': filename['file_time'],
-            'owner': str(_id),
-            'path': '/materials/' + company + '/' + str(_id) + '/' + filename['file_time'],
-            'name': filename['file_name'],
-            'stars': list(),
-            'votes': 0,
-            'comments': list(),
-            'average': 0
+            MATERIAL_ID: filename[FILE_TIME],
+            OWNER: str(_id),
+            PATH: '/' + MATERIALS + '/' + company + '/' + str(_id) + '/' + filename[FILE_TIME],
+            NAME: filename[FILE_NAME],
+            RATES: list(),
+            VOTES: 0,
+            COMMENTS: list(),
+            AVERAGE: 0
         }, filenames))
 
     except Exception as e:
@@ -106,7 +105,7 @@ def create_product():
     if files:
         DB.files.insert(files)
 
-    return response('Product was created', 201, {'data': {'product': str(_id)}})
+    return response('Product was created', 201, {DATA: {PRODUCTS: str(_id)}})
 
 
 @PRODUCTS.route('/products/<_id>')
@@ -114,32 +113,32 @@ def get_product(_id):
     """Gets a single product"""
 
     try:
-        product = DB.products.find_one({'_id': ObjectId(_id)})
-        files = DB.files.find({'owner': _id}, {'_id': False})
+        product = DB.products.find_one({ID: ObjectId(_id)})
+        files = DB.files.find({OWNER: _id}, {ID: False})
     except Exception:
         return response('Not a valid id', 400)
 
     try:
         get_product = {
-            'category': product['category'],
-            'name': product['name'],
-            'createdBy': product['createdBy'],
-            'files': [files for files in files],
-            'serialNo': product['serialNo'],
-            'producer': product['producer'],
-            'description': product['description']
+            CATEGORY: product[CATEGORY],
+            NAME: product[NAME],
+            CREATEDBY: product[CREATEDBY],
+            FILES: [files for files in files],
+            SERIALNO: product[SERIALNO],
+            PRODUCER: product[PRODUCER],
+            DESCRIPTION: product[DESCRIPTION]
         }
     except Exception:
         return response('Cannot find product', 400)
 
-    return response('Found product', 200, {'data': {'product': get_product}})
+    return response('Found product', 200, {DATA: {PRODUCTS: get_product}})
 
 
 @PRODUCTS.route('/products/<_id>/materials', methods=['POST'])
 def upload_actions(_id):
 
     try:
-        token = request.form['jwt']
+        token = request.form[JWT]
     except Exception:
         return response('No JWT', 400)
 
@@ -148,11 +147,11 @@ def upload_actions(_id):
     except Exception:
         return response('Tampered token', 400)
 
-    if payload['role'] != 'representative':
+    if payload[ROLE] != REPRESENTATIVE:
         return response('You are not a representative', 400)
 
-    representative = DB.users.find_one({'username': payload['username']})
-    file_company = representative['data']['owner']
+    representative = DB.users.find_one({USERNAME: payload[USERNAME]})
+    file_company = representative[DATA][OWNER]
 
     try:
         if len(request.files) < 1:
@@ -163,17 +162,17 @@ def upload_actions(_id):
 
     try:
         path = create_file_path(file_company, _id)
-        filenames = save(path, request.files.getlist('files'))
+        filenames = save(path, request.files.getlist(FILES))
 
         files = list(map(lambda filename: {
-            'material_id': filename['file_time'],
-            'owner': str(_id),
-            'path': '/materials/' + file_company + '/' + str(_id) + '/' + filename['file_time'],
-            'name': filename['file_name'],
-            'stars': list(),
-            'votes': 0,
-            'comments': list(),
-            'average': 0
+            MATERIAL_ID: filename[FILE_TIME],
+            OWNER: str(_id),
+            PATH: '/' + MATERIALS + '/' + file_company + '/' + str(_id) + '/' + filename['file_time'],
+            NAME: filename[FILE_NAME],
+            RATES: list(),
+            VOTES: 0,
+            COMMENTS: list(),
+            AVERAGE: 0
         }, filenames))
 
     except Exception as e:
@@ -185,7 +184,7 @@ def upload_actions(_id):
     return response(
         'Successfully uploaded material to the product',
         201,
-        {'data': {'product': 'File uploaded'}}
+        {DATA: {PRODUCTS: 'File uploaded'}}
     )
 
 
@@ -194,16 +193,16 @@ def rate_material(product_id, material_name):
     """Used to rate material"""
 
     try:
-        token = request.form['jwt']
+        token = request.form[JWT]
         payload = jwt.decode(token, 'super-secret')
     except Exception:
         return response('Expected jwt key', 400)
 
-    if payload['role'] != 'consumer':
+    if payload[ROLE] != CONSUMER:
         return response('Have to be consumer to rate', 400)
 
     try:
-        rate = request.form['rate']
+        rate = request.form[ROLE]
     except Exception:
         return response('Expected rate key', 400)
 
@@ -216,42 +215,42 @@ def rate_material(product_id, material_name):
         return response('Expected star value to be between 1 and 5', 400)
 
     user_has_voted = DB.files.find_one({
-        'owner': str(product_id),
-        'material_id': material_name,
-        'stars.username': payload['username']
+        OWNER: str(product_id),
+        MATERIAL_ID: material_name,
+        '%s.%s' % (RATES, USERNAME): payload[USERNAME]
     })
 
     if user_has_voted:
         updated = DB.files.find_one_and_update(
-            {'owner': str(product_id), 'material_id': material_name,
-             'stars.username': payload['username']},
-            {'$set': {'stars.$.rate': rateInt}},
+            {OWNER: str(product_id), MATERIAL_ID: material_name,
+             '%s.%s' % (RATE, USERNAME): payload[USERNAME]},
+            {'$set': {'%s.$.%s' % (RATES, RATE): rateInt}},
             return_document=ReturnDocument.AFTER
         )
     else:
         updated = DB.files.find_one_and_update(
-            {'owner': str(product_id), 'material_id': material_name},
-            {'$inc': {'votes': 1}, '$push': {
-                'stars': {'username': payload['username'], 'rate': rateInt}}},
+            {OWNER: str(product_id), MATERIAL_ID: material_name},
+            {'$inc': {VOTES: 1}, '$push': {
+                RATES: {USERNAME: payload[USERNAME], RATE: rateInt}}},
             return_document=ReturnDocument.AFTER
         )
 
     if not updated:
         return response('There\'s nothing to rate', 200)
 
-    current_votes = updated['stars']
+    current_votes = updated[RATES]
     vote_amount = len(current_votes)
     total = 0
     for value in current_votes:
-        total += value['rate']
+        total += value[RATE]
     total_vote_value = round(total / vote_amount, 1)
 
     DB.files.find_one_and_update(
-        {'owner': str(product_id), 'material_id': material_name},
-        {'$set': {'average': total_vote_value}}
+        {OWNER: str(product_id), MATERIAL_ID: material_name},
+        {'$set': {AVERAGE: total_vote_value}}
     )
 
     return response(str({
-        'average': total_vote_value,
-        'amount': vote_amount
+        AVERAGE: total_vote_value,
+        AMOUNT: vote_amount
     }), 200)
