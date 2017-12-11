@@ -1,4 +1,5 @@
 from .mongo_client import db_conn
+from utils.string import *
 
 
 def get_products(name):
@@ -10,20 +11,24 @@ def get_products(name):
         list -- products found in db
     """
 
-    user = db_conn.users.find_one({'username': name})
-    owner = user['data']['owner']
+    try:
+        user = db_conn.users.find_one({USERNAME: name})
+        owner = user[DATA][OWNER]
+    except Exception:
+        return 'No user information found'
 
-    products = []
-    for product in db_conn.products.find({'producer': owner}):
-        products.append({
-            'category': product.get('category'),
-            'name': product.get('name'),
-            'description': product.get('description'),
-            '_id': str(product.get('_id')),
-            'subcategory': product.get('subcategory'),
-            'serialNo': product.get('serialNo'),
-            'createdBy': product.get('createdBy'),
-            'producer': product.get('producer')
-        })
+    try:
+        products = db_conn.products.find({PRODUCER: owner})
+    except Exception:
+        return 'Cannot get company products'
 
-    return products
+    return list(map(lambda product: {
+        CATEGORY: product.get(CATEGORY),
+        NAME: product.get(NAME),
+        DESCRIPTION: product.get(DESCRIPTION),
+        ID: str(product.get(ID)),
+        SUB: product.get(SUB),
+        SERIALNO: product.get(SERIALNO),
+        CREATEDBY: product.get(CREATEDBY),
+        PRODUCER: product.get(PRODUCER)
+    }, products))
