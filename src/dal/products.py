@@ -1,5 +1,6 @@
 from .mongo_client import db_conn
 from utils.files import check_request_files, create_file_path, save
+from pymongo import ReturnDocument
 from exceptions.WrongCredentials import WrongCredentials
 from exceptions.InvalidRole import InvalidRole
 from exceptions.BadFormData import BadFormData
@@ -23,6 +24,7 @@ def dal_get_products():
             '_id': str(product['_id']),
             'producer': product['producer']
         })
+
     return products_data
 
 
@@ -55,6 +57,7 @@ def dal_get_product_by_id(_id):
 
 def dal_create_product_upload_files(form, files):
 
+    #ref
     try:
         token = form['jwt']
     except Exception:
@@ -67,6 +70,7 @@ def dal_create_product_upload_files(form, files):
 
     if payload['role'] != 'representative':
         raise InvalidRole()
+    #ref
 
     try:
         check_request_files(files)
@@ -120,9 +124,115 @@ def dal_create_product_upload_files(form, files):
     return _id
 
 
-def dal_upload_files():
-    pass
+def dal_upload_files(form, files, _id):
+    #ref
+    try:
+        token = form['jwt']
+    except Exception:
+        raise WrongCredentials()
+
+    try:
+        payload = jwt.decode(token, 'super-secret')
+    except Exception:
+        raise AttributeError()
+
+    if payload['role'] != 'representative':
+        raise InvalidRole()
+    #ref
+
+    representative = db_conn.users.find_one({'username': payload['username']})
+    file_company = representative['owner']
+
+    try:
+
+        if len(files) < 1:
+            raise NotFound()
+
+        check_request_files(files)
+
+    except Exception:
+        raise ErrorRequestingFiles()
+
+    try:
+        path = create_file_path(file_company, _id)
+        filenames = save(path, files.getlist('files'))
+
+        files = list(map(lambda filename: {
+            'material_id': filename['file_time'],
+            'owner': str(_id),
+            'path': '/materials/' + file_company + '/' + str(_id) + '/' + filename['file_time'],
+            'name': filename['file_name'],
+            'stars': list(),
+            'votes': 0,
+            'comments': list(),
+            'average': 0
+        }, filenames))
+
+    except Exception:
+        raise ErrorCreatingFiles()
+
+    if files:
+        db_conn.files.insert(files)
 
 
-def dal_get_product():
-    pass
+def dal_rate_product(form, product_id, material_name):
+
+    try:
+        token = form['jwt']
+        payload = jwt.decode(token, 'super-secret')
+    except Exception:
+        raise WrongCredentials()
+
+    if payload['role'] != 'consumer':
+        raise InvalidRole()
+
+    try:
+        rate = form['rate']
+    except Exception:
+        raise BadFormData()
+
+    try:
+        rateInt = float(float(rate))
+    except Exception:
+        raise FloatingPointError()
+
+    if rateInt > 5 or rateInt < 1:
+        raise ValueError()
+
+    user_has_voted = db_conn.files.find_one({
+        'owner': str(product_id),
+        'material_id': material_name,
+        'stars.username': payload['username']
+    })
+
+    if user_has_voted:
+        updated = db_conn.files.find_one_and_update(
+            {'owner': str(product_id), 'material_id': material_name,
+             'stars.username': payload['username']},
+            {'$set': {'stars.$.rate': rateInt}},
+            return_document=ReturnDocument.AFTER
+        )
+    else:
+        updated = db_conn.files.find_one_and_update(
+            {'owner': str(product_id), 'material_id': material_name},
+            {'$inc': {'votes': 1}, '$push': {
+                'stars': {'username': payload['username'], 'rate': rateInt}}},
+            return_document=ReturnDocument.AFTER
+        )
+
+    if not updated:
+        raise NotFound()
+
+    current_votes = updated['stars']
+    vote_amount = len(current_votes)
+    total = 0
+    for value in current_votes:
+        total += value['rate']
+    total_vote_value = round(total / vote_amount, 1)
+
+    db_conn.files.find_one_and_update(
+        {'owner': str(product_id), 'material_id': material_name},
+        {'$set': {'average': total_vote_value}}
+    )
+
+    return total_vote_value, vote_amount
