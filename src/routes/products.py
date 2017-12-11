@@ -4,7 +4,7 @@ Products route
 
 from flask import Blueprint, request
 from utils.response import response
-from dal.products import dal_get_products, dal_create_product_upload_files, dal_get_product_by_id, dal_upload_files, dal_rate_product
+from dal.products import dal_get_products, dal_create_product_upload_files, dal_get_product_by_id, dal_upload_files, dal_rate_material
 from exceptions.WrongCredentials import WrongCredentials
 from exceptions.AlreadyExists import AlreadyExists
 from exceptions.InvalidRole import InvalidRole
