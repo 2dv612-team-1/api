@@ -5,7 +5,7 @@ Company routes
 from flask import Blueprint, request
 from utils.response import response
 from dal.users import get_users_with_role
-from dal.companies import create_company, get_representatives_for_company, dal_create_representative, get_products
+from dal.companies import create_company, get_representatives_for_company, dal_create_representative, get_products_for_company
 
 
 COMPANIES = Blueprint('companies', __name__)
@@ -70,7 +70,7 @@ def create_representative(name):
 def get_product(name):
     """Gets all products for the company"""
 
-    products = get_products(name)
+    products = get_products_for_company(name)
 
     return response(
         'Successfully retreived all the products for company ' + name,
