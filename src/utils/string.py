@@ -26,6 +26,17 @@ CREATEDBY = 'createdBy'
 PRODUCER = 'producer'
 COMPANIES = 'companies'
 USERS = 'users'
+FILES = 'files'
+MATERIAL_ID = 'material_id'
+FILE_TIME = 'file_time'
+FILE_NAME = 'file_name'
+PATH = 'path'
+RATES = 'rates'
+RATE = 'rate'
+VOTES = 'votes'
+COMMENTS = 'comments'
+AVERAGE = 'average'
+
 
 ## ROUTES ##
 AUTH = 'auth'
