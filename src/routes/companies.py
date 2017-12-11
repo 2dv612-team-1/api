@@ -44,7 +44,7 @@ def get_representatives(name):
     """Gets list of representatives from specific company"""
     try:
         representatives = get_representatives_for_company(name)
-        return response(name, 200, {REPRESENTATIVES: representatives})
+        return response(name, 200, {REPRESENTATIVE: representatives})
 
     except AttributeError:
         return response('Invalid company', 400)
