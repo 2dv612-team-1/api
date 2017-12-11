@@ -113,3 +113,5 @@ def rate_material(product_id, material_name):
         return response('Expected rate to be int', 400)
     except ValueError:
         return response('Expected star value to be between 1 and 5', 400)
+    except NotFound:
+        return response('There\'s nothing to rate', 200)
