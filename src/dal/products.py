@@ -175,7 +175,7 @@ def dal_upload_files(form, files, _id):
         db_conn.files.insert(files)
 
 
-def dal_rate_product(form, product_id, material_name):
+def dal_rate_material(form, product_id, material_name):
 
     try:
         token = form['jwt']

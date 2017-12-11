@@ -97,7 +97,7 @@ def rate_material(product_id, material_name):
     """Used to rate material"""
     try:
 
-        total_vote_value, vote_amount = dal_rate_product(request.form, product_id, material_name)
+        total_vote_value, vote_amount = dal_rate_material(request.form, product_id, material_name)
         return response(str({
             'average': total_vote_value,
             'amount': vote_amount
