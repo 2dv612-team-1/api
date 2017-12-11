@@ -4,6 +4,7 @@ Company routes
 
 from flask import Blueprint, request
 from utils.response import response
+from utils.string import *
 from dal.users import get_users_with_role
 from dal.companies import create_company, get_representatives_for_company, dal_create_representative
 from dal.products import get_products
@@ -11,14 +12,12 @@ from dal.products import get_products
 
 COMPANIES = Blueprint('companies', __name__)
 
-# add bcrypt
-
 
 @COMPANIES.route('/companies')
 def company_actions():
     """Extracts companies"""
     try:
-        users = get_users_with_role('company')
+        users = get_users_with_role(COMPANY)
         return response('Successfully extracted all users', 200, {'companies': users})
     except SystemError:
         return response('Something went wrong while retrieving the data', 500)
@@ -45,7 +44,7 @@ def get_representatives(name):
     """Gets list of representatives from specific company"""
     try:
         representatives = get_representatives_for_company(name)
-        return response(name, 200, {'representatives': representatives})
+        return response(name, 200, {REPRESENTATIVES: representatives})
 
     except AttributeError:
         return response('Invalid company', 400)
@@ -76,7 +75,7 @@ def get_product(name):
     return response(
         'Successfully retreived all the products for company ' + name,
         200,
-        { 'data':
-            { 'products': products }
+        { DATA:
+            { PRODUCTS: products }
         }
     )
