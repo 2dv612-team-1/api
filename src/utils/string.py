@@ -40,7 +40,7 @@ AVERAGE = 'average'
 
 ## ROUTES ##
 AUTH = 'auth'
-PRODUCTS = 'products'
+PRODUCTSs = 'products'
 CONSUMERS = 'consumers'
 COMPANIEsS = 'companies'
 ADMINS = 'admins'
