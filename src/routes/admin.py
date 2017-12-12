@@ -9,9 +9,7 @@ from dal.admin import auth_and_return_admin, create_default_admin
 
 ADMIN_ROUTER = Blueprint(ADMIN, __name__)
 
-
-
-@ADMIN_ROUTE.route('/admins', methods=['POST'])
+@ADMIN_ROUTER.route('/admins', methods=['POST'])
 def admin_actions():
     """When requested create admin account"""
 
