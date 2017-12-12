@@ -1,5 +1,6 @@
 from .mongo_client import db_conn
 from utils.string import *
+from config import *
 import jwt
 
 """
@@ -17,7 +18,7 @@ def auth_and_return_admin(form):
 
     if found_admin:
         payload = {USERNAME: found_admin[USERNAME], ROLE: ADMIN}
-        encoded = jwt.encode(payload, 'super-secret')
+        encoded = jwt.encode(payload, SECRET)
         return encoded
 
     else:
