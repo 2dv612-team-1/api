@@ -1,10 +1,10 @@
 from flask import Blueprint, jsonify
 from utils.string import *
 
-ENTRY = Blueprint('entry', __name__)
+ENTRY_ROUTER = Blueprint(ENTRY, __name__)
 
 
-@ENTRY.route(ROOT)
+@ENTRY_ROUTER.route(ROOT)
 def get_entry():
     """Displays a list of possible routes"""
 

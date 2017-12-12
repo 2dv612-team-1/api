@@ -7,11 +7,11 @@ from utils.response import response
 from utils.string import *
 from dal.admin import auth_and_return_admin, create_default_admin
 
-ADMIN = Blueprint('admin', __name__)
+ADMIN_ROUTER = Blueprint(ADMIN, __name__)
 
 
 
-@ADMIN.route('/admins', methods=['POST'])
+@ADMIN_ROUTE.route('/admins', methods=['POST'])
 def admin_actions():
     """When requested create admin account"""
 
@@ -19,7 +19,7 @@ def admin_actions():
     return response('Admin account has been created', 201)
 
 
-@ADMIN.route('/admins/auth', methods=['POST'])
+@ADMIN_ROUTER.route('/admins/auth', methods=['POST'])
 def admin_auth():
     """Authenticates an admin"""
 

@@ -7,12 +7,12 @@ from utils.response import response
 from utils.string import *
 from dal.users import auth_and_return_user
 
-AUTH = Blueprint('auth', __name__)
+AUTH_ROUTER = Blueprint(AUTH, __name__)
 
 # add bcrypt
 
 
-@AUTH.route('/auth', methods=['POST'])
+@AUTH_ROUTER.route('/auth', methods=['POST'])
 def auth_actions():
     """Authenticates any user"""
 

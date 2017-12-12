@@ -8,13 +8,13 @@ from utils.string import *
 from dal.users import get_users_with_role, check_user_token
 from dal.consumer import create_consumer
 
-CONSUMERS = Blueprint('consumers', __name__)
+CONSUMERS_ROUTER = Blueprint(CONSUMERS, __name__)
 
 
 # add bcrypt
 
 
-@CONSUMERS.route('/consumers')
+@CONSUMERS_ROUTE.route('/consumers')
 def get_consumers():
     try:
 
@@ -24,7 +24,8 @@ def get_consumers():
     except SystemError:
         return response('Something went wrong while retreiving the data', 500)
 
-@CONSUMERS.route('/consumers', methods=['POST'])
+
+@CONSUMERS_ROUTE.route('/consumers', methods=['POST'])
 def consumer_creation():
     """Creates consumer"""
 
@@ -40,8 +41,7 @@ def consumer_creation():
         return response('Wrong credentials', 400)
 
 
-
-@CONSUMERS.route('/consumers/<token>', methods=['GET'])
+@CONSUMERS_ROUTE.route('/consumers/<token>', methods=['GET'])
 def get_user(token):
     """Gets current user"""
 
