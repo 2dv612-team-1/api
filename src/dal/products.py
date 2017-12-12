@@ -35,7 +35,7 @@ def dal_get_product_by_id(_id):
         files = db_conn.files.find({'owner': _id}, {'_id': False})
 
     except Exception:
-        raise WrongCredentials
+        raise WrongCredentials()
 
     try:
 
