@@ -46,3 +46,6 @@ def get_users_with_role(role):
         users.append({'username': user['username']})
 
     return users
+
+def get_user(username):
+    return db_conn.users.find_one({'username': username})
