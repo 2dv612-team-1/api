@@ -14,7 +14,7 @@ CONSUMERS_ROUTER = Blueprint(CONSUMERS, __name__)
 # add bcrypt
 
 
-@CONSUMERS_ROUTE.route('/consumers')
+@CONSUMERS_ROUTER.route('/consumers')
 def get_consumers():
     try:
 
@@ -25,7 +25,7 @@ def get_consumers():
         return response('Something went wrong while retreiving the data', 500)
 
 
-@CONSUMERS_ROUTE.route('/consumers', methods=['POST'])
+@CONSUMERS_ROUTER.route('/consumers', methods=['POST'])
 def consumer_creation():
     """Creates consumer"""
 
@@ -41,7 +41,7 @@ def consumer_creation():
         return response('Wrong credentials', 400)
 
 
-@CONSUMERS_ROUTE.route('/consumers/<token>', methods=['GET'])
+@CONSUMERS_ROUTER.route('/consumers/<token>', methods=['GET'])
 def get_user(token):
     """Gets current user"""
 
