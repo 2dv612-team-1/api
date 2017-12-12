@@ -28,7 +28,7 @@ def get_products(name):
         DESCRIPTION: product.get(DESCRIPTION),
         ID: str(product.get(ID)),
         SUB: product.get(SUB),
-        SERIALNO: product.get(SERIALNO),
+        PRODUCTNO: product.get(PRODUCTNO),
         CREATEDBY: product.get(CREATEDBY),
         PRODUCER: product.get(PRODUCER)
     }, products))
