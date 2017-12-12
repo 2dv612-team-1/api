@@ -1,4 +1,5 @@
 from pymongo import MongoClient
+from config import *
 
 """ Data Access Layer
 
@@ -10,5 +11,5 @@ from pymongo import MongoClient
     self.db_conn.products   => products collection
 """
 
-client = MongoClient('mongodb:27017')
+client = MongoClient(MONGO)
 db_conn = client.api

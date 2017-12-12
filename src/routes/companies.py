@@ -4,27 +4,26 @@ Company routes
 
 from flask import Blueprint, request
 from utils.response import response
+from utils.string import *
 from dal.users import get_users_with_role
 from dal.companies import create_company, get_representatives_for_company, dal_create_representative
 from dal.products import get_products
 
 
-COMPANIES = Blueprint('companies', __name__)
-
-# add bcrypt
+COMPANIES_ROUTER = Blueprint(COMPANIES, __name__)
 
 
-@COMPANIES.route('/companies')
+@COMPANIES_ROUTER.route('/companies')
 def company_actions():
     """Extracts companies"""
     try:
-        users = get_users_with_role('company')
-        return response('Successfully extracted all users', 200, {'companies': users})
+        users = get_users_with_role(COMPANY)
+        return response('Successfully extracted all users', 200, {COMPANIES: users})
     except SystemError:
         return response('Something went wrong while retrieving the data', 500)
 
 
-@COMPANIES.route('/companies', methods=['POST'])
+@COMPANIES_ROUTER.route('/companies', methods=['POST'])
 def company_creation():
     """Creates company"""
     try:
@@ -40,18 +39,18 @@ def company_creation():
         return response('Wrong credentials', 400)
 
 
-@COMPANIES.route('/companies/<name>/representatives')
+@COMPANIES_ROUTER.route('/companies/<name>/representatives')
 def get_representatives(name):
     """Gets list of representatives from specific company"""
     try:
         representatives = get_representatives_for_company(name)
-        return response(name, 200, {'representatives': representatives})
+        return response(name, 200, {REPRESENTATIVES: representatives})
 
     except AttributeError:
         return response('Invalid company', 400)
 
-# name => owner
-@COMPANIES.route('/companies/<name>/representatives', methods=['POST'])
+
+@COMPANIES_ROUTER.route('/companies/<name>/representatives', methods=['POST'])
 def create_representative(name):
     """Creates representative"""
     try:
@@ -67,7 +66,7 @@ def create_representative(name):
         return response('Wrong credentials', 400)
 
 
-@COMPANIES.route('/companies/<name>/products')
+@COMPANIES_ROUTER.route('/companies/<name>/products')
 def get_product(name):
     """Gets all products for the company"""
 
@@ -76,7 +75,7 @@ def get_product(name):
     return response(
         'Successfully retreived all the products for company ' + name,
         200,
-        { 'data':
-            { 'products': products }
-        }
+        {DATA:
+            {PRODUCTS: products}
+         }
     )

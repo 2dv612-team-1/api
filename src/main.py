@@ -3,14 +3,14 @@ Main system file
 """
 
 from flask import Flask
-from routes.entry import ENTRY
-from routes.admin import ADMIN
-from routes.companies import COMPANIES
-from routes.auth import AUTH
-from routes.consumers import CONSUMERS
-from routes.products import PRODUCTS
-from routes.categories import CATEGORIES
-from routes.materials import MATERIALS
+from routes.entry import ENTRY_ROUTER
+from routes.admin import ADMIN_ROUTER
+from routes.companies import COMPANIES_ROUTER
+from routes.auth import AUTH_ROUTER
+from routes.consumers import CONSUMERS_ROUTER
+from routes.products import PRODUCTS_ROUTER
+from routes.categories import CATEGORIES_ROUTER
+from routes.materials import MATERIALS_ROUTER
 from flask_cors import CORS
 # from flask_limiter import Limiter
 # from flask_limiter.util import get_remote_address
@@ -24,14 +24,14 @@ CORS(APP)
 
 # LIMITER.limit("50/day;10/hour")(AUTH)
 
-APP.register_blueprint(ENTRY)
-APP.register_blueprint(CONSUMERS)
-APP.register_blueprint(ADMIN)
-APP.register_blueprint(COMPANIES)
-APP.register_blueprint(CATEGORIES)
-APP.register_blueprint(MATERIALS)
-APP.register_blueprint(AUTH)
-APP.register_blueprint(PRODUCTS)
+APP.register_blueprint(ENTRY_ROUTER)
+APP.register_blueprint(CONSUMERS_ROUTER)
+APP.register_blueprint(ADMIN_ROUTER)
+APP.register_blueprint(COMPANIES_ROUTER)
+APP.register_blueprint(CATEGORIES_ROUTER)
+APP.register_blueprint(MATERIALS_ROUTER)
+APP.register_blueprint(AUTH_ROUTER)
+APP.register_blueprint(PRODUCTS_ROUTER)
 
 if __name__ == '__main__':
     APP.run(host='0.0.0.0', debug=True, port=80)
