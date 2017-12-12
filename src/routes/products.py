@@ -7,6 +7,7 @@ from pymongo import MongoClient, ReturnDocument
 from exceptions.TamperedToken import TamperedToken
 from utils.response import response
 from utils.string import *
+from config import *
 from utils.files import check_request_files, create_file_path, save
 from bson.objectid import ObjectId
 import jwt
@@ -200,7 +201,7 @@ def rate_material(product_id, material_name):
         return response('Have to be consumer to rate', 400)
 
     try:
-        rate = request.form[ROLE]
+        rate = request.form[RATE]
     except Exception:
         return response('Expected rate key', 400)
 
