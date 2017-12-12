@@ -3,6 +3,7 @@ from exceptions.WrongCredentials import WrongCredentials
 from exceptions.AlreadyExists import AlreadyExists
 from exceptions.TamperedToken import TamperedToken
 from utils.string import *
+from config import *
 import jwt
 
 
@@ -26,7 +27,7 @@ def dal_create_category(form):
     except Exception:
         raise WrongCredentials()
     try:
-        payload = jwt.decode(token, 'super-secret')
+        payload = jwt.decode(token, SECRET)
     except Exception:
         raise AttributeError()
 
@@ -37,7 +38,7 @@ def dal_create_category(form):
             raise AlreadyExists()
 
         is_subcategory = db_conn.categories.find_one({
-            'sub.category': category
+            '%s.%s' % (SUB, CATEGORY): category
         })
 
         if is_subcategory:
@@ -54,7 +55,7 @@ def dal_create_subcategory(form, category):
         raise WrongCredentials('JWT or Category is missing')
 
     try:
-        payload = jwt.decode(token, 'super-secret')
+        payload = jwt.decode(token, SECRET)
     except Exception:
         raise TamperedToken('Changes has been made to JWT')
 
