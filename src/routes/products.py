@@ -11,14 +11,12 @@ from utils.files import check_request_files, create_file_path, save
 from bson.objectid import ObjectId
 import jwt
 
-PRODUCTS = Blueprint('products', __name__)
+PRODUCTS_ROUTER = Blueprint(PRODUCTS, __name__)
 CLIENT = MongoClient('mongodb:27017')
 DB = CLIENT.api
 
-# add bcrypt
 
-
-@PRODUCTS.route('/products')
+@PRODUCTS_ROUTER.route('/products')
 def get_products():
     """Gets all available products"""
 
@@ -34,11 +32,11 @@ def get_products():
     return response(
         'Successfully retreived all the products',
         200,
-        {DATA: {PRODUCTSs: products_data}}
+        {DATA: {PRODUCTS: products_data}}
     )
 
 
-@PRODUCTS.route('/products', methods=['POST'])
+@PRODUCTS_ROUTER.route('/products', methods=['POST'])
 def create_product():
     """Create a product"""
 
@@ -67,7 +65,7 @@ def create_product():
             CATEGORY: request.form[CATEGORY],
             NAME: request.form[NAME],
             DESCRIPTION: request.form[DESCRIPTION],
-            SERIALNO: request.form[SERIALNO],
+            PRODUCTNO: request.form[PRODUCTNO],
             CREATEDBY: payload[USERNAME],
             PRODUCER: company
         }
@@ -77,7 +75,7 @@ def create_product():
     search_obj = {
         NAME: new_product[NAME],
         PRODUCER: company,
-        SERIALNO: new_product[SERIALNO]
+        PRODUCTNO: new_product[PRODUCTNO]
     }
 
     if DB.products.find_one(search_obj):
@@ -105,10 +103,10 @@ def create_product():
     if files:
         DB.files.insert(files)
 
-    return response('Product was created', 201, {DATA: {PRODUCTSs: str(_id)}})
+    return response('Product was created', 201, {DATA: {PRODUCTS: str(_id)}})
 
 
-@PRODUCTS.route('/products/<_id>')
+@PRODUCTS_ROUTER.route('/products/<_id>')
 def get_product(_id):
     """Gets a single product"""
 
@@ -124,17 +122,17 @@ def get_product(_id):
             NAME: product[NAME],
             CREATEDBY: product[CREATEDBY],
             FILES: [files for files in files],
-            SERIALNO: product[SERIALNO],
+            PRODUCTNO: product[PRODUCTNO],
             PRODUCER: product[PRODUCER],
             DESCRIPTION: product[DESCRIPTION]
         }
     except Exception:
         return response('Cannot find product', 400)
 
-    return response('Found product', 200, {DATA: {PRODUCTSs: get_product}})
+    return response('Found product', 200, {DATA: {PRODUCTS: get_product}})
 
 
-@PRODUCTS.route('/products/<_id>/materials', methods=['POST'])
+@PRODUCTS_ROUTER.route('/products/<_id>/materials', methods=['POST'])
 def upload_actions(_id):
 
     try:
@@ -167,7 +165,7 @@ def upload_actions(_id):
         files = list(map(lambda filename: {
             MATERIAL_ID: filename[FILE_TIME],
             OWNER: str(_id),
-            PATH: '/' + MATERIALS + '/' + file_company + '/' + str(_id) + '/' + filename['file_time'],
+            PATH: '/' + MATERIALS + '/' + file_company + '/' + str(_id) + '/' + filename[FILE_TIME],
             NAME: filename[FILE_NAME],
             RATES: list(),
             VOTES: 0,
@@ -188,7 +186,7 @@ def upload_actions(_id):
     )
 
 
-@PRODUCTS.route('/products/<product_id>/materials/<material_name>/rate', methods=['POST'])
+@PRODUCTS_ROUTER.route('/products/<product_id>/materials/<material_name>/rate', methods=['POST'])
 def rate_material(product_id, material_name):
     """Used to rate material"""
 
