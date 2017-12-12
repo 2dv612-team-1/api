@@ -3,22 +3,31 @@ Annotations route
 """
 
 from flask import Blueprint, request
-from pymongo import MongoClient
-from exceptions.TamperedToken import TamperedToken
 from utils.response import response
-from dal.users import find_user_by_name
-from bson.objectid import ObjectId
+from dal.users import get_user
+from dal.consumer import create_annotation, update_annotations, get_annotations_for_material
 import jwt
 
-ANNOTAIONS = Blueprint('annotations', __name__)
-CLIENT = MongoClient('mongodb:27017')
-DB = CLIENT.api
+ANNOTATIONS = Blueprint('annotations', __name__)
 
 
-@ANNOTATIONS.route('/consumers/<token>/products/<product_id>/materials/<material_name>/<annotations>', methods=['POST'])
-def create_annotations():
+@ANNOTATIONS.route('/consumers/<username>/materials/<material_id>/annotations')
+def get_annotations(username, material_id):
+    try:
+        annotations = get_annotations_for_material(username, material_id)
+    except Exception as e:
+        return response(str(e), 418)
+
+    return response(
+        'Successfully retreived the annotations for the material',
+        200,
+        {'data': {'annotations': annotations}}
+    )
+
+@ANNOTATIONS.route('/consumers/<username>/materials/<material_id>/annotations', methods=['POST'])
+def create_annotations(username, material_id):
     """Create a note"""
-    
+
     try:
         token = request.form['jwt']
     except Exception:
@@ -33,59 +42,34 @@ def create_annotations():
         return response('You are not a consumer', 400)
 
     try:
-        consumer = DB.users.find_one({'username': payload['username']}) 
-
-        new_annotation = {
-            '_id': ObjectId(username_id)}
-            'material': filename['file_time']
-            'annotations':request.form['annotations']}
-        
-        _id = DB.annotations.insert(new_annotation)
-
-    return response('A note was created', 200 {'new_annotation'})
-
-
-@ANNOTATIONS.route('/consumers/<token>/products/<product_id>/materials/<material_name>/<annotations>', methods=['POST'])
-def update_annotations(token, material_name):
-    """Update note to user and material"""
-    
-    try:
-        token = request.form['jwt']
-        payload = jwt.decode(token, 'super-secret')
+        consumer = get_user(payload['username'])
     except Exception:
-        return response('Expected jwt key', 400)
+        #TODO: Custom exception
+        return response('User doesn\'t exist', 400)
 
-    if payload['role'] != 'consumer':
-        return response('Have to be consumer to annotate', 400)
-
-    updated = DB.users.find_one_and_update({
-        '_id': ObjectId(username_id)},
-        {'$push': {'annotations': {'material_id': payload['material_id'], 'annotation': annotations}}}
-        )
-
-    return response(str(updated), 200)
-
-
-@ANNOTATIONS.route('/consumers/<token>/products/<product_id>/materials/<material_name>')
-def get_annotations(token, material_name):
-    """Gets one note made by one user"""
+    new_annotation = {
+        'material_id': material_id,
+        'annotations':request.form['annotations']}
 
     try:
-        token = request.form['jwt']
-        payload = jwt.decode(token, 'super-secret')
-    except Exception:
-        return response('Expected jwt key', 400)
+        all_annotations = consumer['data']['annotations']
+    except Exception as e:
+        # NO ANNOTATIONS AT ALL CREATE NEW
+        data = create_annotation(consumer, new_annotation)
+        return response(data['res'], data['code'])
 
-    if payload['role'] != 'consumer':
-        return response('Have to be consumer to annotate', 400)
+    found = False
+    for an in all_annotations:
+        if an['material_id'] == material_id:
+            # UPDATE
+            found = True
+            an['annotations'] = request.form['annotations']
 
-    annotation = DB.users.find_one({
-        '_id': ObjectId(username_id),
-        'annotations.material_id': material_name})
+    if not found:
+        # NEW
+        all_annotations.append(new_annotation)
 
-    if (annotation==''):
-        return response('The material has no notes attached.', 400)
 
-    return response(str(annotation), 200)
-
+    data = update_annotations(consumer, all_annotations)
+    return response(data['res'], data['code'])
 
