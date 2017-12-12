@@ -10,6 +10,7 @@ from routes.auth import AUTH
 from routes.consumers import CONSUMERS
 from routes.products import PRODUCTS
 from routes.categories import CATEGORIES
+from routes.annotations import ANNOTATIONS
 from routes.materials import MATERIALS
 from flask_cors import CORS
 # from flask_limiter import Limiter
@@ -32,6 +33,7 @@ APP.register_blueprint(CATEGORIES)
 APP.register_blueprint(MATERIALS)
 APP.register_blueprint(AUTH)
 APP.register_blueprint(PRODUCTS)
+APP.register_blueprint(ANNOTATIONS)
 
 if __name__ == '__main__':
     APP.run(host='0.0.0.0', debug=True, port=80)
