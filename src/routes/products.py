@@ -46,7 +46,7 @@ def create_product():
         return response('No JWT', 400)
 
     try:
-        payload = jwt.decode(token, 'super-secret')
+        payload = jwt.decode(token, SECRET)
     except Exception:
         return response('Tampered token', 400)
 
@@ -141,7 +141,7 @@ def upload_actions(_id):
         return response('No JWT', 400)
 
     try:
-        payload = jwt.decode(token, 'super-secret')
+        payload = jwt.decode(token, SECRET)
     except Exception:
         return response('Tampered token', 400)
 
@@ -182,7 +182,7 @@ def upload_actions(_id):
     return response(
         'Successfully uploaded material to the product',
         201,
-        {DATA: {PRODUCTSs: 'File uploaded'}}
+        {DATA: {PRODUCTS: 'File uploaded'}}
     )
 
 
@@ -192,7 +192,7 @@ def rate_material(product_id, material_name):
 
     try:
         token = request.form[JWT]
-        payload = jwt.decode(token, 'super-secret')
+        payload = jwt.decode(token, SECRET)
     except Exception:
         return response('Expected jwt key', 400)
 
