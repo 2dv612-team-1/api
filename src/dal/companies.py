@@ -1,5 +1,6 @@
 from .mongo_client import db_conn
 from utils.string import *
+from config import *
 import jwt
 
 """Create company account, if company account with given username and password does not already exist"""
@@ -7,7 +8,7 @@ import jwt
 
 def create_company(form):
     token = form[JWT]
-    payload = jwt.decode(token, 'super-secret')
+    payload = jwt.decode(token, SECRET)
 
     if payload[ROLE] == ADMIN:
         username = form[USERNAME]
@@ -46,7 +47,7 @@ def get_representatives_for_company(company_name):
 def dal_create_representative(form, owner):
 
     token = form[JWT]
-    payload = jwt.decode(token, 'super-secret')
+    payload = jwt.decode(token, SECRET)
 
     if payload[ROLE] == COMPANY:
         username = form[USERNAME]
