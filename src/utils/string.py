@@ -6,7 +6,6 @@ OWNER = 'owner'
 DATA = 'data'
 TOKEN = 'token'
 
-
 ## ROLES ##
 ADMIN = 'admin'
 REPRESENTATIVE = 'representative'
@@ -50,3 +49,7 @@ CATEGORIES = 'categories'
 ENTRY = 'entry'
 SELF = 'self'
 ROOT = '/'
+
+## RESPONSE ##
+MESSAGE = 'message'
+STATUS = 'status'
