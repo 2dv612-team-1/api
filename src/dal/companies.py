@@ -68,13 +68,6 @@ def dal_create_representative(form, owner):
         return False
 
 def get_products_for_company(name):
-    """Gets products from db
-
-    Will either get all products or based on filter (eg: {'producer': <company-name>})
-
-    Returns:
-        list -- products found in db
-    """
 
     user = db_conn.users.find_one({'username': name})
     owner = user['data']['owner']
