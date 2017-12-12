@@ -1,5 +1,6 @@
 from .mongo_client import db_conn
 from utils.string import *
+from config import *
 import jwt
 
 """
@@ -24,7 +25,7 @@ def auth_and_return_user(form):
     if found_user:
         payload = {USERNAME: found_user[USERNAME],
                    ROLE: found_user[ROLE], DATA: data}
-        encoded = jwt.encode(payload, 'super-secret')
+        encoded = jwt.encode(payload, SECRET)
         return encoded, found_user[ROLE]
 
     else:
@@ -35,7 +36,7 @@ def auth_and_return_user(form):
 
 
 def check_user_token(token):
-    payload = jwt.decode(token, 'super-secret')
+    payload = jwt.decode(token, SECRET)
     username = payload.get(USERNAME)
 
     found_user = db_conn.users.find_one({USERNAME: username})
