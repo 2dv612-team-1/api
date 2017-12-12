@@ -8,7 +8,7 @@ from utils.string import *
 from pymongo import MongoClient
 
 MATERIALS_ROUTER = Blueprint(MATERIALS, __name__)
-UPLOAD_FOLDER = './materials'
+UPLOAD_FOLDER = './' + MATERIALS
 
 
 @MATERIALS_ROUTER.route('/materials/<company>/<product_id>/<path:filename>')
