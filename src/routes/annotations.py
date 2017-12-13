@@ -4,14 +4,15 @@ Annotations route
 
 from flask import Blueprint, request
 from utils.response import response
+from utils.string import *
 from dal.users import get_user
 from dal.consumer import create_annotation, update_annotations, get_annotations_for_material
 import jwt
 
-ANNOTATIONS = Blueprint('annotations', __name__)
+ANNOTATIONS_ROUTER = Blueprint(ANNOTATIONS, __name__)
 
 
-@ANNOTATIONS.route('/consumers/<username>/materials/<material_id>/annotations')
+@ANNOTATIONS_ROUTER.route('/consumers/<username>/materials/<material_id>/annotations')
 def get_annotations(username, material_id):
     try:
         annotations = get_annotations_for_material(username, material_id)
@@ -21,10 +22,10 @@ def get_annotations(username, material_id):
     return response(
         'Successfully retreived the annotations for the material',
         200,
-        {'data': {'annotations': annotations}}
+        {'data': {ANNOTATIONS: annotations}}
     )
 
-@ANNOTATIONS.route('/consumers/<username>/materials/<material_id>/annotations', methods=['POST'])
+@ANNOTATIONS_ROUTER.route('/consumers/<username>/materials/<material_id>/annotations', methods=['POST'])
 def create_annotations(username, material_id):
     """Create a note"""
 
@@ -49,10 +50,10 @@ def create_annotations(username, material_id):
 
     new_annotation = {
         'material_id': material_id,
-        'annotations':request.form['annotations']}
+        ANNOTATIONS: request.form[ANNOTATIONS]}
 
     try:
-        all_annotations = consumer['data']['annotations']
+        all_annotations = consumer['data'][ANNOTATIONS]
     except Exception as e:
         # NO ANNOTATIONS AT ALL CREATE NEW
         data = create_annotation(consumer, new_annotation)
@@ -63,7 +64,7 @@ def create_annotations(username, material_id):
         if an['material_id'] == material_id:
             # UPDATE
             found = True
-            an['annotations'] = request.form['annotations']
+            an[ANNOTATIONS] = request.form[ANNOTATIONS]
 
     if not found:
         # NEW

@@ -39,6 +39,7 @@ AVERAGE = 'average'
 
 ## ROUTES ##
 AUTH = 'auth'
+ANNOTATIONS = 'annotations'
 PRODUCTS = 'products'
 COMPANIES = 'companies'
 CONSUMERS = 'consumers'
