@@ -178,7 +178,7 @@ def dal_upload_files(form, files, _id):
 
 
 def dal_rate_material(form, product_id, material_name):
-
+    #ref
     try:
         token = form[JWT]
         payload = jwt.decode(token, SECRET)
@@ -193,6 +193,7 @@ def dal_rate_material(form, product_id, material_name):
         rate = form[RATE]
     except Exception:
         raise BadFormData()
+    #ref
 
     try:
         rateInt = float(float(rate))
