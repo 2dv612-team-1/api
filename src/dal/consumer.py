@@ -1,21 +1,22 @@
 from .mongo_client import db_conn
 from exceptions.AnnotationsNotFound import AnnotationsNotFound
+from utils.string import *
 
 """Create consumer account, if consumer account with given username and password does not already exist"""
 
 
 def create_consumer(form):
-    username = form['username']
-    password = form['password']
+    username = form[USERNAME]
+    password = form[PASSWORD]
 
-    if db_conn.users.find({'username': username}).count() != 0:
+    if db_conn.users.find({USERNAME: username}).count() != 0:
         return True
     else:
 
         user = {
-            'username': username,
-            'password': password,
-            'role': 'consumer'
+            USERNAME: username,
+            PASSWORD: password,
+            ROLE: CONSUMER
         }
 
         db_conn.users.insert(user)

@@ -1,7 +1,8 @@
 from .mongo_client import db_conn
+from utils.string import *
 
 
-def get_products(self, filter={}):
+def get_products(name):
     """Gets products from db
 
     Will either get all products or based on filter (eg: {'producer': <company-name>})
@@ -10,9 +11,24 @@ def get_products(self, filter={}):
         list -- products found in db
     """
 
-    products = []
-    for product in db_conn.products.find(filter):
-        product.update({'_id': str(product['_id'])})
-        products.append(product)
+    try:
+        user = db_conn.users.find_one({USERNAME: name})
+        owner = user[DATA][OWNER]
+    except Exception:
+        return 'No user information found'
 
-    return products
+    try:
+        products = db_conn.products.find({PRODUCER: owner})
+    except Exception:
+        return 'Cannot get company products'
+
+    return list(map(lambda product: {
+        CATEGORY: product.get(CATEGORY),
+        NAME: product.get(NAME),
+        DESCRIPTION: product.get(DESCRIPTION),
+        ID: str(product.get(ID)),
+        SUB: product.get(SUB),
+        PRODUCTNO: product.get(PRODUCTNO),
+        CREATEDBY: product.get(CREATEDBY),
+        PRODUCER: product.get(PRODUCER)
+    }, products))
