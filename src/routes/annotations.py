@@ -5,6 +5,7 @@ Annotations route
 from flask import Blueprint, request
 from utils.response import response
 from utils.string import *
+from config import *
 from dal.users import get_user
 from dal.consumer import create_annotation, update_annotations, get_annotations_for_material
 import jwt
