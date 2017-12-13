@@ -27,7 +27,7 @@ def get_annotations(username, material_id):
     )
 
 @ANNOTATIONS_ROUTER.route('/consumers/<username>/materials/<material_id>/annotations', methods=['POST'])
-def create_annotations(username, material_id):
+def create_annotations(material_id):
     """Create a note"""
 
     try:
@@ -44,7 +44,7 @@ def create_annotations(username, material_id):
         return response('You are not a consumer', 400)
 
     try:
-        consumer = get_user(payload[USERNAME]) #changed from get_user(payload['username']) => username arg never used ?
+        consumer = get_user(payload[USERNAME])
     except Exception:
         #TODO: Custom exception
         return response('User doesn\'t exist', 400)
