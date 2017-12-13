@@ -35,6 +35,7 @@ RATE = 'rate'
 VOTES = 'votes'
 COMMENTS = 'comments'
 AVERAGE = 'average'
+PRODUCT = 'product'
 
 
 ## ROUTES ##

@@ -39,7 +39,7 @@ def create_product():
     try:
 
         _id = dal_create_product_upload_files(request.form, request.files)
-        return response('Product was created', 201, {DATA: {PRODUCTS: str(_id)}})
+        return response('Product was created', 201, {DATA: {PRODUCT: str(_id)}})
 
     except AttributeError:
         return response('Tampered token', 400)
@@ -63,7 +63,7 @@ def get_product(_id):
     try:
 
         product = dal_get_product_by_id(_id)
-        return response('Found product', 200, {DATA: {PRODUCTS: product}})
+        return response('Found product', 200, {DATA: {PRODUCT: product}})
 
     except WrongCredentials:
         return response('Not a valid id', 400)
@@ -78,7 +78,7 @@ def upload_actions(_id):
         return response(
             'Successfully uploaded material to the product',
             201,
-            {DATA: {PRODUCTS: 'File uploaded'}})
+            {DATA: {PRODUCT: 'File uploaded'}})
 
     except AttributeError:
         return response('Broken JWT', 400)
