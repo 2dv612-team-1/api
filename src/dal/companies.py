@@ -70,14 +70,9 @@ def dal_create_representative(form, owner):
         return False
 
 def get_products_for_company(name):
-    try:
-        user = db_conn.users.find_one({USERNAME: name})
-        owner = user[DATA][OWNER]
-    except Exception:
-        raise AttributeError('No user information found')
 
     try:
-        products = db_conn.products.find({PRODUCER: owner})
+        products = db_conn.products.find({PRODUCER: name})
     except Exception:
         raise AttributeError('Cannot get company products')
 
