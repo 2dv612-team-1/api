@@ -1,6 +1,8 @@
 from .mongo_client import db_conn
 
 from utils.files import check_request_files, create_file_path, save
+from utils.string import *
+from config import *
 from pymongo import ReturnDocument
 from exceptions.WrongCredentials import WrongCredentials
 from exceptions.InvalidRole import InvalidRole
@@ -10,13 +12,12 @@ from exceptions.ErrorCreatingFiles import ErrorCreatingFiles
 from exceptions.ErrorRequestingFiles import ErrorRequestingFiles
 from exceptions.NotFound import NotFound
 import jwt
-from utils.string import *
-from config import *
 
 from bson.objectid import ObjectId
 
 
 def dal_get_products():
+
     products_data = list(map(lambda product: {
         NAME: product[NAME],
         CATEGORY: product[CATEGORY],
@@ -39,20 +40,20 @@ def dal_get_product_by_id(_id):
 
     try:
 
-        pretty_product = {
-            'category': product['category'],
-            'name': product['name'],
-            'createdBy': product['createdBy'],
-            'files': [files for files in files],
-            'serialNo': product['serialNo'],
-            'producer': product['producer'],
-            'description': product['description']
+        get_product = {
+            CATEGORY: product[CATEGORY],
+            NAME: product[NAME],
+            CREATEDBY: product[CREATEDBY],
+            FILES: [files for files in files],
+            PRODUCTNO: product[PRODUCTNO],
+            PRODUCER: product[PRODUCER],
+            DESCRIPTION: product[DESCRIPTION]
         }
 
     except Exception:
         raise NotFound()
 
-    return pretty_product
+    return get_product
 
 
 def dal_create_product_upload_files(form, files):

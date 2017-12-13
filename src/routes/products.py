@@ -4,6 +4,8 @@ Products route
 
 from flask import Blueprint, request
 from utils.response import response
+from utils.string import *
+from config import *
 
 from dal.products import dal_get_products, dal_create_product_upload_files, dal_get_product_by_id, dal_upload_files, dal_rate_material
 from exceptions.WrongCredentials import WrongCredentials
@@ -14,9 +16,6 @@ from exceptions.ErrorRequestingFiles import ErrorRequestingFiles
 from exceptions.ErrorCreatingFiles import ErrorCreatingFiles
 from exceptions.NotFound import NotFound
 
-from utils.string import *
-from config import *
-
 
 PRODUCTS_ROUTER = Blueprint(PRODUCTS, __name__)
 
@@ -26,6 +25,7 @@ def get_products():
     """Gets all available products"""
 
     products_data = dal_get_products()
+
     return response(
         'Successfully retreived all the products',
         200,
@@ -37,7 +37,6 @@ def get_products():
 def create_product():
     """Create a product"""
     try:
-<<<<<<< HEAD
 
         _id = dal_create_product_upload_files(request.form, request.files)
         return response('Product was created', 201, {'data': {'product': str(_id)}})
@@ -54,7 +53,7 @@ def create_product():
         return response('Wrong information', 400)
     except ErrorRequestingFiles:
         return response('Error requesting files', 409)
-=======
+
         token = request.form[JWT]
     except Exception:
         return response('No JWT', 400)
@@ -118,38 +117,16 @@ def create_product():
         DB.files.insert(files)
 
     return response('Product was created', 201, {DATA: {PRODUCTS: str(_id)}})
->>>>>>> origin/master
+
 
 
 @PRODUCTS_ROUTER.route('/products/<_id>')
 def get_product(_id):
     """Gets a single product"""
     try:
-<<<<<<< HEAD
 
         product = dal_get_product_by_id(_id)
-        return response('Found product', 200, {'data': {'product': product}})
-=======
-        product = DB.products.find_one({ID: ObjectId(_id)})
-        files = DB.files.find({OWNER: _id}, {ID: False})
-    except Exception:
-        return response('Not a valid id', 400)
-
-    try:
-        get_product = {
-            CATEGORY: product[CATEGORY],
-            NAME: product[NAME],
-            CREATEDBY: product[CREATEDBY],
-            FILES: [files for files in files],
-            PRODUCTNO: product[PRODUCTNO],
-            PRODUCER: product[PRODUCER],
-            DESCRIPTION: product[DESCRIPTION]
-        }
-    except Exception:
-        return response('Cannot find product', 400)
-
-    return response('Found product', 200, {DATA: {PRODUCTS: get_product}})
->>>>>>> origin/master
+        return response('Found product', 200, {DATA: {PRODUCTS: product}})
 
     except WrongCredentials:
         return response('Not a valid id', 400)
