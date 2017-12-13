@@ -68,13 +68,14 @@ def create_representative(name):
 @COMPANIES_ROUTER.route('/companies/<name>/products')
 def get_product(name):
     """Gets all products for the company"""
+    try:
 
-    products = get_products_for_company(name)
-
-    return response(
-        'Successfully retreived all the products for company ' + name,
-        200,
-        {DATA:
-            {PRODUCTS: products}
-         }
-    )
+        products = get_products_for_company(name)
+        return response(
+                'Successfully retreived all the products for company ' + name,
+                200,
+                {DATA:
+                    {PRODUCTS: products}
+                })
+    except Exception as e:
+        return response(str(e), 400)

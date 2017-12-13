@@ -70,12 +70,24 @@ def dal_create_representative(form, owner):
         return False
 
 def get_products_for_company(name):
+    try:
+        user = db_conn.users.find_one({USERNAME: name})
+        owner = user[DATA][OWNER]
+    except Exception:
+        raise AttributeError('No user information found')
 
-    user = db_conn.users.find_one({USERNAME: name})
-    owner = user[DATA][OWNER]
+    try:
+        products = db_conn.products.find({PRODUCER: owner})
+    except Exception:
+        raise AttributeError('Cannot get company products')
 
-    products = []
-    for product in db_conn.products.find({PRODUCER: owner}):
-        products.append(str(product))
-
-    return products
+    return list(map(lambda product: {
+        CATEGORY: product.get(CATEGORY),
+        NAME: product.get(NAME),
+        DESCRIPTION: product.get(DESCRIPTION),
+        ID: str(product.get(ID)),
+        SUB: product.get(SUB),
+        PRODUCTNO: product.get(PRODUCTNO),
+        CREATEDBY: product.get(CREATEDBY),
+        PRODUCER: product.get(PRODUCER)
+    }, products))
