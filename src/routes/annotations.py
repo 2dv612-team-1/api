@@ -44,7 +44,7 @@ def create_annotations(username, material_id):
         return response('You are not a consumer', 400)
 
     try:
-        consumer = get_user(payload[USERNAME])
+        consumer = get_user(payload[USERNAME]) #changed from get_user(payload['username']) => username arg never used ?
     except Exception:
         #TODO: Custom exception
         return response('User doesn\'t exist', 400)
