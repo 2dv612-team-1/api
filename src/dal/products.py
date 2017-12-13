@@ -60,7 +60,7 @@ def dal_create_product_upload_files(form, files):
 
     #ref
     try:
-        token = form['jwt']
+        token = form[JWT]
     except Exception:
         raise WrongCredentials()
 
@@ -69,32 +69,33 @@ def dal_create_product_upload_files(form, files):
     except Exception:
         raise AttributeError()
 
-    if payload['role'] != 'representative':
+    if payload[ROLE] != REPRESENTATIVE:
         raise InvalidRole()
-    #ref
 
     try:
         check_request_files(files)
     except Exception:
         raise ErrorRequestingFiles()
+    #ref
 
     try:
-        representative = db_conn.users.find_one({'username': payload['username']})
-        company = representative['data']['owner']
+        representative = db_conn.users.find_one({USERNAME: payload[USERNAME]})
+        company = representative[DATA][OWNER]
         new_product = {
-            'category': form['category'],
-            'name': form['name'],
-            'description': form['description'],
-            'serialNo': form['serialNo'],
-            'createdBy': payload['username'],
-            'producer': company
+            CATEGORY: form[CATEGORY],
+            NAME: form[NAME],
+            DESCRIPTION: form[DESCRIPTION],
+            PRODUCTNO: form[PRODUCTNO],
+            CREATEDBY: payload[USERNAME],
+            PRODUCER: company
         }
     except Exception:
         raise BadFormData()
 
     search_obj = {
-        'producer': company,
-        'serialNo': new_product['serialNo']
+        NAME: new_product[NAME],
+        PRODUCER: company,
+        PRODUCTNO: new_product[PRODUCTNO]
     }
 
     if db_conn.products.find_one(search_obj):
@@ -104,16 +105,16 @@ def dal_create_product_upload_files(form, files):
 
     try:
         path = create_file_path(company, str(_id))
-        filenames = save(path, files.getlist('files'))
+        filenames = save(path, files.getlist(FILES))
         files = list(map(lambda filename: {
-            'material_id': filename['file_time'],
-            'owner': str(_id),
-            'path': '/materials/' + company + '/' + str(_id) + '/' + filename['file_time'],
-            'name': filename['file_name'],
-            'stars': list(),
-            'votes': 0,
-            'comments': list(),
-            'average': 0
+            MATERIAL_ID: filename[FILE_TIME],
+            OWNER: str(_id),
+            PATH: '/' + MATERIALS + '/' + company + '/' + str(_id) + '/' + filename[FILE_TIME],
+            NAME: filename[FILE_NAME],
+            RATES: list(),
+            VOTES: 0,
+            COMMENTS: list(),
+            AVERAGE: 0
         }, filenames))
 
     except Exception:

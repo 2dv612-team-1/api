@@ -39,10 +39,10 @@ def create_product():
     try:
 
         _id = dal_create_product_upload_files(request.form, request.files)
-        return response('Product was created', 201, {'data': {'product': str(_id)}})
+        return response('Product was created', 201, {DATA: {PRODUCTS: str(_id)}})
 
     except AttributeError:
-        return response('Broken JWT', 400)
+        return response('Tampered token', 400)
     except WrongCredentials:
         return response('Invalid credentials', 400)
     except AlreadyExists:
@@ -54,69 +54,6 @@ def create_product():
     except ErrorRequestingFiles:
         return response('Error requesting files', 409)
 
-        token = request.form[JWT]
-    except Exception:
-        return response('No JWT', 400)
-
-    try:
-        payload = jwt.decode(token, SECRET)
-    except Exception:
-        return response('Tampered token', 400)
-
-    if payload[ROLE] != REPRESENTATIVE:
-        return response('You are not a representative', 400)
-
-    try:
-        check_request_files(request.files)
-    except AttributeError as e:
-        return response(str(e), 400)
-
-    try:
-        representative = DB.users.find_one({USERNAME: payload[USERNAME]})
-        company = representative[DATA][OWNER]
-        new_product = {
-            CATEGORY: request.form[CATEGORY],
-            NAME: request.form[NAME],
-            DESCRIPTION: request.form[DESCRIPTION],
-            PRODUCTNO: request.form[PRODUCTNO],
-            CREATEDBY: payload[USERNAME],
-            PRODUCER: company
-        }
-    except Exception:
-        return response('Wrong information', 400)
-
-    search_obj = {
-        NAME: new_product[NAME],
-        PRODUCER: company,
-        PRODUCTNO: new_product[PRODUCTNO]
-    }
-
-    if DB.products.find_one(search_obj):
-        return response('Product already exists', 409)
-
-    _id = DB.products.insert(new_product)
-
-    try:
-        path = create_file_path(company, str(_id))
-        filenames = save(path, request.files.getlist(FILES))
-        files = list(map(lambda filename: {
-            MATERIAL_ID: filename[FILE_TIME],
-            OWNER: str(_id),
-            PATH: '/' + MATERIALS + '/' + company + '/' + str(_id) + '/' + filename[FILE_TIME],
-            NAME: filename[FILE_NAME],
-            RATES: list(),
-            VOTES: 0,
-            COMMENTS: list(),
-            AVERAGE: 0
-        }, filenames))
-
-    except Exception as e:
-        return response(str(e), 409)
-
-    if files:
-        DB.files.insert(files)
-
-    return response('Product was created', 201, {DATA: {PRODUCTS: str(_id)}})
 
 
 
