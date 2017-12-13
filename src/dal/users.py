@@ -55,3 +55,7 @@ def get_users_with_role(role):
         users.append({USERNAME: user[USERNAME]})
 
     return users
+  
+def get_user(username):
+    #TODO: Filter out password and any other private data
+    return db_conn.users.find_one({'username': username})
