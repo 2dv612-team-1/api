@@ -53,7 +53,7 @@ def dal_create_representative(form, owner):
         username = form[USERNAME]
         password = form[PASSWORD]
     else:
-        raise AttributeError() #Need custom return to trigger 'You are not a company' response in route
+        raise AttributeError()
 
     if db_conn.users.find({USERNAME: username}).count() != 0:
         return True
@@ -68,3 +68,21 @@ def dal_create_representative(form, owner):
 
         db_conn.users.insert(representative)
         return False
+
+def get_products_for_company(name):
+
+    try:
+        products = db_conn.products.find({PRODUCER: name})
+    except Exception:
+        raise AttributeError('Cannot get company products')
+
+    return list(map(lambda product: {
+        CATEGORY: product.get(CATEGORY),
+        NAME: product.get(NAME),
+        DESCRIPTION: product.get(DESCRIPTION),
+        ID: str(product.get(ID)),
+        SUB: product.get(SUB),
+        PRODUCTNO: product.get(PRODUCTNO),
+        CREATEDBY: product.get(CREATEDBY),
+        PRODUCER: product.get(PRODUCER)
+    }, products))

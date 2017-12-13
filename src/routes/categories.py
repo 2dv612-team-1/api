@@ -43,4 +43,3 @@ def create_sub(category):
         return response('Subcategory created', 201)
     except Exception as e:
         return response(str(e), 400)
-    

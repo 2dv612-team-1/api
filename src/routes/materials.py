@@ -5,7 +5,6 @@ Materials route
 from flask import Blueprint, send_from_directory
 from utils.response import response
 from utils.string import *
-from pymongo import MongoClient
 
 MATERIALS_ROUTER = Blueprint(MATERIALS, __name__)
 UPLOAD_FOLDER = './' + MATERIALS

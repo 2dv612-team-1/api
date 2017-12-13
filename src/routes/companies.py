@@ -6,8 +6,7 @@ from flask import Blueprint, request
 from utils.response import response
 from utils.string import *
 from dal.users import get_users_with_role
-from dal.companies import create_company, get_representatives_for_company, dal_create_representative
-from dal.products import get_products
+from dal.companies import create_company, get_representatives_for_company, dal_create_representative, get_products_for_company
 
 
 COMPANIES_ROUTER = Blueprint(COMPANIES, __name__)
@@ -69,13 +68,14 @@ def create_representative(name):
 @COMPANIES_ROUTER.route('/companies/<name>/products')
 def get_product(name):
     """Gets all products for the company"""
+    try:
 
-    products = get_products(name)
-
-    return response(
-        'Successfully retreived all the products for company ' + name,
-        200,
-        {DATA:
-            {PRODUCTS: products}
-         }
-    )
+        products = get_products_for_company(name)
+        return response(
+                'Successfully retreived all the products for company ' + name,
+                200,
+                {DATA:
+                    {PRODUCTS: products}
+                })
+    except Exception as e:
+        return response(str(e), 400)
