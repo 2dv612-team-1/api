@@ -5,9 +5,10 @@ Files utils
 import os
 import time
 from flask import current_app
+from utils.string import *
 from werkzeug.utils import secure_filename
 
-UPLOAD_FOLDER = './materials'
+UPLOAD_FOLDER = './' + MATERIALS
 ALLOWED_EXTENSIONS = set(['pdf'])
 
 def allowed_file(filename):
@@ -31,7 +32,7 @@ def check_request_files(request_files):
     req_files = request_files
     for file_key in req_files:
         current_app.logger.info(file_key)
-        if not file_key == 'files':
+        if not file_key == FILES:
             raise AttributeError('Form key for files must be \'files\'')
     files = req_files.getlist('file')
     for file in files:
@@ -64,8 +65,8 @@ def save(path, files):
         file_path = os.path.join(file_folder, file_time)
         file.save(file_path)
         file_with_stamp.append({
-            'file_time': file_time,
-            'file_name': filename[0]
+            FILE_TIME: file_time,
+            FILE_NAME: filename[0]
         })
 
     return file_with_stamp 

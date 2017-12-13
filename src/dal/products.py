@@ -1,4 +1,5 @@
 from .mongo_client import db_conn
+
 from utils.files import check_request_files, create_file_path, save
 from pymongo import ReturnDocument
 from exceptions.WrongCredentials import WrongCredentials
@@ -9,24 +10,23 @@ from exceptions.ErrorCreatingFiles import ErrorCreatingFiles
 from exceptions.ErrorRequestingFiles import ErrorRequestingFiles
 from exceptions.NotFound import NotFound
 import jwt
+from utils.string import *
+from config import *
 
 from bson.objectid import ObjectId
 
 
 def dal_get_products():
-    products_data = []
-    for product in db_conn.products.find():
-        products_data.append({
-            'name': product['name'],
-            'category': product['category'],
-            'description': product['description'],
-            'createdBy': product['createdBy'],
-            '_id': str(product['_id']),
-            'producer': product['producer']
-        })
+    products_data = list(map(lambda product: {
+        NAME: product[NAME],
+        CATEGORY: product[CATEGORY],
+        DESCRIPTION: product[DESCRIPTION],
+        CREATEDBY: product[CREATEDBY],
+        ID: str(product[ID]),
+        PRODUCER: product[PRODUCER]
+    }, db_conn.products.products.find()))
 
     return products_data
-
 
 def dal_get_product_by_id(_id):
     try:
@@ -236,3 +236,26 @@ def dal_rate_material(form, product_id, material_name):
     )
 
     return total_vote_value, vote_amount
+=======
+    try:
+        user = db_conn.users.find_one({USERNAME: name})
+        owner = user[DATA][OWNER]
+    except Exception:
+        return 'No user information found'
+
+    try:
+        products = db_conn.products.find({PRODUCER: owner})
+    except Exception:
+        return 'Cannot get company products'
+
+    return list(map(lambda product: {
+        CATEGORY: product.get(CATEGORY),
+        NAME: product.get(NAME),
+        DESCRIPTION: product.get(DESCRIPTION),
+        ID: str(product.get(ID)),
+        SUB: product.get(SUB),
+        PRODUCTNO: product.get(PRODUCTNO),
+        CREATEDBY: product.get(CREATEDBY),
+        PRODUCER: product.get(PRODUCER)
+    }, products))
+>>>>>>> origin/master
