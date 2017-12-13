@@ -73,55 +73,12 @@ def get_product(_id):
 @PRODUCTS_ROUTER.route('/products/<_id>/materials', methods=['POST'])
 def upload_actions(_id):
     try:
-<<<<<<< HEAD
 
         dal_upload_files(request.form, request.files, _id)
         return response(
             'Successfully uploaded material to the product',
             201,
-            {'data': {'product': 'File uploaded'}}
-        )
-=======
-        token = request.form[JWT]
-    except Exception:
-        return response('No JWT', 400)
-
-    try:
-        payload = jwt.decode(token, SECRET)
-    except Exception:
-        return response('Tampered token', 400)
-
-    if payload[ROLE] != REPRESENTATIVE:
-        return response('You are not a representative', 400)
-
-    representative = DB.users.find_one({USERNAME: payload[USERNAME]})
-    file_company = representative[DATA][OWNER]
-
-    try:
-        if len(request.files) < 1:
-            raise AttributeError('Files missing from request')
-        check_request_files(request.files)
-    except AttributeError as e:
-        return response(str(e), 400)
-
-    try:
-        path = create_file_path(file_company, _id)
-        filenames = save(path, request.files.getlist(FILES))
-
-        files = list(map(lambda filename: {
-            MATERIAL_ID: filename[FILE_TIME],
-            OWNER: str(_id),
-            PATH: '/' + MATERIALS + '/' + file_company + '/' + str(_id) + '/' + filename[FILE_TIME],
-            NAME: filename[FILE_NAME],
-            RATES: list(),
-            VOTES: 0,
-            COMMENTS: list(),
-            AVERAGE: 0
-        }, filenames))
-
-    except Exception as e:
-        return response(str(e), 409)
->>>>>>> origin/master
+            {DATA: {PRODUCTS: 'File uploaded'}})
 
     except AttributeError:
         return response('Broken JWT', 400)
@@ -134,94 +91,27 @@ def upload_actions(_id):
     except ErrorCreatingFiles:
         return response('Error creating files', 409)
 
-<<<<<<< HEAD
-=======
-    return response(
-        'Successfully uploaded material to the product',
-        201,
-        {DATA: {PRODUCTS: 'File uploaded'}}
-    )
->>>>>>> origin/master
-
 
 @PRODUCTS_ROUTER.route('/products/<product_id>/materials/<material_name>/rate', methods=['POST'])
 def rate_material(product_id, material_name):
     """Used to rate material"""
     try:
-<<<<<<< HEAD
 
         total_vote_value, vote_amount = dal_rate_material(request.form, product_id, material_name)
         return response(str({
-            'average': total_vote_value,
-            'amount': vote_amount
-        }), 200)
+            AVERAGE: total_vote_value,
+            AMOUNT: vote_amount
+            }), 200)
 
     except WrongCredentials:
         return response('Expected jwt key', 400)
     except InvalidRole:
         return response('Have to be consumer to rate', 400)
     except BadFormData:
-=======
-        token = request.form[JWT]
-        payload = jwt.decode(token, SECRET)
-    except Exception:
-        return response('Expected jwt key', 400)
-
-    if payload[ROLE] != CONSUMER:
-        return response('Have to be consumer to rate', 400)
-
-    try:
-        rate = request.form[RATE]
-    except Exception:
->>>>>>> origin/master
         return response('Expected rate key', 400)
     except FloatingPointError:
         return response('Expected rate to be int', 400)
     except ValueError:
         return response('Expected star value to be between 1 and 5', 400)
-<<<<<<< HEAD
-    except NotFound:
-        return response('There\'s nothing to rate', 200)
-=======
 
-    user_has_voted = DB.files.find_one({
-        OWNER: str(product_id),
-        MATERIAL_ID: material_name,
-        '%s.%s' % (RATES, USERNAME): payload[USERNAME]
-    })
 
-    if user_has_voted:
-        updated = DB.files.find_one_and_update(
-            {OWNER: str(product_id), MATERIAL_ID: material_name,
-             '%s.%s' % (RATE, USERNAME): payload[USERNAME]},
-            {'$set': {'%s.$.%s' % (RATES, RATE): rateInt}},
-            return_document=ReturnDocument.AFTER
-        )
-    else:
-        updated = DB.files.find_one_and_update(
-            {OWNER: str(product_id), MATERIAL_ID: material_name},
-            {'$inc': {VOTES: 1}, '$push': {
-                RATES: {USERNAME: payload[USERNAME], RATE: rateInt}}},
-            return_document=ReturnDocument.AFTER
-        )
-
-    if not updated:
-        return response('There\'s nothing to rate', 200)
-
-    current_votes = updated[RATES]
-    vote_amount = len(current_votes)
-    total = 0
-    for value in current_votes:
-        total += value[RATE]
-    total_vote_value = round(total / vote_amount, 1)
-
-    DB.files.find_one_and_update(
-        {OWNER: str(product_id), MATERIAL_ID: material_name},
-        {'$set': {AVERAGE: total_vote_value}}
-    )
-
-    return response(str({
-        AVERAGE: total_vote_value,
-        AMOUNT: vote_amount
-    }), 200)
->>>>>>> origin/master

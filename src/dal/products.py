@@ -65,7 +65,7 @@ def dal_create_product_upload_files(form, files):
         raise WrongCredentials()
 
     try:
-        payload = jwt.decode(token, 'super-secret')
+        payload = jwt.decode(token, SECRET)
     except Exception:
         raise AttributeError()
 
@@ -129,21 +129,21 @@ def dal_create_product_upload_files(form, files):
 def dal_upload_files(form, files, _id):
     #ref
     try:
-        token = form['jwt']
+        token = form[JWT]
     except Exception:
         raise WrongCredentials()
 
     try:
-        payload = jwt.decode(token, 'super-secret')
+        payload = jwt.decode(token, SECRET)
     except Exception:
         raise AttributeError()
 
-    if payload['role'] != 'representative':
+    if payload[ROLE] != REPRESENTATIVE:
         raise InvalidRole()
     #ref
 
-    representative = db_conn.users.find_one({'username': payload['username']})
-    file_company = representative['owner']
+    representative = db_conn.users.find_one({USERNAME: payload[USERNAME]})
+    file_company = representative[DATA][OWNER]
 
     try:
 
@@ -157,17 +157,17 @@ def dal_upload_files(form, files, _id):
 
     try:
         path = create_file_path(file_company, _id)
-        filenames = save(path, files.getlist('files'))
+        filenames = save(path, files.getlist(FILES))
 
         files = list(map(lambda filename: {
-            'material_id': filename['file_time'],
-            'owner': str(_id),
-            'path': '/materials/' + file_company + '/' + str(_id) + '/' + filename['file_time'],
-            'name': filename['file_name'],
-            'stars': list(),
-            'votes': 0,
-            'comments': list(),
-            'average': 0
+            MATERIAL_ID: filename[FILE_TIME],
+            OWNER: str(_id),
+            PATH: '/' + MATERIALS + '/' + file_company + '/' + str(_id) + '/' + filename[FILE_TIME],
+            NAME: filename[FILE_NAME],
+            RATES: list(),
+            VOTES: 0,
+            COMMENTS: list(),
+            AVERAGE: 0
         }, filenames))
 
     except Exception:
@@ -180,16 +180,17 @@ def dal_upload_files(form, files, _id):
 def dal_rate_material(form, product_id, material_name):
 
     try:
-        token = form['jwt']
-        payload = jwt.decode(token, 'super-secret')
+        token = form[JWT]
+        payload = jwt.decode(token, SECRET)
+
     except Exception:
         raise WrongCredentials()
 
-    if payload['role'] != 'consumer':
+    if payload[ROLE] != CONSUMER:
         raise InvalidRole()
 
     try:
-        rate = form['rate']
+        rate = form[RATE]
     except Exception:
         raise BadFormData()
 
@@ -202,62 +203,40 @@ def dal_rate_material(form, product_id, material_name):
         raise ValueError()
 
     user_has_voted = db_conn.files.find_one({
-        'owner': str(product_id),
-        'material_id': material_name,
-        'stars.username': payload['username']
+        OWNER: str(product_id),
+        MATERIAL_ID: material_name,
+        '%s.%s' % (RATES, USERNAME): payload[USERNAME]
     })
 
     if user_has_voted:
         updated = db_conn.files.find_one_and_update(
-            {'owner': str(product_id), 'material_id': material_name,
-             'stars.username': payload['username']},
-            {'$set': {'stars.$.rate': rateInt}},
+            {OWNER: str(product_id), MATERIAL_ID: material_name,
+             '%s.%s' % (RATE, USERNAME): payload[USERNAME]},
+            {'$set': {'%s.$.%s' % (RATES, RATE): rateInt}},
             return_document=ReturnDocument.AFTER
         )
     else:
         updated = db_conn.files.find_one_and_update(
-            {'owner': str(product_id), 'material_id': material_name},
-            {'$inc': {'votes': 1}, '$push': {
-                'stars': {'username': payload['username'], 'rate': rateInt}}},
+            {OWNER: str(product_id), MATERIAL_ID: material_name},
+            {'$inc': {VOTES: 1}, '$push': {
+                RATES: {USERNAME: payload[USERNAME], RATE: rateInt}}},
             return_document=ReturnDocument.AFTER
         )
 
     if not updated:
         raise NotFound()
 
-    current_votes = updated['stars']
+    current_votes = updated[RATES]
     vote_amount = len(current_votes)
     total = 0
     for value in current_votes:
-        total += value['rate']
+        total += value[RATE]
     total_vote_value = round(total / vote_amount, 1)
 
     db_conn.files.find_one_and_update(
-        {'owner': str(product_id), 'material_id': material_name},
-        {'$set': {'average': total_vote_value}}
+        {OWNER: str(product_id), MATERIAL_ID: material_name},
+        {'$set': {AVERAGE: total_vote_value}}
     )
 
     return total_vote_value, vote_amount
-=======
-    try:
-        user = db_conn.users.find_one({USERNAME: name})
-        owner = user[DATA][OWNER]
-    except Exception:
-        return 'No user information found'
 
-    try:
-        products = db_conn.products.find({PRODUCER: owner})
-    except Exception:
-        return 'Cannot get company products'
-
-    return list(map(lambda product: {
-        CATEGORY: product.get(CATEGORY),
-        NAME: product.get(NAME),
-        DESCRIPTION: product.get(DESCRIPTION),
-        ID: str(product.get(ID)),
-        SUB: product.get(SUB),
-        PRODUCTNO: product.get(PRODUCTNO),
-        CREATEDBY: product.get(CREATEDBY),
-        PRODUCER: product.get(PRODUCER)
-    }, products))
->>>>>>> origin/master
