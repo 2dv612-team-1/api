@@ -31,7 +31,7 @@ def create_annotation(user, annotations):
     """
 
     try:
-        db_conn.users.find_one_and_update({'_id': user['_id']}, {'$push': {'data.annotations': annotations}})
+        db_conn.users.find_one_and_update({ID: user[ID]}, {'$push': {'data.annotations': annotations}})
     except Exception as e:
         return {'res': 'Failed', 'code': 500}
 
@@ -46,7 +46,7 @@ def update_annotations(user, annotations):
     """
 
     try:
-        db_conn.users.find_one_and_update({'_id': user['_id']}, {'$set': {'data.annotations': annotations}})
+        db_conn.users.find_one_and_update({ID: user[ID]}, {'$set': {'data.annotations': annotations}})
     except Exception as e:
         return {'res': 'Failed', 'code': 500}
 
@@ -56,15 +56,15 @@ def get_annotations_for_material(username, material_id):
 
     try:
         found_annotations = db_conn.users.aggregate([
-            {'$match': {'username': username}},
+            {'$match': {USERNAME: username}},
             {'$unwind': '$data.annotations'},
             {
                 '$project': {
-                    'material_id': '$data.annotations.material_id',
-                    'annotations': '$data.annotations.annotations'
+                    MATERIAL_ID: '$data.annotations.material_id',
+                    ANNOTATIONS: '$data.annotations.annotations'
                 }
             },
-            {'$match': {'material_id': material_id}}
+            {'$match': {MATERIAL_ID: material_id}}
         ])
     except Exception as e:
         raise AnnotationsNotFound('Annotations for material not found')
@@ -74,7 +74,7 @@ def get_annotations_for_material(username, material_id):
 
     annotations = {}
     for x in found_annotations:
-        annotations['material_id'] = x['material_id']
-        annotations['annotations'] = x['annotations']
+        annotations[MATERIAL_ID] = x[MATERIAL_ID]
+        annotations[ANNOTATIONS] = x[ANNOTATIONS]
 
     return annotations

@@ -22,7 +22,7 @@ def get_annotations(username, material_id):
     return response(
         'Successfully retreived the annotations for the material',
         200,
-        {'data': {ANNOTATIONS: annotations}}
+        {DATA: {ANNOTATIONS: annotations}}
     )
 
 @ANNOTATIONS_ROUTER.route('/consumers/<username>/materials/<material_id>/annotations', methods=['POST'])
@@ -30,30 +30,30 @@ def create_annotations(username, material_id):
     """Create a note"""
 
     try:
-        token = request.form['jwt']
+        token = request.form[JWT]
     except Exception:
         return response('No JWT', 400)
 
     try:
-        payload = jwt.decode(token, 'super-secret')
+        payload = jwt.decode(token, SECRET)
     except Exception:
         return response('Tampered token', 400)
 
-    if payload['role'] != 'consumer':
+    if payload[ROLE] != CONSUMER:
         return response('You are not a consumer', 400)
 
     try:
-        consumer = get_user(payload['username'])
+        consumer = get_user(payload[USERNAME])
     except Exception:
         #TODO: Custom exception
         return response('User doesn\'t exist', 400)
 
     new_annotation = {
-        'material_id': material_id,
+        MATERIAL_ID: material_id,
         ANNOTATIONS: request.form[ANNOTATIONS]}
 
     try:
-        all_annotations = consumer['data'][ANNOTATIONS]
+        all_annotations = consumer[DATA][ANNOTATIONS]
     except Exception as e:
         # NO ANNOTATIONS AT ALL CREATE NEW
         data = create_annotation(consumer, new_annotation)
@@ -61,7 +61,7 @@ def create_annotations(username, material_id):
 
     found = False
     for an in all_annotations:
-        if an['material_id'] == material_id:
+        if an[MATERIAL_ID] == material_id:
             # UPDATE
             found = True
             an[ANNOTATIONS] = request.form[ANNOTATIONS]
