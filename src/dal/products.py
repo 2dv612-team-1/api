@@ -25,7 +25,7 @@ def dal_get_products():
         CREATEDBY: product[CREATEDBY],
         ID: str(product[ID]),
         PRODUCER: product[PRODUCER]
-    }, db_conn.products.products.find()))
+    }, db_conn.products.find()))
 
     return products_data
 
