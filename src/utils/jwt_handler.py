@@ -5,9 +5,9 @@ JWT handler
 from exceptions.NoJWT import NoJWT
 from exceptions.TamperedToken import TamperedToken
 from exceptions.IncorrectRole import IncorrectRole
+from utils.string import *
+from config import SECRET
 import jwt
-
-SUPER_SECRET = 'super-secret'
 
 
 def extract(request):
@@ -25,12 +25,12 @@ def extract(request):
     """
 
     try:
-        token = request.form['jwt']
+        token = request.form[JWT]
     except Exception:
         raise NoJWT('No JWT present in request')
 
     try:
-        payload = jwt.decode(token, SUPER_SECRET)
+        payload = jwt.decode(token, SECRET)
     except Exception:
         raise TamperedToken('Token has been tampered')
 
@@ -45,7 +45,7 @@ def authorized_role(payload, role):
         role string -- the expected role
     """
 
-    if payload['role'] != role:
+    if payload[ROLE] != role:
         raise IncorrectRole('You are not a ' + role)
 
 def encode(payload):
@@ -57,4 +57,4 @@ def encode(payload):
         encoded -- the encoded payload
     """
 
-    return jwt.encode(payload, SUPER_SECRET)
+    return jwt.encode(payload, SECRET)
