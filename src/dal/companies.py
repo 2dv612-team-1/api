@@ -46,10 +46,6 @@ def get_representatives_for_company(company_name):
 
 def dal_create_representative(request, owner):
 
-    # token = form[JWT]
-    # payload = jwt.decode(token, SECRET)
-
-    # if payload[ROLE] == COMPANY:
     try:
         username = extract_attribute(request, USERNAME)
         password = extract_attribute(request, PASSWORD)
