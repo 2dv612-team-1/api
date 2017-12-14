@@ -3,7 +3,6 @@ from utils.string import *
 from utils.form_handler import *
 from config import *
 from exceptions.AlreadyExists import AlreadyExists
-# import jwt
 
 """Create company account, if company account with given username and password does not already exist"""
 

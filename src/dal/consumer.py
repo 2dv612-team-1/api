@@ -1,26 +1,32 @@
 from .mongo_client import db_conn
 from exceptions.AnnotationsNotFound import AnnotationsNotFound
 from utils.string import *
+from utils.form_handler import extract_attribute
+from exceptions.AlreadyExists import AlreadyExists
 
 """Create consumer account, if consumer account with given username and password does not already exist"""
 
 
-def create_consumer(form):
-    username = form[USERNAME]
-    password = form[PASSWORD]
+def create_consumer(request):
+
+    try:
+        username = extract_attribute(request, USERNAME)
+        password = extract_attribute(request, PASSWORD)
+    except Exception as e:
+        raise e
 
     if db_conn.users.find({USERNAME: username}).count() != 0:
-        return True
-    else:
+        raise AlreadyExists('Username is already in use')
 
-        user = {
-            USERNAME: username,
-            PASSWORD: password,
-            ROLE: CONSUMER
-        }
+    user = {
+        USERNAME: username,
+        PASSWORD: password,
+        ROLE: CONSUMER
+    }
 
-        db_conn.users.insert(user)
-        return False
+    user_id = db_conn.users.insert(user)
+    new_user = {USERNAME: username, ID: str(user_id)}
+    return new_user
 
 def create_annotation(username, annotations):
     """Creates a new annotation for a specific product
