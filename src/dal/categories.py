@@ -3,6 +3,7 @@ from exceptions.WrongCredentials import WrongCredentials
 from exceptions.AlreadyExists import AlreadyExists
 from exceptions.TamperedToken import TamperedToken
 from utils.string import *
+from utils.jwt_handler import *
 from config import *
 import jwt
 
@@ -19,48 +20,24 @@ def dal_get_categories():
     return categories_data
 
 
-def dal_create_category(form):
-    try:
-        token = form[JWT]
-        category = form[CATEGORY]
+def dal_create_category(category):
 
-    except Exception:
-        raise WrongCredentials()
-    try:
-        payload = jwt.decode(token, SECRET)
-    except Exception:
-        raise AttributeError()
+    category_exists = db_conn.categories.find_one({CATEGORY: category})
 
-    if payload[ROLE] == ADMIN:
-        category_exists = db_conn.categories.find_one({CATEGORY: category})
+    if category_exists:
+        raise AlreadyExists()
 
-        if category_exists:
-            raise AlreadyExists()
+    is_subcategory = db_conn.categories.find_one({
+        '%s.%s' % (SUB, CATEGORY): category
+    })
 
-        is_subcategory = db_conn.categories.find_one({
-            '%s.%s' % (SUB, CATEGORY): category
-        })
+    if is_subcategory:
+        raise AlreadyExists('Category is a subcategory')
 
-        if is_subcategory:
-            raise AlreadyExists('Category is a subcategory')
-
-        db_conn.categories.insert({CATEGORY: category, SUB: []})
+    db_conn.categories.insert({CATEGORY: category, SUB: []})
 
 
-def dal_create_subcategory(form, category):
-    try:
-        token = form[JWT]
-        subcategory = form[CATEGORY]
-    except Exception:
-        raise WrongCredentials('JWT or Category is missing')
-
-    try:
-        payload = jwt.decode(token, SECRET)
-    except Exception:
-        raise TamperedToken('Changes has been made to JWT')
-
-    if payload[ROLE] != ADMIN:
-        raise AttributeError('Not an admin')
+def dal_create_subcategory(category, subcategory):
 
     subcategory_exists = db_conn.categories.find_one({
         '%s.%s' % (SUB, CATEGORY): subcategory

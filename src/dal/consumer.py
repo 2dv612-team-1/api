@@ -1,28 +1,34 @@
 from .mongo_client import db_conn
 from exceptions.AnnotationsNotFound import AnnotationsNotFound
 from utils.string import *
+from utils.form_handler import extract_attribute
+from exceptions.AlreadyExists import AlreadyExists
 
 """Create consumer account, if consumer account with given username and password does not already exist"""
 
 
-def create_consumer(form):
-    username = form[USERNAME]
-    password = form[PASSWORD]
+def create_consumer(request):
+
+    try:
+        username = extract_attribute(request, USERNAME)
+        password = extract_attribute(request, PASSWORD)
+    except Exception as e:
+        raise e
 
     if db_conn.users.find({USERNAME: username}).count() != 0:
-        return True
-    else:
+        raise AlreadyExists('Username is already in use')
 
-        user = {
-            USERNAME: username,
-            PASSWORD: password,
-            ROLE: CONSUMER
-        }
+    user = {
+        USERNAME: username,
+        PASSWORD: password,
+        ROLE: CONSUMER
+    }
 
-        db_conn.users.insert(user)
-        return False
+    user_id = db_conn.users.insert(user)
+    new_user = {USERNAME: username, ID: str(user_id)}
+    return new_user
 
-def create_annotation(user, annotations):
+def create_annotation(username, annotations):
     """Creates a new annotation for a specific product
 
     Arguments:
@@ -31,11 +37,11 @@ def create_annotation(user, annotations):
     """
 
     try:
-        db_conn.users.find_one_and_update({ID: user[ID]}, {'$push': {'data.annotations': annotations}})
+        db_conn.users.find_one_and_update({USERNAME: username}, {'$push': {'data.annotations': annotations}})
     except Exception as e:
-        return {'res': 'Failed', 'code': 500}
+        return {MESSAGE: str(e), STATUS: 500}
 
-    return {'res': 'GREAT SUCCESS', 'code': 201}
+    return {MESSAGE: 'GREAT SUCCESS', STATUS: 201}
 
 def update_annotations(user, annotations):
     """Update annotations for a specific product
@@ -48,9 +54,9 @@ def update_annotations(user, annotations):
     try:
         db_conn.users.find_one_and_update({ID: user[ID]}, {'$set': {'data.annotations': annotations}})
     except Exception as e:
-        return {'res': 'Failed', 'code': 500}
+        return {MESSAGE: 'Failed', STATUS: 500}
 
-    return {'res': 'GREAT SUCCESS', 'code': 200}
+    return {MESSAGE: 'GREAT SUCCESS', STATUS: 200}
 
 def get_annotations_for_material(username, material_id):
 

@@ -30,15 +30,10 @@ def consumer_creation():
     """Creates consumer"""
 
     try:
-        consumer_exist = create_consumer(request.form)
-
-        if consumer_exist:
-            return response('User already exists', 409)
-        else:
-            return response('User was created', 201)
-
-    except AttributeError:
-        return response('Wrong credentials', 400)
+        consumer = create_consumer(request)
+        return response('User was created', 201, {DATA: {CONSUMER: consumer}})
+    except Exception as e:
+        return response(str(e), 400)
 
 
 @CONSUMERS_ROUTER.route('/consumers/<token>', methods=['GET'])
@@ -47,7 +42,7 @@ def get_user(token):
 
     try:
         username = check_user_token(token)
-        return response('Successfully gather user data', 200, {DATA: username})
+        return response('Successfully retreived user data', 200, {DATA: username})
 
     except AttributeError:
         return response('Wrong credentials', 400)

@@ -1,7 +1,8 @@
 from .mongo_client import db_conn
+from exceptions.NotFound import NotFound
 from utils.string import *
+from utils.jwt_handler import *
 from config import *
-import jwt
 
 """
     db_conn.users   => client.api.users
@@ -25,7 +26,7 @@ def auth_and_return_user(form):
     if found_user:
         payload = {USERNAME: found_user[USERNAME],
                    ROLE: found_user[ROLE], DATA: data}
-        encoded = jwt.encode(payload, SECRET)
+        encoded = encode(payload)
         return encoded, found_user[ROLE]
 
     else:
@@ -36,8 +37,8 @@ def auth_and_return_user(form):
 
 
 def check_user_token(token):
-    payload = jwt.decode(token, SECRET)
-    username = payload.get(USERNAME)
+    payload = decode(token)
+    username = payload[USERNAME]
 
     found_user = db_conn.users.find_one({USERNAME: username})
     if found_user:
@@ -55,7 +56,10 @@ def get_users_with_role(role):
         users.append({USERNAME: user[USERNAME]})
 
     return users
-  
+
 def get_user(username):
     #TODO: Filter out password and any other private data
-    return db_conn.users.find_one({'username': username})
+    try:
+        user = db_conn.users.find_one({'username': username})
+    except Exception as e:
+        raise NotFound('Couldn\'t find user')

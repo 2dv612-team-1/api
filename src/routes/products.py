@@ -5,10 +5,13 @@ Products route
 from flask import Blueprint, request
 from utils.response import response
 from utils.string import *
+from utils.form_handler import *
+from utils.jwt_handler import *
 from config import *
 
 from dal.products import dal_get_products, dal_create_product_upload_files, dal_get_product_by_id, dal_upload_files, dal_rate_material
 from exceptions.WrongCredentials import WrongCredentials
+from exceptions.NotFound import NotFound
 from exceptions.AlreadyExists import AlreadyExists
 from exceptions.InvalidRole import InvalidRole
 from exceptions.BadFormData import BadFormData
@@ -37,22 +40,25 @@ def get_products():
 def create_product():
     """Create a product"""
     try:
-
-        _id = dal_create_product_upload_files(request.form, request.files)
-        return response('Product was created', 201, {DATA: {PRODUCT: str(_id)}})
+        payload = extract(request)
+        authorized_role(payload, REPRESENTATIVE)
+        product = dal_create_product_upload_files(request, payload[USERNAME])
+        return response('Product was created', 201, {DATA: {PRODUCT: product}})
 
     except AttributeError:
         return response('Tampered token', 400)
     except WrongCredentials:
         return response('Invalid credentials', 400)
-    except AlreadyExists:
-        return response('Category exists', 409)
+    except AlreadyExists as e:
+        return response(str(e), 409)
     except InvalidRole:
         return response('You are not a representative', 400)
-    except BadFormData:
-        return response('Wrong information', 400)
+    except BadFormData as e:
+        return response(str(e), 400)
     except ErrorRequestingFiles:
         return response('Error requesting files', 409)
+    except ErrorCreatingFiles as e:
+        return response(str(e), 409)
 
 
 
@@ -73,31 +79,40 @@ def get_product(_id):
 @PRODUCTS_ROUTER.route('/products/<_id>/materials', methods=['POST'])
 def upload_actions(_id):
     try:
-
-        dal_upload_files(request.form, request.files, _id)
+        payload = extract(request)
+        authorized_role(payload, REPRESENTATIVE)
+        username = payload[USERNAME]
+        dal_upload_files(request.files, username, _id)
         return response(
             'Successfully uploaded material to the product',
             201,
-            {DATA: {PRODUCT: 'File uploaded'}})
+            {DATA: {PRODUCT: {ID: _id}}})
 
     except AttributeError:
-        return response('Broken JWT', 400)
+        return response('Tampered token', 400)
     except WrongCredentials:
         return response('Invalid credentials', 400)
-    except NotFound:
-        return response('Files missing from request', 400)
+    except AlreadyExists as e:
+        return response(str(e), 409)
+    except InvalidRole:
+        return response('You are not a representative', 400)
+    except BadFormData as e:
+        return response(str(e), 400)
     except ErrorRequestingFiles:
         return response('Error requesting files', 409)
-    except ErrorCreatingFiles:
-        return response('Error creating files', 409)
+    except ErrorCreatingFiles as e:
+        return response(str(e), 409)
 
 
 @PRODUCTS_ROUTER.route('/products/<product_id>/materials/<material_name>/rate', methods=['POST'])
 def rate_material(product_id, material_name):
     """Used to rate material"""
     try:
-
-        total_vote_value, vote_amount = dal_rate_material(request.form, product_id, material_name)
+        payload = extract(request)
+        authorized_role(payload, CONSUMER)
+        username = payload[USERNAME]
+        rating = extract_attribute(request, RATE)
+        total_vote_value, vote_amount = dal_rate_material(rating, username, product_id, material_name)
         return response(str({
             AVERAGE: total_vote_value,
             AMOUNT: vote_amount
@@ -105,6 +120,8 @@ def rate_material(product_id, material_name):
 
     except WrongCredentials:
         return response('Expected jwt key', 400)
+    except NotFound:
+        return response('Not found', 400)
     except InvalidRole:
         return response('Have to be consumer to rate', 400)
     except BadFormData:
