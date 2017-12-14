@@ -4,7 +4,7 @@ JWT handler
 
 from exceptions.NoJWT import NoJWT
 from exceptions.TamperedToken import TamperedToken
-from exceptions.IncorrectRole import IncorrectRole
+from exceptions.NotAuthorized import NotAuthorized
 from utils.string import *
 from config import SECRET
 import jwt
@@ -46,7 +46,7 @@ def authorized_role(payload, role):
     """
 
     if payload[ROLE] != role:
-        raise IncorrectRole('You are not a ' + role)
+        raise NotAuthorized('Forbidden')
 
 def encode(payload):
     """Encodes the payload with the super secret
