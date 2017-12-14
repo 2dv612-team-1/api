@@ -7,7 +7,7 @@ from pymongo import ReturnDocument
 from exceptions.WrongCredentials import WrongCredentials
 from exceptions.InvalidRole import InvalidRole
 from exceptions.BadFormData import BadFormData
-from exceptions.AlreadyExist import AlreadyExist
+from exceptions.AlreadyExists import AlreadyExists
 from exceptions.ErrorCreatingFiles import ErrorCreatingFiles
 from exceptions.ErrorRequestingFiles import ErrorRequestingFiles
 from exceptions.NotFound import NotFound
@@ -99,7 +99,7 @@ def dal_create_product_upload_files(form, files):
     }
 
     if db_conn.products.find_one(search_obj):
-        raise AlreadyExist()
+        raise AlreadyExists()
 
     _id = db_conn.products.insert(new_product)
 
