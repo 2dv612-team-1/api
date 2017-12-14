@@ -1,4 +1,5 @@
 from .mongo_client import db_conn
+from exceptions.NotFound import NotFound
 from utils.string import *
 from config import *
 import jwt
@@ -55,7 +56,10 @@ def get_users_with_role(role):
         users.append({USERNAME: user[USERNAME]})
 
     return users
-  
+
 def get_user(username):
     #TODO: Filter out password and any other private data
-    return db_conn.users.find_one({'username': username})
+    try:
+        user = db_conn.users.find_one({'username': username})
+    except Exception as e:
+        raise NotFound('Couldn\'t find user')
