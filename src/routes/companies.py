@@ -51,16 +51,13 @@ def get_representatives(name):
 def create_representative(name):
     """Creates representative"""
     try:
+        payload = extract(request)
+        authorized_role(payload, COMPANY)
+        representative = dal_create_representative(request, name)
+        return response('Representative was created', 201, {DATA: {REPRESENTATIVE: representative}})
 
-        representative_exists = dal_create_representative(request.form, name)
-
-        if representative_exists:
-            return response('Username already exists', 409)
-        else:
-            return response('Representative was created', 201)
-
-    except AttributeError:
-        return response('Wrong credentials', 400)
+    except Exception as e:
+        return response(str(e), 400)
 
 
 @COMPANIES_ROUTER.route('/companies/<name>/products')

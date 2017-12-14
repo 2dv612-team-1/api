@@ -1,5 +1,4 @@
 from .mongo_client import db_conn
-from bson.objectid import ObjectId
 from utils.string import *
 from utils.form_handler import *
 from config import *
@@ -16,6 +15,7 @@ def create_company(request):
         password = extract_attribute(request, PASSWORD)
     except Exception as e:
         raise e
+
     if db_conn.users.find({USERNAME: username}).count() != 0:
         raise AlreadyExists('Username is already in use')
 
@@ -44,30 +44,31 @@ def get_representatives_for_company(company_name):
         raise AttributeError()
 
 
-def dal_create_representative(form, owner):
+def dal_create_representative(request, owner):
 
-    token = form[JWT]
-    payload = jwt.decode(token, SECRET)
+    # token = form[JWT]
+    # payload = jwt.decode(token, SECRET)
 
-    if payload[ROLE] == COMPANY:
-        username = form[USERNAME]
-        password = form[PASSWORD]
-    else:
-        raise AttributeError()
+    # if payload[ROLE] == COMPANY:
+    try:
+        username = extract_attribute(request, USERNAME)
+        password = extract_attribute(request, PASSWORD)
+    except Exception as e:
+        raise e
 
     if db_conn.users.find({USERNAME: username}).count() != 0:
-        return True
-    else:
+        raise AlreadyExists('Username is already in use')
 
-        representative = {
-            USERNAME: username,
-            PASSWORD: password,
-            ROLE: REPRESENTATIVE,
-            DATA: {OWNER: owner}
-        }
+    representative = {
+        USERNAME: username,
+        PASSWORD: password,
+        ROLE: REPRESENTATIVE,
+        DATA: {OWNER: owner}
+    }
 
-        db_conn.users.insert(representative)
-        return False
+    rep_id = db_conn.users.insert(representative)
+    new_rep = {USERNAME: username, ID: str(rep_id)}
+    return new_rep
 
 def get_products_for_company(name):
 
