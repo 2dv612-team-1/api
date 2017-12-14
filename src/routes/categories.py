@@ -5,20 +5,21 @@ Categories Route
 from flask import Blueprint, request
 from dal.categories import dal_get_categories, dal_create_category, dal_create_subcategory
 from utils.response import response
+from utils.string import *
 from exceptions.WrongCredentials import WrongCredentials
 from exceptions.AlreadyExists import AlreadyExists
 
-CATEGORIES = Blueprint('CATEGORIES', __name__)
+CATEGORIES_ROUTER = Blueprint(CATEGORIES, __name__)
 
 
-@CATEGORIES.route('/categories')
+@CATEGORIES_ROUTER.route('/categories')
 def get_categories():
     """Gets all available categories"""
     categories_data = dal_get_categories()
     return response(categories_data, 200)
 
 
-@CATEGORIES.route('/categories', methods=['POST'])
+@CATEGORIES_ROUTER.route('/categories', methods=['POST'])
 def create_categories():
     """Creates a new category"""
 
@@ -33,7 +34,7 @@ def create_categories():
         return response('Category exists', 409)
 
 
-@CATEGORIES.route('/categories/<category>/subcategories', methods=['POST'])
+@CATEGORIES_ROUTER.route('/categories/<category>/subcategories', methods=['POST'])
 def create_sub(category):
     """Create a subcategory"""
 
@@ -42,4 +43,3 @@ def create_sub(category):
         return response('Subcategory created', 201)
     except Exception as e:
         return response(str(e), 400)
-    

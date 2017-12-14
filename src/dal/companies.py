@@ -1,27 +1,29 @@
 from .mongo_client import db_conn
+from utils.string import *
+from config import *
 import jwt
 
 """Create company account, if company account with given username and password does not already exist"""
 
 
 def create_company(form):
-    token = form['jwt']
-    payload = jwt.decode(token, 'super-secret')
+    token = form[JWT]
+    payload = jwt.decode(token, SECRET)
 
-    if payload['role'] == 'admin':
-        username = form['username']
-        password = form['password']
+    if payload[ROLE] == ADMIN:
+        username = form[USERNAME]
+        password = form[PASSWORD]
     else:
         raise AttributeError()
 
-    if db_conn.users.find({'username': username}).count() != 0:
+    if db_conn.users.find({USERNAME: username}).count() != 0:
         return True
     else:
 
         company = {
-            'username': username,
-            'password': password,
-            'role': 'company'
+            USERNAME: username,
+            PASSWORD: password,
+            ROLE: COMPANY
         }
 
         db_conn.users.insert(company)
@@ -29,12 +31,12 @@ def create_company(form):
 
 
 def get_representatives_for_company(company_name):
-    if db_conn.users.find_one({'username': company_name}):
+    if db_conn.users.find_one({USERNAME: company_name}):
 
         representatives = []
 
-        for representative in db_conn.users.find({'data':{'owner': company_name}}):
-            representatives.append({'username': representative['username']})
+        for representative in db_conn.users.find({DATA:{OWNER: company_name}}):
+            representatives.append({USERNAME: representative[USERNAME]})
 
         return representatives
 
@@ -44,25 +46,43 @@ def get_representatives_for_company(company_name):
 
 def dal_create_representative(form, owner):
 
-    token = form['jwt']
-    payload = jwt.decode(token, 'super-secret')
+    token = form[JWT]
+    payload = jwt.decode(token, SECRET)
 
-    if payload['role'] == 'company':
-        username = form['username']
-        password = form['password']
+    if payload[ROLE] == COMPANY:
+        username = form[USERNAME]
+        password = form[PASSWORD]
     else:
-        raise AttributeError() #Need custom return to trigger 'You are not a company' response in route
+        raise AttributeError()
 
-    if db_conn.users.find({'username': username}).count() != 0:
+    if db_conn.users.find({USERNAME: username}).count() != 0:
         return True
     else:
 
         representative = {
-            'username': username,
-            'password': password,
-            'role': 'representative',
-            'data': {'owner': owner}
+            USERNAME: username,
+            PASSWORD: password,
+            ROLE: REPRESENTATIVE,
+            DATA: {OWNER: owner}
         }
 
         db_conn.users.insert(representative)
         return False
+
+def get_products_for_company(name):
+
+    try:
+        products = db_conn.products.find({PRODUCER: name})
+    except Exception:
+        raise AttributeError('Cannot get company products')
+
+    return list(map(lambda product: {
+        CATEGORY: product.get(CATEGORY),
+        NAME: product.get(NAME),
+        DESCRIPTION: product.get(DESCRIPTION),
+        ID: str(product.get(ID)),
+        SUB: product.get(SUB),
+        PRODUCTNO: product.get(PRODUCTNO),
+        CREATEDBY: product.get(CREATEDBY),
+        PRODUCER: product.get(PRODUCER)
+    }, products))

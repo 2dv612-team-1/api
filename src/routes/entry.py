@@ -1,20 +1,29 @@
 from flask import Blueprint, jsonify
+from utils.string import *
 
-ENTRY = Blueprint('entry', __name__)
+ENTRY_ROUTER = Blueprint(ENTRY, __name__)
 
 
-@ENTRY.route('/')
+@ENTRY_ROUTER.route(ROOT)
 def get_entry():
     """Displays a list of possible routes"""
 
+    url = set_root(ROOT)
+
     routes = {
-        'auth': '/auth',
-        'products': '/products',
-        'consumers': '/consumers',
-        'companies': '/companies',
-        'admins': '/admins',
-        'materials': '/materials',
-        'categories': '/categories',
-        'self': '/'
+        AUTH: url(AUTH),
+        PRODUCTS: url(PRODUCTS),
+        CONSUMERS: url(CONSUMERS),
+        COMPANIES: url(COMPANIES),
+        ADMINS: url(ADMINS),
+        MATERIALS: url(MATERIALS),
+        CATEGORIES: url(CATEGORIES),
+        SELF: ROOT
     }
     return jsonify(routes)
+
+
+def set_root(root):
+    def set_url(url):
+        return root + url
+    return set_url
