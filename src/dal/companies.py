@@ -1,33 +1,33 @@
 from .mongo_client import db_conn
+from bson.objectid import ObjectId
 from utils.string import *
+from utils.form_handler import *
 from config import *
-import jwt
+from exceptions.AlreadyExists import AlreadyExists
+# import jwt
 
 """Create company account, if company account with given username and password does not already exist"""
 
 
-def create_company(form):
-    token = form[JWT]
-    payload = jwt.decode(token, SECRET)
+def create_company(request):
 
-    if payload[ROLE] == ADMIN:
-        username = form[USERNAME]
-        password = form[PASSWORD]
-    else:
-        raise AttributeError()
-
+    try:
+        username = extract_attribute(request, USERNAME)
+        password = extract_attribute(request, PASSWORD)
+    except Exception as e:
+        raise e
     if db_conn.users.find({USERNAME: username}).count() != 0:
-        return True
-    else:
+        raise AlreadyExists('Username is already in use')
 
-        company = {
-            USERNAME: username,
-            PASSWORD: password,
-            ROLE: COMPANY
-        }
+    company = {
+        USERNAME: username,
+        PASSWORD: password,
+        ROLE: COMPANY
+    }
 
-        db_conn.users.insert(company)
-        return False
+    company_id = db_conn.users.insert(company)
+    new_company = {NAME: username, ID: str(company_id)}
+    return new_company
 
 
 def get_representatives_for_company(company_name):
