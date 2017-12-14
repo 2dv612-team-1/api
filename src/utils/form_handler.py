@@ -6,4 +6,4 @@ def extract_attribute(request, attribute):
     try:
         return request.form[attribute]
     except Exception as e:
-        raise BadFormData('Category field is missing')
+        raise BadFormData(attribute + ' field is missing')
