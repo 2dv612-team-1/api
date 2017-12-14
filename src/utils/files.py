@@ -65,11 +65,12 @@ def save(path, files):
         file_path = os.path.join(file_folder, file_time)
         file.save(file_path)
         file_with_stamp.append({
-            FILE_TIME: file_time,
-            FILE_NAME: filename[0]
+            FILENAME: file_time,
+            MATERIAL_ID: filename[0] + '-' + time_stamp,
+            ORIGINAL_FILENAME: filename[0]
         })
 
-    return file_with_stamp 
+    return file_with_stamp
 
 def create_folder(path):
     file_folder = os.path.join(UPLOAD_FOLDER, path)

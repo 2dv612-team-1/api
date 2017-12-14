@@ -2,6 +2,7 @@ from .mongo_client import db_conn
 
 from utils.files import check_request_files, create_file_path, save
 from utils.string import *
+from utils.form_handler import *
 from config import *
 from pymongo import ReturnDocument
 from exceptions.WrongCredentials import WrongCredentials
@@ -56,41 +57,26 @@ def dal_get_product_by_id(_id):
     return get_product
 
 
-def dal_create_product_upload_files(form, files):
-
-    #ref
-    try:
-        token = form[JWT]
-    except Exception:
-        raise WrongCredentials()
+def dal_create_product_upload_files(request, username):
 
     try:
-        payload = jwt.decode(token, SECRET)
-    except Exception:
-        raise AttributeError()
-
-    if payload[ROLE] != REPRESENTATIVE:
-        raise InvalidRole()
-
-    try:
-        check_request_files(files)
+        check_request_files(request.files)
     except Exception:
         raise ErrorRequestingFiles()
-    #ref
 
     try:
-        representative = db_conn.users.find_one({USERNAME: payload[USERNAME]})
+        representative = db_conn.users.find_one({USERNAME: username})
         company = representative[DATA][OWNER]
         new_product = {
-            CATEGORY: form[CATEGORY],
-            NAME: form[NAME],
-            DESCRIPTION: form[DESCRIPTION],
-            PRODUCTNO: form[PRODUCTNO],
-            CREATEDBY: payload[USERNAME],
+            CATEGORY: extract_attribute(request, CATEGORY),
+            NAME: extract_attribute(request, NAME),
+            DESCRIPTION: extract_attribute(request, DESCRIPTION),
+            PRODUCTNO: extract_attribute(request, PRODUCTNO),
+            CREATEDBY: username,
             PRODUCER: company
         }
-    except Exception:
-        raise BadFormData()
+    except BadFormData as e:
+        raise BadFormData(str(e))
 
     search_obj = {
         NAME: new_product[NAME],
@@ -99,50 +85,38 @@ def dal_create_product_upload_files(form, files):
     }
 
     if db_conn.products.find_one(search_obj):
-        raise AlreadyExists()
+        raise AlreadyExists('Product already exists')
 
     _id = db_conn.products.insert(new_product)
 
     try:
         path = create_file_path(company, str(_id))
-        filenames = save(path, files.getlist(FILES))
+        filenames = save(path, request.files.getlist(FILES))
         files = list(map(lambda filename: {
-            MATERIAL_ID: filename[FILE_TIME],
+            MATERIAL_ID: filename[MATERIAL_ID],
+            FILENAME: filename[FILENAME],
+            ORIGINAL_FILENAME: filename[ORIGINAL_FILENAME],
             OWNER: str(_id),
-            PATH: '/' + MATERIALS + '/' + company + '/' + str(_id) + '/' + filename[FILE_TIME],
-            NAME: filename[FILE_NAME],
+            PATH: '/' + MATERIALS + '/' + company + '/' + str(_id) + '/' + filename[FILENAME],
+            # NAME: filename[FILENAME],
             RATES: list(),
             VOTES: 0,
             COMMENTS: list(),
             AVERAGE: 0
         }, filenames))
 
-    except Exception:
-        raise ErrorCreatingFiles()
+    except Exception as e:
+        raise ErrorCreatingFiles(str(e))
 
     if files:
         db_conn.files.insert(files)
 
-    return _id
+    new_product[ID] = str(_id)
+    return new_product
 
 
-def dal_upload_files(form, files, _id):
-    #ref
-    try:
-        token = form[JWT]
-    except Exception:
-        raise WrongCredentials()
-
-    try:
-        payload = jwt.decode(token, SECRET)
-    except Exception:
-        raise AttributeError()
-
-    if payload[ROLE] != REPRESENTATIVE:
-        raise InvalidRole()
-    #ref
-
-    representative = db_conn.users.find_one({USERNAME: payload[USERNAME]})
+def dal_upload_files(files, username, _id):
+    representative = db_conn.users.find_one({USERNAME: username})
     file_company = representative[DATA][OWNER]
 
     try:
@@ -160,10 +134,12 @@ def dal_upload_files(form, files, _id):
         filenames = save(path, files.getlist(FILES))
 
         files = list(map(lambda filename: {
-            MATERIAL_ID: filename[FILE_TIME],
+            MATERIAL_ID: filename[MATERIAL_ID],
+            FILENAME: filename[FILENAME],
+            ORIGINAL_FILENAME: filename[ORIGINAL_FILENAME],
             OWNER: str(_id),
-            PATH: '/' + MATERIALS + '/' + file_company + '/' + str(_id) + '/' + filename[FILE_TIME],
-            NAME: filename[FILE_NAME],
+            PATH: '/' + MATERIALS + '/' + file_company + '/' + str(_id) + '/' + filename[FILENAME],
+            # NAME: filename[FILENAME],
             RATES: list(),
             VOTES: 0,
             COMMENTS: list(),
@@ -177,23 +153,7 @@ def dal_upload_files(form, files, _id):
         db_conn.files.insert(files)
 
 
-def dal_rate_material(form, product_id, material_name):
-    #ref
-    try:
-        token = form[JWT]
-        payload = jwt.decode(token, SECRET)
-
-    except Exception:
-        raise WrongCredentials()
-
-    if payload[ROLE] != CONSUMER:
-        raise InvalidRole()
-
-    try:
-        rate = form[RATE]
-    except Exception:
-        raise BadFormData()
-    #ref
+def dal_rate_material(rate, username, product_id, material_name):
 
     try:
         rateInt = float(float(rate))
@@ -206,13 +166,13 @@ def dal_rate_material(form, product_id, material_name):
     user_has_voted = db_conn.files.find_one({
         OWNER: str(product_id),
         MATERIAL_ID: material_name,
-        '%s.%s' % (RATES, USERNAME): payload[USERNAME]
+        '%s.%s' % (RATES, USERNAME): username
     })
 
     if user_has_voted:
         updated = db_conn.files.find_one_and_update(
             {OWNER: str(product_id), MATERIAL_ID: material_name,
-             '%s.%s' % (RATE, USERNAME): payload[USERNAME]},
+             '%s.%s' % (RATE, USERNAME): username},
             {'$set': {'%s.$.%s' % (RATES, RATE): rateInt}},
             return_document=ReturnDocument.AFTER
         )
@@ -220,7 +180,7 @@ def dal_rate_material(form, product_id, material_name):
         updated = db_conn.files.find_one_and_update(
             {OWNER: str(product_id), MATERIAL_ID: material_name},
             {'$inc': {VOTES: 1}, '$push': {
-                RATES: {USERNAME: payload[USERNAME], RATE: rateInt}}},
+                RATES: {USERNAME: username, RATE: rateInt}}},
             return_document=ReturnDocument.AFTER
         )
 
