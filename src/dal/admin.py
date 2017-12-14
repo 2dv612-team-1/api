@@ -2,7 +2,6 @@ from .mongo_client import db_conn
 from utils.string import *
 from utils.jwt_handler import *
 from config import *
-import jwt
 
 """
     db_conn.admin   => client.api.admin
