@@ -5,6 +5,7 @@ Company routes
 from flask import Blueprint, request
 from utils.response import response
 from utils.string import *
+from utils.jwt_handler import *
 from dal.users import get_users_with_role
 from dal.companies import create_company, get_representatives_for_company, dal_create_representative, get_products_for_company
 
@@ -26,16 +27,13 @@ def company_actions():
 def company_creation():
     """Creates company"""
     try:
+        payload = extract(request)
+        authorized_role(payload, ADMIN)
+        company = create_company(request)
+        return response('Company was created', 201, {DATA: {COMPANY:company}})
 
-        company_exists = create_company(request.form)
-
-        if company_exists:
-            return response('Username already exists', 409)
-        else:
-            return response('Company was created', 201)
-
-    except AttributeError:
-        return response('Wrong credentials', 400)
+    except Exception as e:
+        return response(str(e), 400)
 
 
 @COMPANIES_ROUTER.route('/companies/<name>/representatives')
