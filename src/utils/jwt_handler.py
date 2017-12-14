@@ -58,3 +58,15 @@ def encode(payload):
     """
 
     return jwt.encode(payload, SECRET)
+
+def decode(token):
+    """Decode token
+
+    Arguments:
+        token {jwt token} -- JWT Token to decode
+
+    Returns:
+        Decoded JWT
+    """
+
+    return jwt.decode(token, SECRET)
