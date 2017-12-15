@@ -28,6 +28,7 @@ def create_consumer(request):
     new_user = {USERNAME: username, ID: str(user_id)}
     return new_user
 
+
 def create_annotation(username, annotations):
     """Creates a new annotation for a specific product
 
@@ -43,6 +44,7 @@ def create_annotation(username, annotations):
 
     return {MESSAGE: 'GREAT SUCCESS', STATUS: 201}
 
+
 def update_annotations(user, annotations):
     """Update annotations for a specific product
 
@@ -57,6 +59,7 @@ def update_annotations(user, annotations):
         return {MESSAGE: 'Failed', STATUS: 500}
 
     return {MESSAGE: 'GREAT SUCCESS', STATUS: 200}
+
 
 def get_annotations_for_material(username, material_id):
 
@@ -75,12 +78,14 @@ def get_annotations_for_material(username, material_id):
     except Exception as e:
         raise AnnotationsNotFound('Annotations for material not found')
 
-    if len(list(found_annotations)) < 1:
+    list_annotations = list(found_annotations)
+    cursor_len = len(list_annotations)
+    if cursor_len < 1:
         raise AnnotationsNotFound('Annotations for material not found')
 
     annotations = {}
-    for x in found_annotations:
-        annotations[MATERIAL_ID] = x[MATERIAL_ID]
-        annotations[ANNOTATIONS] = x[ANNOTATIONS]
+    for doc in list_annotations:
+        annotations[MATERIAL_ID] = doc[MATERIAL_ID]
+        annotations[ANNOTATIONS] = doc[ANNOTATIONS]
 
     return annotations
