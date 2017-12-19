@@ -5,6 +5,7 @@ from config import *
 from bson.objectid import ObjectId
 from exceptions.BadFormData import BadFormData
 from exceptions.NotFound import NotFound
+import datetime
 
 """
     db_conn.threads => client.api.threads
@@ -43,6 +44,7 @@ def dal_create_thread(form, payload):
         raise BadFormData('Message is missing')
 
     thread.update({REPLIES: list()})
+    thread.update({TIMESTAMP: str(datetime.datetime.now()).split('.')[0]})
 
     try:
         _id = db_conn.threads.insert(thread)
