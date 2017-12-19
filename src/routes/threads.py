@@ -35,8 +35,6 @@ def create_thread():
         return response(str(e), 403)
     except WrongCredentials:
         return response('Invalid credentials', 400)
-    except AlreadyExists as e:
-        return response(str(e), 409)
     except InvalidRole:
         return response('You are not a representative', 400)
     except BadFormData as e:
