@@ -51,6 +51,18 @@ def dal_create_thread(form, payload):
     return str(_id)
 
 
+def get_threads():
+
+    threads = list(map(lambda thread: {
+        ID: str(thread[ID]),
+        NAME: thread[NAME],
+        TITLE: thread[TITLE],
+        TIMESTAMP: thread[TIMESTAMP]
+    }, db_conn.threads.find()))
+
+    return threads
+
+
 def set(dict, form):
     """A nice version for updating dict"""
     def add(name):

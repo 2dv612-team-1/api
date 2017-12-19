@@ -4,7 +4,7 @@ from utils.response import response
 from utils.string import *
 from dal import *
 
-from dal.threads import dal_create_thread
+from dal.threads import dal_create_thread, dal_get_threads
 from exceptions.WrongCredentials import WrongCredentials
 from exceptions.NotFound import NotFound
 from exceptions.AlreadyExists import AlreadyExists
@@ -18,6 +18,7 @@ THREADS_ROUTER = Blueprint(THREADS, __name__)
 
 @THREADS_ROUTER.route('/threads')
 def get_threads():
+    threads = dal_get_threads()
     return response('HÄÄÄÄR RICKARD', 200)
 
 

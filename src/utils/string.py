@@ -38,6 +38,7 @@ VOTES = 'votes'
 COMMENTS = 'comments'
 AVERAGE = 'average'
 PRODUCT = 'product'
+TIMESTAMP = 'timestamp'
 
 
 ## ROUTES ##
@@ -59,9 +60,11 @@ THREADS = 'threads'
 MESSAGE = 'message'
 STATUS = 'status'
 
+## THREADS ##
 PRODUCT = 'product'
 SUBCATEGORY = 'subcategory'
 TITLE = 'title'
 CATEGORY = 'category'
 MESSAGE = 'message'
 REPLIES = 'replies'
+TIMESTAMP = 'timestamp'
