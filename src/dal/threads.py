@@ -19,6 +19,11 @@ def dal_create_thread(form, payload):
     add = set(thread, form)
 
     try:
+        thread.update({NAME: payload[USERNAME]})
+    except Exception:
+        raise BadFormData('No username')
+
+    try:
         add(TITLE)
     except Exception:
         raise BadFormData('Title is missing from request')
