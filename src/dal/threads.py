@@ -2,8 +2,10 @@ from .mongo_client import db_conn
 from utils.string import *
 from utils.jwt_handler import *
 from config import *
-
+from bson.objectid import ObjectId
 from exceptions.BadFormData import BadFormData
+from exceptions.NotFound import NotFound
+import datetime
 
 """
     db_conn.threads => client.api.threads
@@ -15,6 +17,11 @@ def dal_create_thread(form, payload):
 
     thread = dict()
     add = set(thread, form)
+
+    try:
+        thread.update({NAME: payload[USERNAME]})
+    except Exception:
+        raise BadFormData('No username')
 
     try:
         add(TITLE)
@@ -42,6 +49,7 @@ def dal_create_thread(form, payload):
         raise BadFormData('Message is missing')
 
     thread.update({REPLIES: list()})
+    thread.update({TIMESTAMP: str(datetime.datetime.now()).split('.')[0]})
 
     try:
         _id = db_conn.threads.insert(thread)
@@ -49,6 +57,18 @@ def dal_create_thread(form, payload):
         raise BadFormData('Could not create thread with supplied data')
 
     return str(_id)
+
+
+def dal_get_thread(id):
+    try:
+        thread = db_conn.threads.find_one({ID: ObjectId(id)})
+    except Exception:
+        raise NotFound('Could not find thread')
+
+    thread_data = list(
+        map(lambda key: [key, str(thread[key])], thread.keys()))
+
+    return dict(thread_data)
 
 
 def set(dict, form):
