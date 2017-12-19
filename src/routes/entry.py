@@ -18,6 +18,7 @@ def get_entry():
         ADMINS: url(ADMINS),
         MATERIALS: url(MATERIALS),
         CATEGORIES: url(CATEGORIES),
+        THREADS: url(THREADS),
         SELF: ROOT
     }
     return jsonify(routes)

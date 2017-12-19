@@ -12,6 +12,7 @@ from routes.products import PRODUCTS_ROUTER
 from routes.categories import CATEGORIES_ROUTER
 from routes.materials import MATERIALS_ROUTER
 from routes.annotations import ANNOTATIONS_ROUTER
+from routes.threads import THREADS_ROUTER
 
 from flask_cors import CORS
 # from flask_limiter import Limiter
@@ -35,6 +36,7 @@ APP.register_blueprint(MATERIALS_ROUTER)
 APP.register_blueprint(AUTH_ROUTER)
 APP.register_blueprint(PRODUCTS_ROUTER)
 APP.register_blueprint(ANNOTATIONS_ROUTER)
+APP.register_blueprint(THREADS_ROUTER)
 
 if __name__ == '__main__':
     APP.run(host='0.0.0.0', debug=True, port=80)
