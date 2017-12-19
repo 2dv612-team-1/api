@@ -4,7 +4,7 @@ from utils.response import response
 from utils.string import *
 from dal import *
 
-from dal.threads import dal_create_thread
+from dal.threads import dal_create_thread, dal_get_thread
 from exceptions.WrongCredentials import WrongCredentials
 from exceptions.NotFound import NotFound
 from exceptions.AlreadyExists import AlreadyExists
@@ -39,3 +39,14 @@ def create_thread():
         return response('You are not a representative', 400)
     except BadFormData as e:
         return response(str(e), 400)
+
+
+@THREADS_ROUTER.route('/threads/<id>')
+def get_thread(id):
+    """Gets a single thread"""
+
+    try:
+        thread = dal_get_thread(id)
+        return response(thread, 200)
+    except NotFound as e:
+        return response(str(e), 404)
