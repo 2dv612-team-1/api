@@ -41,12 +41,14 @@ def create_thread():
         return response(str(e), 400)
 
 
-@THREADS_ROUTER.route('/threads/<id>')
-def get_thread(id):
+@THREADS_ROUTER.route('/threads/<_id>')
+def get_thread(_id):
     """Gets a single thread"""
 
     try:
-        thread = dal_get_thread(id)
+        thread = dal_get_thread(_id)
         return response(thread, 200)
     except NotFound as e:
         return response(str(e), 404)
+    except Exception:
+        return response('Everything broke', 500)
