@@ -53,6 +53,7 @@ CATEGORIES = 'categories'
 ENTRY = 'entry'
 SELF = 'self'
 ROOT = '/'
+THREADS = 'threads'
 
 ## RESPONSE ##
 MESSAGE = 'message'
