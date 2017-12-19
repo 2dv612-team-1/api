@@ -9,6 +9,7 @@ from exceptions.BadFormData import BadFormData
     db_conn.threads => client.api.threads
 """
 
+
 def dal_create_thread(form, payload):
     """Create Thread"""
 
@@ -40,9 +41,15 @@ def dal_create_thread(form, payload):
     except Exception:
         raise BadFormData('Message is missing')
 
-    _id = db_conn.threads.insert(thread)
+    thread.update({REPLIES: list()})
 
-    return str(_id) 
+    try:
+        _id = db_conn.threads.insert(thread)
+    except Exception:
+        raise BadFormData('Could not create thread with supplied data')
+
+    return str(_id)
+
 
 def set(dict, form):
     def add(name):
