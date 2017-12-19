@@ -38,8 +38,6 @@ VOTES = 'votes'
 COMMENTS = 'comments'
 AVERAGE = 'average'
 PRODUCT = 'product'
-TIMESTAMP = 'timestamp'
-
 
 ## ROUTES ##
 AUTH = 'auth'
