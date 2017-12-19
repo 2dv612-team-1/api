@@ -52,6 +52,7 @@ def dal_create_thread(form, payload):
 
 
 def set(dict, form):
+    """A nice version for updating dict"""
     def add(name):
         dict.update({name: form[name]})
     return add
