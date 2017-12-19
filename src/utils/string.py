@@ -64,4 +64,4 @@ SUBCATEGORY = 'subcategory'
 TITLE = 'title'
 CATEGORY = 'category'
 MESSAGE = 'message'
-
+REPLIES = 'replies'
