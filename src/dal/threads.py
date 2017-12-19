@@ -5,6 +5,7 @@ from config import *
 from bson.objectid import ObjectId
 from exceptions.BadFormData import BadFormData
 from exceptions.NotFound import NotFound
+from exceptions.WrongCredentials import WrongCredentials
 import datetime
 
 """
@@ -81,6 +82,37 @@ def dal_get_thread(id):
         map(lambda key: [key, str(thread[key])], thread.keys()))
 
     return dict(thread_data)
+
+
+def dal_create_reply(form, payload, _id):
+
+    reply = dict()
+    add = set(reply, payload)
+
+    try:
+        add(USERNAME)
+    except Exception:
+        raise WrongCredentials('No username in jwt')
+
+    try:
+        add(ROLE)
+    except Exception:
+        raise WrongCredentials('No role in jwt')
+
+    reply.update({TIMESTAMP: str(datetime.datetime.now()).split('.')[0]})
+
+    try:
+        reply.update({MESSAGE: form[MESSAGE]})
+    except Exception:
+        raise BadFormData('Message is missing')
+
+    try:
+        db_conn.threads.find_one_and_update(
+            {ID: ObjectId(_id)},
+            {'$push': {REPLIES: reply}}
+        )
+    except Exception:
+        raise BadFormData('That thread does not exist')
 
 
 def set(dict, form):
