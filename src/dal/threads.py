@@ -59,7 +59,6 @@ def dal_create_thread(form, payload):
     return str(_id)
 
 
-
 def dal_get_threads():
 
     threads_data = list(map(lambda thread: {
@@ -71,6 +70,7 @@ def dal_get_threads():
 
     return threads_data
 
+
 def dal_get_thread(id):
     try:
         thread = db_conn.threads.find_one({ID: ObjectId(id)})
@@ -81,7 +81,6 @@ def dal_get_thread(id):
         map(lambda key: [key, str(thread[key])], thread.keys()))
 
     return dict(thread_data)
-
 
 
 def set(dict, form):
