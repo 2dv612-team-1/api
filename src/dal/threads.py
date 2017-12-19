@@ -51,6 +51,13 @@ def dal_create_thread(form, payload):
     return str(_id)
 
 
+def dal_get_user_threads(username):
+    """Gets user threads"""
+
+    threads = db_conn.threads.find({NAME: username})
+    return threads
+
+
 def set(dict, form):
     """A nice version for updating dict"""
     def add(name):
