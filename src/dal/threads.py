@@ -51,16 +51,16 @@ def dal_create_thread(form, payload):
     return str(_id)
 
 
-def get_threads():
+def dal_get_threads():
 
-    threads = list(map(lambda thread: {
+    threads_data = list(map(lambda thread: {
         ID: str(thread[ID]),
         NAME: thread[NAME],
         TITLE: thread[TITLE],
         TIMESTAMP: thread[TIMESTAMP]
     }, db_conn.threads.find()))
 
-    return threads
+    return threads_data
 
 
 def set(dict, form):

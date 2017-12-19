@@ -19,6 +19,7 @@ THREADS_ROUTER = Blueprint(THREADS, __name__)
 @THREADS_ROUTER.route('/threads')
 def get_threads():
     threads = dal_get_threads()
+
     return response('HÄÄÄÄR RICKARD', 200)
 
 
