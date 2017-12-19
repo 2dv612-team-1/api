@@ -39,7 +39,6 @@ COMMENTS = 'comments'
 AVERAGE = 'average'
 PRODUCT = 'product'
 
-
 ## ROUTES ##
 AUTH = 'auth'
 ANNOTATIONS = 'annotations'
