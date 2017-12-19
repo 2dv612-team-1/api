@@ -39,7 +39,6 @@ COMMENTS = 'comments'
 AVERAGE = 'average'
 PRODUCT = 'product'
 
-
 ## ROUTES ##
 AUTH = 'auth'
 ANNOTATIONS = 'annotations'
@@ -59,9 +58,11 @@ THREADS = 'threads'
 MESSAGE = 'message'
 STATUS = 'status'
 
+## THREADS ##
 PRODUCT = 'product'
 SUBCATEGORY = 'subcategory'
 TITLE = 'title'
 CATEGORY = 'category'
 MESSAGE = 'message'
 REPLIES = 'replies'
+TIMESTAMP = 'timestamp'
