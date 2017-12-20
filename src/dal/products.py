@@ -152,9 +152,8 @@ def dal_upload_files(files, username, _id):
 
 
 def dal_rate_material(rate, username, product_id, material_name):
-
     try:
-        rateInt = float(float(rate))
+        rateInt = float(rate)
     except Exception:
         raise FloatingPointError()
 
@@ -169,14 +168,14 @@ def dal_rate_material(rate, username, product_id, material_name):
 
     if user_has_voted:
         updated = db_conn.files.find_one_and_update(
-            {OWNER: str(product_id), MATERIAL_ID: material_name,
-             '%s.%s' % (RATE, USERNAME): username},
+            {OWNER: product_id, MATERIAL_ID: material_name,
+             '%s.%s' % (RATES, USERNAME): username},
             {'$set': {'%s.$.%s' % (RATES, RATE): rateInt}},
             return_document=ReturnDocument.AFTER
         )
     else:
         updated = db_conn.files.find_one_and_update(
-            {OWNER: str(product_id), MATERIAL_ID: material_name},
+            {OWNER: product_id, MATERIAL_ID: material_name},
             {'$inc': {VOTES: 1}, '$push': {
                 RATES: {USERNAME: username, RATE: rateInt}}},
             return_document=ReturnDocument.AFTER
@@ -197,5 +196,8 @@ def dal_rate_material(rate, username, product_id, material_name):
         {'$set': {AVERAGE: total_vote_value}}
     )
 
-    return total_vote_value, vote_amount
+    return {
+        AVERAGE: total_vote_value,
+        AMOUNT: vote_amount
+    }
 
