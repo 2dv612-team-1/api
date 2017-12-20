@@ -61,8 +61,6 @@ def create_product():
         return response(str(e), 409)
 
 
-
-
 @PRODUCTS_ROUTER.route('/products/<_id>')
 def get_product(_id):
     """Gets a single product"""
@@ -75,6 +73,7 @@ def get_product(_id):
         return response('Not a valid id', 400)
     except NotFound:
         return response('Cannot find product', 400)
+
 
 @PRODUCTS_ROUTER.route('/products/<_id>/materials', methods=['POST'])
 def upload_actions(_id):
@@ -107,16 +106,17 @@ def upload_actions(_id):
 @PRODUCTS_ROUTER.route('/products/<product_id>/materials/<material_name>/rate', methods=['POST'])
 def rate_material(product_id, material_name):
     """Used to rate material"""
+
     try:
         payload = extract(request)
         authorized_role(payload, CONSUMER)
         username = payload[USERNAME]
         rating = extract_attribute(request, RATE)
-        total_vote_value, vote_amount = dal_rate_material(rating, username, product_id, material_name)
-        return response(str({
-            AVERAGE: total_vote_value,
-            AMOUNT: vote_amount
-            }), 200)
+
+        updated_rating = dal_rate_material(
+            rating, username, product_id, material_name)
+
+        return response(updated_rating, 200)
 
     except WrongCredentials:
         return response('Expected jwt key', 400)
@@ -130,5 +130,5 @@ def rate_material(product_id, material_name):
         return response('Expected rate to be int', 400)
     except ValueError:
         return response('Expected star value to be between 1 and 5', 400)
-
-
+    except Exception:
+        return response('Everything broke', 500)
