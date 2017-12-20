@@ -6,6 +6,7 @@ from flask import Blueprint, request
 from utils.response import response
 from utils.string import *
 from dal.users import get_users_with_role, check_user_token
+from dal.threads import dal_get_user_threads
 from dal.consumer import create_consumer
 
 CONSUMERS_ROUTER = Blueprint(CONSUMERS, __name__)
@@ -46,3 +47,14 @@ def get_user(token):
 
     except AttributeError:
         return response('Wrong credentials', 400)
+
+
+@CONSUMERS_ROUTER.route('/consumers/<username>/threads')
+def get_user_threads(username):
+    """Gets users threads"""
+
+    try:
+        threads = dal_get_user_threads(username)
+        return response(threads, 200)
+    except Exception:
+        return response('Everything broke', 500)

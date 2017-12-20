@@ -60,6 +60,15 @@ def dal_create_thread(form, payload):
     return str(_id)
 
 
+def dal_get_user_threads(username):
+    """Gets user threads"""
+
+    threads = db_conn.threads.find({NAME: username})
+
+    return list(map(lambda thread: dict(
+        map(lambda key: [key, str(thread[key]) if key == ID else thread[key]], thread.keys())), threads))
+
+
 def dal_get_threads():
 
     threads_data = list(map(lambda thread: {
@@ -114,7 +123,7 @@ def dal_create_reply(form, payload, _id):
     except Exception:
         raise BadFormData('That thread does not exist')
 
-
+        
 def set(dict, form):
     """A nice version for updating dict"""
     def add(name):
