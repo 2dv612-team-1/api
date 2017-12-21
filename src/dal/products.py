@@ -22,7 +22,7 @@ def dal_get_products():
     products_data = list(map(lambda product: {
         NAME: product[NAME],
         CATEGORY: product[CATEGORY],
-        SUBCATEGORY: extract_attribute(request, SUBCATEGORY),
+        SUB: product[SUB],
         DESCRIPTION: product[DESCRIPTION],
         CREATEDBY: product[CREATEDBY],
         ID: str(product[ID]),
@@ -44,7 +44,7 @@ def dal_get_product_by_id(_id):
 
         get_product = {
             CATEGORY: product[CATEGORY],
-            SUBCATEGORY: extract_attribute(request, SUBCATEGORY),
+            SUB: product[SUB],
             NAME: product[NAME],
             CREATEDBY: product[CREATEDBY],
             FILES: [files for files in files],
@@ -71,7 +71,7 @@ def dal_create_product_upload_files(request, username):
         company = representative[DATA][OWNER]
         new_product = {
             CATEGORY: extract_attribute(request, CATEGORY),
-            SUBCATEGORY: extract_attribute(request, SUBCATEGORY),
+            SUB: extract_attribute(request, SUB),
             NAME: extract_attribute(request, NAME),
             DESCRIPTION: extract_attribute(request, DESCRIPTION),
             PRODUCTNO: extract_attribute(request, PRODUCTNO),
