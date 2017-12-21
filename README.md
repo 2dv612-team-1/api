@@ -333,7 +333,7 @@ Creates a new product. Requires the following data:
 
     "jwt": "a.representative.jwt",
     "name": "product.name",
-    "productNo": "product.serial.number",
+    "serialNo": "product.serial.number",
     "description": "product.description",
     "category": "product.category",
     "files": [] //optional array of files
@@ -350,7 +350,7 @@ Returns the following JSON:
                 "files": [], //If no files were present in the POST request
                 "name": "blå bil",
                 "producer": "tesla",
-                "productNo": "122"
+                "serialNo": "122"
             }
         },
         "message": "Product was created",
@@ -389,7 +389,7 @@ Returns the following JSON:
                 ],
                 "name": "blå bil",
                 "producer": "tesla",
-                "productNo": "1223"
+                "serialNo": "1223"
             }
         },
         "message": "Successfully uploaded material to the product",
@@ -425,7 +425,7 @@ Gets the information for the specified product. Returns the following JSON:
                 ],
                 "name": "Toaster from test with pdf",
                 "producer": "242235471",
-                "productNo": "242235471"
+                "serialNo": "242235471"
             }
         },
         "message": "Found product",
@@ -448,7 +448,7 @@ Returns all the listed products of the specified company as the following JSON:
                     "files": [],
                     "name": "gul bil",
                     "producer": "tesla",
-                    "productNo": "123333"
+                    "serialNo": "123333"
                 },
                 {
                     "_id": "5a202ddfe3214803f7dc192a",
@@ -465,7 +465,7 @@ Returns all the listed products of the specified company as the following JSON:
                     ],
                     "name": "blå bil",
                     "producer": "tesla",
-                    "productNo": "1223"
+                    "serialNo": "1223"
                 }
             ]
         },
