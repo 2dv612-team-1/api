@@ -333,7 +333,7 @@ Creates a new product. Requires the following data:
 
     "jwt": "a.representative.jwt",
     "name": "product.name",
-    "productNo": "product.serial.number",
+    "serialNo": "product.serial.number",
     "description": "product.description",
     "category": "product.category",
     "files": [] //optional array of files
@@ -350,7 +350,7 @@ Returns the following JSON:
                 "files": [], //If no files were present in the POST request
                 "name": "blå bil",
                 "producer": "tesla",
-                "productNo": "122"
+                "serialNo": "122"
             }
         },
         "message": "Product was created",
@@ -389,7 +389,7 @@ Returns the following JSON:
                 ],
                 "name": "blå bil",
                 "producer": "tesla",
-                "productNo": "1223"
+                "serialNo": "1223"
             }
         },
         "message": "Successfully uploaded material to the product",
@@ -425,7 +425,7 @@ Gets the information for the specified product. Returns the following JSON:
                 ],
                 "name": "Toaster from test with pdf",
                 "producer": "242235471",
-                "productNo": "242235471"
+                "serialNo": "242235471"
             }
         },
         "message": "Found product",
@@ -448,7 +448,7 @@ Returns all the listed products of the specified company as the following JSON:
                     "files": [],
                     "name": "gul bil",
                     "producer": "tesla",
-                    "productNo": "123333"
+                    "serialNo": "123333"
                 },
                 {
                     "_id": "5a202ddfe3214803f7dc192a",
@@ -465,7 +465,7 @@ Returns all the listed products of the specified company as the following JSON:
                     ],
                     "name": "blå bil",
                     "producer": "tesla",
-                    "productNo": "1223"
+                    "serialNo": "1223"
                 }
             ]
         },
@@ -483,3 +483,36 @@ Gives the selected material a rating. Requires the following data:
 
     "jwt": "a.consumer.jwt",
     "rate": 4 (An integer between 1 and 5)
+
+#### Create Annotations
+https://nanotu.be/consumers/<username>/materials/<material_id>/annotations | POST
+Creates or updates annotation. If there is already an annotation for the specified material this method will just overwrite it with a new one. Else it creates a new annotation for that material. Requires the following data:
+
+    "username" {string} -- name of user the annotation belongs to
+    "material_id" {string} -- id of material to annotate
+
+#### Get Annotations
+https://nanotu.be/consumers/<username>/materials/<material_id>/annotations | GET
+Gets all annotations connected to a specifi file. Requires the following data:
+
+        "username": "Bertil Hansson"
+        "material_id": "filnamnkylskap123"
+
+Returns the following JSON:
+
+        {"data": {
+            "annotations": "Litet kylskåp"
+                }
+        }
+        "message": "Successfully retreived the annotations for the material"
+        "status": 200
+
+#### Create Threads
+https://nanotu.be/threads | POST
+Creates a thread 
+
+
+
+#### Get Threads
+https://nanotu.be/threads | GET
+Returns the created thread in a list
