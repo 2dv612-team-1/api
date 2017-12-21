@@ -495,24 +495,75 @@ Creates or updates annotation. If there is already an annotation for the specifi
 https://nanotu.be/consumers/<username>/materials/<material_id>/annotations | GET
 Gets all annotations connected to a specifi file. Requires the following data:
 
-        "username": "Bertil Hansson"
-        "material_id": "filnamnkylskap123"
+    "username": "Bertil Hansson"
+    "material_id": "filnamnkylskap123"
 
-Returns the following JSON:
+Returns the following JSON and the statuscode:
 
-        {"data": {
-            "annotations": "Litet kylskåp"
-                }
-        }
-        "message": "Successfully retreived the annotations for the material"
-        "status": 200
-
-#### Create Threads
-https://nanotu.be/threads | POST
-Creates a thread 
-
-
+    {"data": {
+        "annotations": "Litet kylskåp"
+            }
+    }
+    "message": "Successfully retreived the annotations for the material"
+    "status": 200
 
 #### Get Threads
 https://nanotu.be/threads | GET
-Returns the created thread in a list
+Returns the created thread in a list in the following JSON:
+
+[
+    {
+        "id": "rifsffshfh",
+        "name": "Sven",
+        "title": "Vad är egentligen ett kylskåp?",
+        "timestamp": "typ-nyss"
+    },
+    {
+        "id": "7483302",
+        "name": "Jörgen",
+        "title": "Varför är lampan röd?",
+        "timestamp": "ungefär-nu"
+    }
+]
+Returns the following statuscode:
+
+    "message": "Successfully retrieved all the threads"
+    "status": 200
+
+#### Create Thread
+https://nanotu.be/threads | POST
+Creates a thread reply with text. Returns the id of the created thread. Requires the following data:
+
+    {
+        "jwt": "rep.or.consumer",
+        "message": "An answer I have"
+    }
+
+    "message": "Thread was created" 
+    "status": 201
+
+#### Get Thread
+https://nanotu.be/threads/<_id> | GET
+Returns a single thread for a specific product. Requires the following data:
+
+    {
+        "id": "thread.id"
+    }
+    
+Returns the statuscode and located thread:
+
+    "status": 200
+
+#### Create Reply
+https://nanotu.be/threads/<_id>/replies | POST
+Posts a reply to a specific thread. Requires the following data:
+
+    {
+        "jwt": "rep.or.consumer",
+        "id": "thread.id"
+    }
+
+Returns the the following data:
+
+"message": "Reply created"
+"status": 201
