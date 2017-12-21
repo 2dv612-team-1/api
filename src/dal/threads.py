@@ -81,9 +81,9 @@ def dal_get_threads():
     return threads_data
 
 
-def dal_get_thread(id):
+def dal_get_thread(_id):
     try:
-        thread = db_conn.threads.find_one({ID: ObjectId(id)})
+        thread = db_conn.threads.find_one({ID: ObjectId(_id)})
     except Exception:
         raise NotFound('Could not find thread')
 
@@ -123,7 +123,7 @@ def dal_create_reply(form, payload, _id):
     except Exception:
         raise BadFormData('That thread does not exist')
 
-        
+
 def set(dict, form):
     """A nice version for updating dict"""
     def add(name):

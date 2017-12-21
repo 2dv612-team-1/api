@@ -54,7 +54,7 @@ def get_thread(_id):
 
     try:
         thread = dal_get_thread(_id)
-        return response(thread, 200)
+        return response("Got the muthafaaakin tråd", 200, {DATA: thread})
     except NotFound as e:
         return response(str(e), 404)
     except Exception:
