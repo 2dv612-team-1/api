@@ -18,6 +18,7 @@ from exceptions.BadFormData import BadFormData
 from exceptions.ErrorRequestingFiles import ErrorRequestingFiles
 from exceptions.ErrorCreatingFiles import ErrorCreatingFiles
 from exceptions.NotFound import NotFound
+from exceptions.NotAuthorized import NotAuthorized
 
 
 PRODUCTS_ROUTER = Blueprint(PRODUCTS, __name__)
@@ -57,6 +58,8 @@ def create_product():
         return response(str(e), 400)
     except ErrorRequestingFiles:
         return response('Error requesting files', 409)
+    except NotAuthorized:
+        return response('Beppe is a Teapot', 418)
     except ErrorCreatingFiles as e:
         return response(str(e), 409)
 
@@ -99,6 +102,8 @@ def upload_actions(_id):
         return response(str(e), 400)
     except ErrorRequestingFiles:
         return response('Error requesting files', 409)
+    except NotAuthorized:
+        return response('Beppe is a Teapot', 418)
     except ErrorCreatingFiles as e:
         return response(str(e), 409)
 
@@ -130,5 +135,7 @@ def rate_material(product_id, material_name):
         return response('Expected rate to be int', 400)
     except ValueError:
         return response('Expected star value to be between 1 and 5', 400)
+    except NotAuthorized:
+        return response('Beppe is a Teapot', 418)
     except Exception:
         return response('Everything broke', 500)
