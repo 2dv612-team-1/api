@@ -88,7 +88,7 @@ def dal_get_thread(_id):
         raise NotFound('Could not find thread')
 
     thread_data = list(
-        map(lambda key: [key, str(thread[key])], thread.keys()))
+        map(lambda key: [key, str(thread[key]) if key == ID else thread[key]], thread.keys()))
 
     return dict(thread_data)
 
