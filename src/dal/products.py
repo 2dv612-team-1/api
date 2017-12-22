@@ -39,8 +39,8 @@ def dal_get_products():
 def dal_get_product_by_id(_id):
     try:
 
-        product = db_conn.products.find_one({'_id': ObjectId(_id)})
-        files = db_conn.files.find({'owner': _id}, {'_id': False})
+        product = db_conn.products.find_one({ID: ObjectId(_id)})
+        files = db_conn.files.find({OWNER: _id}, {ID: False})
 
     except Exception:
         raise WrongCredentials()
@@ -49,7 +49,6 @@ def dal_get_product_by_id(_id):
 
         get_product = {
             CATEGORY: product[CATEGORY],
-            SUB: product[SUB],
             NAME: product[NAME],
             CREATEDBY: product[CREATEDBY],
             FILES: [files for files in files],
