@@ -19,17 +19,22 @@ from bson.objectid import ObjectId
 
 def dal_get_products():
 
-    products_data = list(map(lambda product: {
-        NAME: product[NAME],
-        CATEGORY: product[CATEGORY],
-        SUB: product[SUB],
-        DESCRIPTION: product[DESCRIPTION],
-        CREATEDBY: product[CREATEDBY],
-        ID: str(product[ID]),
-        PRODUCER: product[PRODUCER]
-    }, db_conn.products.find()))
+    # products_data = list(map(lambda product: {
+    #     NAME: product[NAME],
+    #     CATEGORY: product[CATEGORY],
+    #     SUB: product[SUB],
+    #     DESCRIPTION: product[DESCRIPTION],
+    #     CREATEDBY: product[CREATEDBY],
+    #     ID: str(product[ID]),
+    #     PRODUCER: product[PRODUCER]
+    # }, db_conn.products.find()))
 
-    return products_data
+    threads = db_conn.products.find()
+
+    return list(map(lambda thread: dict(
+        map(lambda key: [key, str(thread[key]) if key == ID else thread[key]], thread.keys())), threads))
+
+    # return products_data
 
 def dal_get_product_by_id(_id):
     try:
