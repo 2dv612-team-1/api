@@ -21,7 +21,8 @@ def create_company(request):
     company = {
         USERNAME: username,
         PASSWORD: password,
-        ROLE: COMPANY
+        ROLE: COMPANY,
+        UNREAD: list()
     }
 
     company_id = db_conn.users.insert(company)
@@ -64,6 +65,14 @@ def dal_create_representative(request, owner):
     rep_id = db_conn.users.insert(representative)
     new_rep = {USERNAME: username, ID: str(rep_id)}
     return new_rep
+
+def dal_add_unread(form, thread_id):
+    products = db_conn.products.find({CATEGORY: form[CATEGORY]})
+    producers = list(map(lambda product: product[PRODUCER], products)) 
+    for producer in producers:
+        db_conn.users.find_one_and_update({USERNAME: producer}, {
+            '$push': {UNREAD: thread_id}
+        })
 
 def get_products_for_company(name):
 
