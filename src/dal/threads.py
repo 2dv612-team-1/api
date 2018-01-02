@@ -70,15 +70,10 @@ def dal_get_user_threads(username):
 
 
 def dal_get_threads():
+    threads = db_conn.threads.find()
 
-    threads_data = list(map(lambda thread: {
-        ID: str(thread[ID]),
-        NAME: thread[NAME],
-        TITLE: thread[TITLE],
-        TIMESTAMP: thread[TIMESTAMP]
-    }, db_conn.threads.find()))
-
-    return threads_data
+    return list(map(lambda thread: dict(
+        map(lambda key: [key, str(thread[key]) if key == ID else thread[key]], thread.keys())), threads))
 
 
 def dal_get_thread(_id):
