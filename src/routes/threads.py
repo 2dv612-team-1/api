@@ -4,6 +4,7 @@ from utils.response import response
 from utils.string import *
 from dal import *
 from dal.threads import dal_create_thread, dal_get_threads, dal_get_thread, dal_create_reply
+from dal.companies import dal_add_unread
 
 from exceptions.WrongCredentials import WrongCredentials
 from exceptions.NotFound import NotFound
@@ -34,6 +35,7 @@ def create_thread():
     try:
         payload = extract(request)
         thread = dal_create_thread(request.form, payload)
+        dal_add_unread(request.form, thread)
         return response('Thread was created', 201, {DATA: {THREADS: thread}})
 
     except AttributeError:
@@ -59,6 +61,7 @@ def get_thread(_id):
         return response(str(e), 404)
     except Exception:
         return response('Everything broke', 500)
+
 
 @THREADS_ROUTER.route('/threads/<_id>/replies', methods=['POST'])
 def create_reply(_id):
