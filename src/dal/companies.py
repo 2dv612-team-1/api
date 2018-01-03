@@ -76,11 +76,11 @@ def dal_add_unread(form, thread_id):
         })
 
 def dal_get_unread_threads(comp_username):
-    user = db_conn.users.find_one({USERNAME: comp_username})
+    company = db_conn.users.find_one({USERNAME: comp_username})
 
     try:
 
-        thread_ids = user[UNREAD]
+        thread_ids = company[UNREAD]
 
     except Exception:
         raise BadFormData('Problem extracting threads')
