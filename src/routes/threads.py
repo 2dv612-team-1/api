@@ -83,7 +83,7 @@ def get_unread_threads():
     try:
         payload = extract(request)
         authorized_role(payload, REPRESENTATIVE)
-        comp_username = payload['owner']
+        comp_username = payload[DATA][OWNER]
 
         threads_data = dal_get_unread_threads(comp_username)
 
