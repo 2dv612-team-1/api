@@ -7,7 +7,8 @@ from utils.response import response
 from utils.string import *
 from utils.jwt_handler import *
 from dal.users import get_users_with_role
-from dal.companies import create_company, get_representatives_for_company, dal_create_representative, get_products_for_company
+from dal.companies import create_company, get_representatives_for_company, dal_create_representative, get_products_for_company, dal_read_thread
+from exceptions.BadFormData import BadFormData
 
 
 COMPANIES_ROUTER = Blueprint(COMPANIES, __name__)
@@ -30,7 +31,7 @@ def company_creation():
         payload = extract(request)
         authorized_role(payload, ADMIN)
         company = create_company(request)
-        return response('Company was created', 201, {DATA: {COMPANY:company}})
+        return response('Company was created', 201, {DATA: {COMPANY: company}})
 
     except Exception as e:
         return response(str(e), 400)
@@ -67,10 +68,27 @@ def get_product(name):
 
         products = get_products_for_company(name)
         return response(
-                'Successfully retreived all the products for company ' + name,
-                200,
-                {DATA:
-                    {PRODUCTS: products}
-                })
+            'Successfully retreived all the products for company ' + name,
+            200,
+            {DATA:
+             {PRODUCTS: products}
+             })
+    except Exception as e:
+        return response(str(e), 400)
+
+
+@COMPANIES_ROUTER.route('/companies/<name>/threads/<thread_id>', methods=['PATCH'])
+def remove_thread_read(name, thread_id):
+    """Removes read thread from company"""
+
+    try:
+        payload = extract(request)
+        authorized_role(payload, REPRESENTATIVE)
+
+        if payload[DATA][OWNER] != name:
+            raise BadFormData('Wrong company')
+
+        dal_read_thread(thread_id, name)
+        return response('', 204)
     except Exception as e:
         return response(str(e), 400)
