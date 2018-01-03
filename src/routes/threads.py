@@ -78,7 +78,7 @@ def create_reply(_id):
         return response('Everything broke', 500)
 
 
-@THREADS_ROUTER.route('/threads/unread', methods=['POST'])
+@THREADS_ROUTER.route('/threads/unread')
 def get_unread_threads():
     try:
         payload = extract(request)
