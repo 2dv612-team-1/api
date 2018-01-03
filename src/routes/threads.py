@@ -76,3 +76,26 @@ def create_reply(_id):
         return response(str(e), 404)
     except Exception:
         return response('Everything broke', 500)
+
+
+@THREADS_ROUTER.route('/threads/unread', methods=['POST'])
+def get_unread_threads():
+    try:
+        payload = extract(request)
+        authorized_role(payload, REPRESENTATIVE)
+        comp_username = payload['owner']
+
+        threads_data = dal_get_unread_threads(comp_username)
+
+        return response(
+            'Successfully retrieved all the unread-threads',
+            200,
+            {DATA: {THREADS: threads_data}}
+        )
+
+    except BadFormData:
+        return response(str(e), 400)
+    except InvalidRole:
+        return response('You are not a representative', 400)
+    except Exception:
+        return response('Everything broke', 500)
