@@ -76,18 +76,6 @@ def dal_get_threads():
         map(lambda key: [key, str(thread[key]) if key == ID else thread[key]], thread.keys())), threads))
 
 
-def dal_get_unread_threads(username):
-    user = db_conn.users.find_one({USERNAME: username})
-
-    try:
-        thread_ids = user[UNREAD]
-
-    except Exception:
-        raise BadFormData('Problem extracting threads')
-
-    return thread_ids
-
-
 def dal_get_thread(_id):
     try:
         thread = db_conn.threads.find_one({ID: ObjectId(_id)})
