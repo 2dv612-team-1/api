@@ -3,6 +3,7 @@ from utils.string import *
 from utils.form_handler import *
 from config import *
 from exceptions.AlreadyExists import AlreadyExists
+from exceptions.BadFormData import BadFormData
 
 """Create company account, if company account with given username and password does not already exist"""
 
@@ -76,6 +77,19 @@ def dal_add_unread(form, thread_id):
         })
 
 
+def dal_get_unread_threads(comp_username):
+    company = db_conn.users.find_one({USERNAME: comp_username})
+
+    try:
+
+        thread_ids = company[UNREAD]
+
+    except Exception:
+        raise BadFormData('Problem extracting threads')
+
+    return thread_ids
+
+  
 def get_products_for_company(name):
 
     try:

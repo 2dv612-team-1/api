@@ -3,8 +3,9 @@ from utils.jwt_handler import *
 from utils.response import response
 from utils.string import *
 from dal import *
+
 from dal.threads import dal_create_thread, dal_get_threads, dal_get_thread, dal_create_reply
-from dal.companies import dal_add_unread
+from dal.companies import dal_add_unread, dal_get_unread_threads
 
 from exceptions.WrongCredentials import WrongCredentials
 from exceptions.NotFound import NotFound
@@ -73,5 +74,28 @@ def create_reply(_id):
         return response('Reply created', 201)
     except BadFormData as e:
         return response(str(e), 404)
+    except Exception:
+        return response('Everything broke', 500)
+
+
+@THREADS_ROUTER.route('/threads/unread')
+def get_unread_threads():
+    try:
+        payload = extract(request)
+        authorized_role(payload, REPRESENTATIVE)
+        comp_username = payload[DATA][OWNER]
+
+        threads_data = dal_get_unread_threads(comp_username)
+
+        return response(
+            'Successfully retrieved all the unread-threads',
+            200,
+            {DATA: {THREADS: threads_data}}
+        )
+
+    except BadFormData:
+        return response(str(e), 400)
+    except InvalidRole:
+        return response('You are not a representative', 400)
     except Exception:
         return response('Everything broke', 500)
