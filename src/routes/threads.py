@@ -3,7 +3,7 @@ from utils.jwt_handler import *
 from utils.response import response
 from utils.string import *
 from dal import *
-from dal.threads import dal_create_thread, dal_get_threads, dal_get_thread, dal_create_reply
+from dal.threads import dal_create_thread, dal_get_threads, dal_get_thread, dal_create_reply, dal_get_unread_threads
 
 from exceptions.WrongCredentials import WrongCredentials
 from exceptions.NotFound import NotFound
@@ -60,6 +60,7 @@ def get_thread(_id):
     except Exception:
         return response('Everything broke', 500)
 
+
 @THREADS_ROUTER.route('/threads/<_id>/replies', methods=['POST'])
 def create_reply(_id):
     """Posts reply to thread"""
@@ -72,3 +73,22 @@ def create_reply(_id):
         return response(str(e), 404)
     except Exception:
         return response('Everything broke', 500)
+
+@THREADS_ROUTER.route('/threads/unread', methods=['POST'])
+def get_unread_threads():
+    try:
+        payload = extract(request)
+        authorized_role(payload, REPRESENTATIVE)
+        company = payload['owner']
+
+        threads_data = dal_get_unread_threads(company)
+
+        return response(
+            'Successfully retrieved all the unread-threads',
+            200,
+            {DATA: {THREADS: threads_data}}
+        )
+
+    except AttributeError:
+        return response('Tampered token', 400)
+
