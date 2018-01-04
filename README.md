@@ -567,3 +567,45 @@ Returns the the following data:
 
 "message": "Reply created"
 "status": 201
+
+#### Company Actions
+https://nanotu.be/companies
+Extracts users within companies. Returns the following statuscode and message:
+
+"message": "Successfully extracted all users"
+"status": 200
+
+#### Company Creation
+https://nanotu.be/companies | POST
+Creates company. Returns the following statuscode and message:
+
+"message": "Company was created"
+"status": 201
+
+#### Get Representatives
+https://nanotu.be/companies/<name>/representatives
+Gets list of representatives from specific company. Returns the following statuscode and list of representatives:
+
+"status": 200
+
+
+#### Create Representatives
+https://nanotu.be/companies/<name>/representatives | POST
+Creates representative. Requires the name of a representative. Returns the following statuscode and message:
+
+"message": "Representative was created"
+"status": 201
+
+
+#### Get Product
+https://nanotu.be/companies/<name>/products
+Gets all products for the company. Requires the name of a product. Returns the following statuscode, list of products and message:
+
+"message": "Successfully retreived all the products for company " + name
+"status": 200
+
+#### Remove Thread Read
+https://nanotu.be/companies/<name>/threads/<thread_id> | PATCH
+Removes read thread from company. Requires the name of the authorized owner of the thread, i.e. a representative for the company. Returns the following statuscode:
+
+"status": 204
