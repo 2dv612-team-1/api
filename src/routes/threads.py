@@ -18,7 +18,7 @@ THREADS_ROUTER = Blueprint(THREADS, __name__)
 
 @THREADS_ROUTER.route('/threads')
 def get_threads():
-
+    """Gets all threads"""
     threads_data = dal_get_threads()
 
     return response(
@@ -69,6 +69,18 @@ def create_reply(_id):
         dal_create_reply(request.form, payload, _id)
         return response('Reply created', 201)
     except BadFormData as e:
+        return response(str(e), 404)
+    except Exception:
+        return response('Everything broke', 500)
+
+@THREADS_ROUTER.route('/threads/<username>/favourites')
+def get_favourites(username)
+    """Gets the replies from the threads a consumer participates in"""
+    try:
+        thread = dal_get_user_threads(username)
+
+        return response("Got favourites", 200, )
+    except NotFound as e:
         return response(str(e), 404)
     except Exception:
         return response('Everything broke', 500)
