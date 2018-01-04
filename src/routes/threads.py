@@ -83,9 +83,16 @@ def get_favourites(username):
     """Gets the replies from the threads a consumer participates in"""
     try:
 
-        threads = dal_get_favourites(username)
+        threads_data = dal_get_favourites(username)
+        if len(threads_data) == 0:
+            return response("Data not found", 201)
 
-        return response("Got favourites", 200, {DATA: threads})
+        return response(
+            "Got favourites", 
+            200, 
+            {DATA: {THREADS: threads_data}}
+        )
+
     except NotFound as e:
         return response(str(e), 404)
     except Exception:
