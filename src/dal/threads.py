@@ -119,6 +119,17 @@ def dal_create_reply(form, payload, _id):
         raise BadFormData('That thread does not exist')
 
 
+def dal_get_favourites(username):
+    """Gets threads with users reply"""
+
+    # Fetches threads which includes replies from user
+    threads = db_conn.threads.find({'replies.username': username})
+
+    # Converts appropriate thread data to strings
+    return list(map(lambda thread: dict(
+        map(lambda key: [key, str(thread[key]) if key == ID else thread[key]], thread.keys())), threads))
+
+
 def set(dict, form):
     """A nice version for updating dict"""
     def add(name):

@@ -4,7 +4,7 @@ from utils.response import response
 from utils.string import *
 from dal import *
 
-from dal.threads import dal_create_thread, dal_get_threads, dal_get_thread, dal_create_reply
+from dal.threads import dal_create_thread, dal_get_threads, dal_get_thread, dal_create_reply, dal_get_favourites
 from dal.companies import dal_add_unread, dal_get_unread_threads
 
 from exceptions.WrongCredentials import WrongCredentials
@@ -20,7 +20,7 @@ THREADS_ROUTER = Blueprint(THREADS, __name__)
 
 @THREADS_ROUTER.route('/threads')
 def get_threads():
-
+    """Gets all threads"""
     threads_data = dal_get_threads()
 
     return response(
@@ -73,6 +73,27 @@ def create_reply(_id):
         dal_create_reply(request.form, payload, _id)
         return response('Reply created', 201)
     except BadFormData as e:
+        return response(str(e), 404)
+    except Exception:
+        return response('Everything broke', 500)
+
+
+@THREADS_ROUTER.route('/threads/<username>/favourites')
+def get_favourites(username):
+    """Gets the replies from the threads a consumer participates in"""
+    try:
+
+        threads_data = dal_get_favourites(username)
+        if len(threads_data) == 0:
+            return response("Data not found", 201)
+
+        return response(
+            "Got favourites", 
+            200, 
+            {DATA: {THREADS: threads_data}}
+        )
+
+    except NotFound as e:
         return response(str(e), 404)
     except Exception:
         return response('Everything broke', 500)
