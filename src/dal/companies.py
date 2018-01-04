@@ -75,7 +75,7 @@ def dal_add_unread(form, thread_id):
     producers = list(map(lambda product: product[PRODUCER], products))
     for producer in producers:
         db_conn.users.find_one_and_update({USERNAME: producer}, {
-            '$push': {UNREAD: thread_id}
+            '$addToSet': {UNREAD: thread_id}
         })
 
 
