@@ -55,6 +55,6 @@ def get_user_threads(username):
 
     try:
         threads = dal_get_user_threads(username)
-        return response(threads, 200)
+        return response('Successfully retreived users threads', 200, {DATA: {THREADS: threads}})
     except Exception:
         return response('Everything broke', 500)

@@ -3,6 +3,9 @@ from utils.string import *
 from utils.form_handler import *
 from config import *
 from exceptions.AlreadyExists import AlreadyExists
+from exceptions.BadFormData import BadFormData
+
+from dal.threads import dal_get_thread
 
 """Create company account, if company account with given username and password does not already exist"""
 
@@ -21,7 +24,8 @@ def create_company(request):
     company = {
         USERNAME: username,
         PASSWORD: password,
-        ROLE: COMPANY
+        ROLE: COMPANY,
+        UNREAD: list()
     }
 
     company_id = db_conn.users.insert(company)
@@ -34,7 +38,7 @@ def get_representatives_for_company(company_name):
 
         representatives = []
 
-        for representative in db_conn.users.find({DATA:{OWNER: company_name}}):
+        for representative in db_conn.users.find({DATA: {OWNER: company_name}}):
             representatives.append({USERNAME: representative[USERNAME]})
 
         return representatives
@@ -65,6 +69,34 @@ def dal_create_representative(request, owner):
     new_rep = {USERNAME: username, ID: str(rep_id)}
     return new_rep
 
+
+def dal_add_unread(form, thread_id):
+    products = db_conn.products.find({CATEGORY: form[CATEGORY]})
+    producers = list(map(lambda product: product[PRODUCER], products))
+    for producer in producers:
+        db_conn.users.find_one_and_update({USERNAME: producer}, {
+            '$push': {UNREAD: thread_id}
+        })
+
+
+def dal_get_unread_threads(comp_username):
+    company = db_conn.users.find_one({USERNAME: comp_username})
+
+    try:
+
+        thread_ids = company[UNREAD]
+        unread_threads = []
+
+        for thread_id in thread_ids:
+            unread_threads.append(dal_get_thread(thread_id))
+
+
+    except Exception:
+        raise BadFormData('Problem extracting threads')
+
+    return unread_threads
+
+
 def get_products_for_company(name):
 
     try:
@@ -82,3 +114,15 @@ def get_products_for_company(name):
         CREATEDBY: product.get(CREATEDBY),
         PRODUCER: product.get(PRODUCER)
     }, products))
+
+
+def dal_read_thread(thread_id, company_name):
+    """Checks thread as read"""
+
+    try:
+        db_conn.users.find_one_and_update(
+            {USERNAME: company_name},
+            {'$pull': {UNREAD: thread_id}}
+        )
+    except Exception:
+        raise AttributeError('There is nothing to read')
