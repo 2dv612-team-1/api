@@ -5,6 +5,8 @@ from config import *
 from exceptions.AlreadyExists import AlreadyExists
 from exceptions.BadFormData import BadFormData
 
+from dal.threads import dal_get_thread
+
 """Create company account, if company account with given username and password does not already exist"""
 
 
@@ -83,13 +85,18 @@ def dal_get_unread_threads(comp_username):
     try:
 
         thread_ids = company[UNREAD]
+        unread_threads = []
+
+        for thread_id in thread_ids:
+            unread_threads.append(dal_get_thread(thread_id))
+
 
     except Exception:
         raise BadFormData('Problem extracting threads')
 
-    return thread_ids
+    return unread_threads
 
-  
+
 def get_products_for_company(name):
 
     try:

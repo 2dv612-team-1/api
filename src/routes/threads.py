@@ -78,12 +78,9 @@ def create_reply(_id):
         return response('Everything broke', 500)
 
 
-@THREADS_ROUTER.route('/threads/unread')
-def get_unread_threads():
+@THREADS_ROUTER.route('/threads/<comp_username>/unread')
+def get_unread_threads(comp_username):
     try:
-        payload = extract(request)
-        authorized_role(payload, REPRESENTATIVE)
-        comp_username = payload[DATA][OWNER]
 
         threads_data = dal_get_unread_threads(comp_username)
 
